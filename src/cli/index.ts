@@ -1,13 +1,16 @@
-
 /**
- * Command-line interface for the DAF420 parser
+ * Enhanced CLI with progress reporting and better UI
+ * Location: src/cli/index.ts
+ * 
+ * REPLACE your existing CLI index.ts with this version
  */
 
 import * as fs from 'fs';
 import { Config } from '../config';
 import { PermitParser } from '../parser';
 import { CSVExporter } from '../exporter';
-import { ParseStats } from '../models';
+import { ProgressReporter, Logger } from './ProgressReporter';
+import { ConfigurationError } from '../utils/ParseError';
 
 interface CLIArgs {
   input?: string;
@@ -16,11 +19,12 @@ interface CLIArgs {
   strict?: boolean;
   verbose?: boolean;
   help?: boolean;
+  performance?: boolean;
+  validationReport?: string;
 }
 
 /**
  * Parse command-line arguments
- * @returns Parsed arguments
  */
 function parseArgs(): CLIArgs {
   const args: CLIArgs = {};
@@ -41,6 +45,10 @@ function parseArgs(): CLIArgs {
       args.strict = true;
     } else if (arg === '-v' || arg === '--verbose') {
       args.verbose = true;
+    } else if (arg === '-p' || arg === '--performance') {
+      args.performance = true;
+    } else if (arg === '--validation-report') {
+      args.validationReport = argv[++i];
     }
   }
   
@@ -52,33 +60,44 @@ function parseArgs(): CLIArgs {
  */
 function printUsage(): void {
   console.log(`
-DAF420 Permit Parser - TypeScript Edition
-==========================================
+DAF420 Permit Parser - TypeScript Edition v2.0
+===============================================
 
 Usage: npm run parse -- [options]
 
-Options:
-  -i, --input <file>      Input DAF420 file (required)
-  -o, --output <file>     Output CSV file (required)
-  -c, --config <file>     Custom config file path (optional)
-  --strict                Strict mode - fail on errors (optional)
-  -v, --verbose           Verbose logging (optional)
-  -h, --help              Show this help message
+Required Options:
+  -i, --input <file>           Input DAF420 file
+  -o, --output <file>          Output CSV file
+
+Optional:
+  -c, --config <file>          Custom config file path
+  --strict                     Strict mode - fail on errors
+  -v, --verbose                Verbose logging
+  -p, --performance            Show performance metrics
+  --validation-report <file>   Export validation issues to CSV
+  -h, --help                   Show this help message
 
 Examples:
+  # Basic usage
   npm run parse -- -i input.dat -o output.csv
+  
+  # Verbose mode with progress
   npm run parse -- -i input.dat -o output.csv -v
-  npm run parse -- -i input.dat -o output.csv --strict
-  npm run parse -- -i input.dat -o output.csv -c custom_config.yaml
+  
+  # Strict mode with validation report
+  npm run parse -- -i input.dat -o output.csv --strict --validation-report issues.csv
+  
+  # With performance monitoring
+  npm run parse -- -i input.dat -o output.csv -p
   `);
 }
 
 /**
  * Print parsing summary
- * @param stats - Parse statistics
- * @param schemas - Schema map
  */
-function printSummary(stats: ParseStats, schemas: Map<string, any>): void {
+function printSummary(result: any, schemas: Map<string, any>): void {
+  const stats = result.stats;
+  
   console.log('\n' + '='.repeat(80));
   console.log('PROCESSING SUMMARY');
   console.log('='.repeat(80));
@@ -88,8 +107,10 @@ function printSummary(stats: ParseStats, schemas: Map<string, any>): void {
   console.log(`Orphaned records:     ${stats.orphanedRecords.toLocaleString()}`);
   console.log(`  - Recovered:        ${stats.recoveredRecords.toLocaleString()}`);
   console.log(`  - Lost:             ${(stats.orphanedRecords - stats.recoveredRecords).toLocaleString()}`);
-  console.log(`Validation errors:    ${stats.validationErrors.toLocaleString()}`);
-  console.log(`Validation warnings:  ${stats.validationWarnings.toLocaleString()}`);
+  
+  const valSummary = result.validationReport.getSummary();
+  console.log(`Validation errors:    ${valSummary.totalErrors.toLocaleString()}`);
+  console.log(`Validation warnings:  ${valSummary.totalWarnings.toLocaleString()}`);
   
   console.log('\nRecords by Type:');
   const sortedTypes = Array.from(stats.recordsByType.entries()).sort((a, b) => a[0].localeCompare(b[0]));
@@ -102,9 +123,19 @@ function printSummary(stats: ParseStats, schemas: Map<string, any>): void {
 }
 
 /**
+ * Estimate total lines in file (for progress bar)
+ */
+function estimateLineCount(filePath: string): number {
+  const stats = fs.statSync(filePath);
+  // Rough estimate: assume average line is ~100 bytes
+  return Math.floor(stats.size / 100);
+}
+
+/**
  * Main CLI entry point
  */
 async function main(): Promise<number> {
+  const logger = new Logger();
   const args = parseArgs();
   
   // Show help
@@ -115,49 +146,125 @@ async function main(): Promise<number> {
   
   // Validate required arguments
   if (!args.input || !args.output) {
-    console.error('Error: Both input (-i) and output (-o) files are required\n');
+    logger.error('Both input (-i) and output (-o) files are required\n');
     printUsage();
     return 1;
   }
   
   // Check if input file exists
   if (!fs.existsSync(args.input)) {
-    console.error(`Error: Input file not found: ${args.input}`);
+    logger.error(`Input file not found: ${args.input}`);
     return 1;
   }
   
   try {
     // Load configuration
+    logger.info('Loading configuration...');
     const config = new Config(args.config);
+    const configSummary = config.getSummary();
     
-    console.log(`Processing: ${args.input}`);
-    const stats = fs.statSync(args.input);
-    console.log(`File size: ${stats.size.toLocaleString()} bytes`);
+    if (args.verbose) {
+      logger.info(`Loaded ${configSummary.schemasCount} schemas and ${configSummary.lookupTablesCount} lookup tables`);
+    }
+    
+    // File info
+    const fileStats = fs.statSync(args.input);
+    logger.info(`Processing: ${args.input}`);
+    logger.info(`File size: ${fileStats.size.toLocaleString()} bytes`);
+    
+    // Setup progress reporter
+    const estimatedLines = estimateLineCount(args.input);
+    const progress = args.verbose ? new ProgressReporter(estimatedLines, true) : null;
     
     // Create parser
     const parser = new PermitParser(config, {
       strictMode: args.strict || false,
-      verbose: args.verbose || false
+      verbose: args.verbose || false,
+      enablePerformanceMonitoring: args.performance || false,
+      onProgress: progress ? (line, stats) => progress.update(line, stats) : undefined
     });
     
     // Parse file
+    logger.info('Parsing file...\n');
     const startTime = Date.now();
-    const { permits, stats: parseStats } = await parser.parseFile(args.input);
+    
+    let result;
+    try {
+      result = await parser.parseFile(args.input);
+    } catch (error) {
+      if (progress) {
+        progress.error(error instanceof Error ? error.message : String(error));
+      } else {
+        logger.error(error instanceof Error ? error.message : String(error));
+      }
+      throw error;
+    }
+    
     const elapsed = Date.now() - startTime;
     
+    // Show completion
+    if (progress) {
+      progress.complete(result.stats, elapsed);
+    } else {
+      logger.success(`Parsing complete in ${(elapsed / 1000).toFixed(2)}s`);
+    }
+    
     // Export to CSV
+    logger.info('Exporting to CSV...');
     const exporter = new CSVExporter(config);
-    await exporter.export(permits, args.output);
+    await exporter.export(result.permits, args.output);
+    logger.success(`Output written to: ${args.output}`);
+    
+    // Export validation report if requested
+    if (args.validationReport && result.validationReport.getSummary().total > 0) {
+      logger.info('Exporting validation report...');
+      await result.validationReport.exportToCSV(args.validationReport);
+      logger.success(`Validation report written to: ${args.validationReport}`);
+    }
     
     // Print summary
-    printSummary(parseStats, config.schemas);
-    console.log(`\nProcessing time: ${(elapsed / 1000).toFixed(2)}s`);
-    console.log(`Output written to: ${args.output}`);
+    printSummary(result, config.schemas);
+    
+    // Print performance metrics if requested
+    if (args.performance && result.performance) {
+      console.log('\n' + '='.repeat(80));
+      console.log('PERFORMANCE METRICS');
+      console.log('='.repeat(80));
+      
+      for (const [label, metrics] of Object.entries(result.performance)) {
+        console.log(
+          `${label.padEnd(30)} | ` +
+          `Avg: ${(metrics as any).avg.padStart(10)} | ` +
+          `Max: ${(metrics as any).max.padStart(10)} | ` +
+          `Count: ${(metrics as any).count}`
+        );
+      }
+    }
+    
+    // Print validation summary if there are issues
+    if (result.validationReport.getSummary().total > 0) {
+      result.validationReport.printSummary();
+    }
+    
+    // Exit with error code if there were validation errors in strict mode
+    if (args.strict && result.validationReport.hasErrors()) {
+      logger.warning('Validation errors detected in strict mode');
+      return 1;
+    }
     
     return 0;
+    
   } catch (error) {
-    console.error('\nError during processing:');
-    console.error(error);
+    console.error('\n' + '='.repeat(80));
+    
+    if (error instanceof ConfigurationError) {
+      logger.error('Configuration Error:');
+      console.error(error.toString());
+    } else {
+      logger.error('Error during processing:');
+      console.error(error);
+    }
+    
     return 1;
   }
 }

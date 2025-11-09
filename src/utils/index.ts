@@ -4,3 +4,5 @@
  */
 
 export * from './typeConverters';
+export * from './ParseError';
+export * from './PerformanceMonitor';

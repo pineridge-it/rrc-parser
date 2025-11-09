@@ -4,4 +4,5 @@
 export * from './Config';
 export * from './RecordSchema';
 export * from './FieldSpec';
+export * from './ConfigValidator';
 //# sourceMappingURL=index.d.ts.map

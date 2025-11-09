@@ -1,5 +1,8 @@
 /**
- * Core permit parsing engine with state machine
+ * Enhanced PermitParser with performance monitoring and better error handling
+ * Location: src/parser/PermitParser.ts
+ * 
+ * REPLACE your existing PermitParser.ts with this version
  */
 
 import * as fs from 'fs';
@@ -7,6 +10,7 @@ import * as readline from 'readline';
 import { Config } from '../config';
 import { Permit, ParseStats } from '../models';
 import { Validator } from '../validators';
+import { ValidationReport } from '../validators/ValidationReport';
 import { 
   PermitData, 
   RecordData, 
@@ -15,13 +19,32 @@ import {
   StorageKey
 } from '../types';
 import { parseDate, parseIntValue, parseFloatValue } from '../utils';
+import { ParseError } from '../utils/ParseError';
+import { PerformanceMonitor } from '../utils/PerformanceMonitor';
+
+export interface ParserOptions {
+  strictMode?: boolean;
+  verbose?: boolean;
+  enablePerformanceMonitoring?: boolean;
+  onProgress?: (lineNumber: number, stats: ParseStats) => void;
+}
+
+export interface ParseResult {
+  permits: Record<string, PermitData>;
+  stats: ParseStats;
+  validationReport: ValidationReport;
+  performance?: Record<string, any>;
+}
 
 export class PermitParser {
   private config: Config;
   private strictMode: boolean;
   private validator: Validator;
+  private validationReport: ValidationReport;
   private stats: ParseStats;
   private logger: ILogger;
+  private perfMonitor: PerformanceMonitor;
+  private onProgress?: (lineNumber: number, stats: ParseStats) => void;
   
   // State machine variables
   private permits: Map<string, Permit> = new Map();
@@ -29,61 +52,80 @@ export class PermitParser {
   private pendingRoot: RecordData | null = null;
   private pendingChildren: Array<{ recordType: string; data: RecordData }> = [];
   
-  constructor(config?: Config, options: { strictMode?: boolean; verbose?: boolean } = {}) {
+  constructor(config?: Config, options: ParserOptions = {}) {
     this.config = config || new Config();
     this.strictMode = options.strictMode || false;
     this.validator = new Validator(this.config);
+    this.validationReport = new ValidationReport();
     this.stats = new ParseStats();
     this.logger = new ConsoleLogger(options.verbose || false);
+    this.perfMonitor = new PerformanceMonitor(options.enablePerformanceMonitoring);
+    this.onProgress = options.onProgress;
   }
   
   /**
    * Parse a DAF420 file
-   * @param inputPath - Path to the input file
-   * @returns Object containing permits and statistics
    */
-  async parseFile(inputPath: string): Promise<{
-    permits: Record<string, PermitData>;
-    stats: ParseStats;
-  }> {
-    return new Promise((resolve, reject) => {
-      const fileStream = fs.createReadStream(inputPath, {
-        encoding: this.config.settings.encoding as BufferEncoding
-      });
-      
-      const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-      });
-      
-      let lineNumber = 0;
-      
-      rl.on('line', (line: string) => {
-        lineNumber++;
-        this.processLine(lineNumber, line.trimEnd());
-      });
-      
-      rl.on('close', () => {
-        this.finalizeParsing();
+  async parseFile(inputPath: string): Promise<ParseResult> {
+    return this.perfMonitor.timeAsync('parseFile', async () => {
+      return new Promise((resolve, reject) => {
+        const fileStream = fs.createReadStream(inputPath, {
+          encoding: this.config.settings.encoding as BufferEncoding
+        });
         
-        const result = {
-          permits: this.getPermitsAsObjects(),
-          stats: this.stats
-        };
+        const rl = readline.createInterface({
+          input: fileStream,
+          crlfDelay: Infinity
+        });
         
-        resolve(result);
-      });
-      
-      rl.on('error', (error) => {
-        reject(error);
+        let lineNumber = 0;
+        
+        rl.on('line', (line: string) => {
+          lineNumber++;
+          
+          try {
+            this.perfMonitor.time('processLine', () => {
+              this.processLine(lineNumber, line.trimEnd());
+            });
+            
+            // Call progress callback periodically
+            if (this.onProgress && lineNumber % 100 === 0) {
+              this.onProgress(lineNumber, this.stats);
+            }
+          } catch (error) {
+            if (this.strictMode) {
+              rl.close();
+              reject(error);
+            }
+          }
+        });
+        
+        rl.on('close', () => {
+          try {
+            this.finalizeParsing();
+            
+            const result: ParseResult = {
+              permits: this.getPermitsAsObjects(),
+              stats: this.stats,
+              validationReport: this.validationReport,
+              performance: this.perfMonitor.getReport()
+            };
+            
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        });
+        
+        rl.on('error', (error) => {
+          reject(error);
+        });
       });
     });
   }
   
   /**
    * Process a single line from the input file
-   * @param lineNumber - The line number
-   * @param record - The record string
    */
   private processLine(lineNumber: number, record: string): void {
     this.stats.linesProcessed++;
@@ -116,18 +158,20 @@ export class PermitParser {
         this.routeRecord(recType, parsed, lineNumber);
       }
     } catch (error) {
-      this.stats.logMalformed(lineNumber, `Parse error: ${String(error)}`);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      this.stats.logMalformed(lineNumber, `Parse error: ${errorMsg}`);
+      
       if (this.strictMode) {
-        throw error;
+        if (error instanceof ParseError) {
+          throw error;
+        }
+        throw new ParseError(errorMsg, lineNumber, recType, error as Error);
       }
     }
   }
   
   /**
    * Validate the structure of a record
-   * @param lineNumber - The line number
-   * @param record - The record string
-   * @returns True if valid
    */
   private validateRecordStructure(lineNumber: number, record: string): boolean {
     if (record.length < this.config.settings.minRecordLength) {
@@ -152,41 +196,72 @@ export class PermitParser {
   
   /**
    * Parse a record according to its schema
-   * @param record - The record string
-   * @param recType - The record type
-   * @param lineNumber - The line number
-   * @returns Parsed record data or null
    */
   private parseRecord(record: string, recType: string, lineNumber: number): RecordData | null {
     const schema = this.config.getSchema(recType);
     if (!schema) {
-      return null;
+      throw new ParseError(`Unknown record type: ${recType}`, lineNumber, recType);
     }
     
-    const parsed = schema.parseRecord(record);
+    let parsed: RecordData;
+    
+    try {
+      parsed = schema.parseRecord(record);
+    } catch (error) {
+      throw new ParseError(
+        `Failed to parse record type ${recType}`,
+        lineNumber,
+        recType,
+        error instanceof Error ? error : undefined
+      );
+    }
     
     // Type conversion and validation
     for (const fieldSpec of schema.fields) {
       const rawValue = parsed[fieldSpec.name] as string;
       
       // Type conversion
-      if (fieldSpec.type === 'date') {
-        parsed[fieldSpec.name] = parseDate(rawValue);
-      } else if (fieldSpec.type === 'int') {
-        parsed[fieldSpec.name] = parseIntValue(rawValue);
-      } else if (fieldSpec.type === 'float') {
-        parsed[fieldSpec.name] = parseFloatValue(rawValue);
+      try {
+        if (fieldSpec.type === 'date') {
+          parsed[fieldSpec.name] = parseDate(rawValue);
+        } else if (fieldSpec.type === 'int') {
+          parsed[fieldSpec.name] = parseIntValue(rawValue);
+        } else if (fieldSpec.type === 'float') {
+          parsed[fieldSpec.name] = parseFloatValue(rawValue);
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Line ${lineNumber}: Failed to convert ${fieldSpec.name} to ${fieldSpec.type}: ${rawValue}`
+        );
       }
       
       // Validation
       if (fieldSpec.validator && rawValue) {
         const context = `line_${lineNumber}_${fieldSpec.name}`;
-        this.validator.validate(fieldSpec.validator, rawValue, context);
+        const isValid = this.validator.validate(fieldSpec.validator, rawValue, context);
+        
+        if (!isValid) {
+          // Add to validation report
+          this.validationReport.addWarning(
+            fieldSpec.name,
+            rawValue,
+            `Failed ${fieldSpec.validator} validation`,
+            fieldSpec.validator,
+            { lineNumber }
+          );
+        }
       }
       
       // Required field check
       if (fieldSpec.required && !rawValue) {
         this.logger.warn(`Line ${lineNumber}: Missing required field ${fieldSpec.name}`);
+        this.validationReport.addError(
+          fieldSpec.name,
+          '',
+          'Required field is missing',
+          'required',
+          { lineNumber }
+        );
       }
     }
     
@@ -195,9 +270,6 @@ export class PermitParser {
   
   /**
    * Route a parsed record to the appropriate handler
-   * @param recType - The record type
-   * @param parsed - The parsed record data
-   * @param lineNumber - The line number
    */
   private routeRecord(recType: string, parsed: RecordData, lineNumber: number): void {
     if (recType === '01') {
@@ -214,8 +286,6 @@ export class PermitParser {
   
   /**
    * Handle a DAPERMIT record (02)
-   * @param parsed - The parsed record data
-   * @param lineNumber - The line number
    */
   private handlePermitRecord(parsed: RecordData, lineNumber: number): void {
     const permitNum = (parsed.permit_number as string || '').trim();
@@ -272,9 +342,6 @@ export class PermitParser {
   
   /**
    * Handle a child record (03-15)
-   * @param recType - The record type
-   * @param parsed - The parsed record data
-   * @param lineNumber - The line number
    */
   private handleChildRecord(recType: string, parsed: RecordData, lineNumber: number): void {
     const schema = this.config.getSchema(recType);
@@ -315,7 +382,6 @@ export class PermitParser {
   
   /**
    * Get permits as plain objects
-   * @returns Record of permit number to permit data
    */
   private getPermitsAsObjects(): Record<string, PermitData> {
     const result: Record<string, PermitData> = {};
@@ -329,10 +395,23 @@ export class PermitParser {
   
   /**
    * Get the current statistics
-   * @returns Parse statistics
    */
   getStats(): ParseStats {
     return this.stats;
+  }
+  
+  /**
+   * Get the validation report
+   */
+  getValidationReport(): ValidationReport {
+    return this.validationReport;
+  }
+  
+  /**
+   * Get performance metrics
+   */
+  getPerformanceReport(): Record<string, any> {
+    return this.perfMonitor.getReport();
   }
   
   /**
@@ -345,5 +424,7 @@ export class PermitParser {
     this.pendingChildren = [];
     this.stats = new ParseStats();
     this.validator.reset();
+    this.validationReport.clear();
+    this.perfMonitor.reset();
   }
 }
