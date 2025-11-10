@@ -1,5 +1,6 @@
 # DAF420 Parser Configuration
 # Schema definitions and lookup tables
+# yaml-language-server: $schema=./config.schema.json
 
 settings:
   min_record_length: 10

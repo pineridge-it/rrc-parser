@@ -1,0 +1,218 @@
+/**
+ * Generate JSON Schema for config.yaml validation
+ * Location: scripts/generateConfigSchema.ts
+ * 
+ * Run with: npx ts-node scripts/generateConfigSchema.ts
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+const configSchema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  title: 'DAF420 Parser Configuration',
+  description: 'Configuration schema for the DAF420 permit parser',
+  type: 'object',
+  properties: {
+    settings: {
+      type: 'object',
+      description: 'Global parser settings',
+      properties: {
+        minRecordLength: {
+          type: 'number',
+          minimum: 1,
+          default: 10,
+          description: 'Minimum length for a valid record in bytes'
+        },
+        strictMode: {
+          type: 'boolean',
+          default: false,
+          description: 'If true, parser will fail on any errors'
+        },
+        encoding: {
+          type: 'string',
+          enum: ['utf8', 'latin1', 'ascii'],
+          default: 'latin1',
+          description: 'Character encoding for input files'
+        }
+      }
+    },
+    schemas: {
+      type: 'object',
+      description: 'Record type schemas defining field positions and types',
+      patternProperties: {
+        '^\\d{2}$': {
+          type: 'object',
+          required: ['name'],
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Human-readable name for this record type'
+            },
+            expected_min_length: {
+              type: 'number',
+              minimum: 0,
+              description: 'Expected minimum length for validation'
+            },
+            storage_key: {
+              type: ['string', 'null'],
+              description: 'Key used to store this record type in permit objects',
+              enum: [
+                null,
+                'daroot',
+                'dapermit',
+                'dafield',
+                'dalease',
+                'dasurvey',
+                'dacanres',
+                'daareas',
+                'daremarks',
+                'daareares',
+                'daaddress',
+                'gis_surface',
+                'gis_bottomhole'
+              ]
+            },
+            fields: {
+              type: 'array',
+              description: 'Field definitions for this record type',
+              items: {
+                type: 'object',
+                required: ['name', 'start', 'end'],
+                properties: {
+                  name: {
+                    type: 'string',
+                    description: 'Field name (will be used as key in output)'
+                  },
+                  start: {
+                    type: 'number',
+                    minimum: 0,
+                    description: 'Starting position (0-based index)'
+                  },
+                  end: {
+                    type: 'number',
+                    description: 'Ending position (exclusive)'
+                  },
+                  type: {
+                    type: 'string',
+                    enum: ['str', 'date', 'int', 'float'],
+                    default: 'str',
+                    description: 'Data type for parsing and conversion'
+                  },
+                  required: {
+                    type: 'boolean',
+                    default: false,
+                    description: 'Whether this field must have a value'
+                  },
+                  validator: {
+                    type: 'string',
+                    enum: [
+                      'county_code',
+                      'app_type',
+                      'well_type',
+                      'flag',
+                      'depth',
+                      'latitude',
+                      'longitude',
+                      'operator_number',
+                      'district'
+                    ],
+                    description: 'Validation rule to apply to this field'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    lookup_tables: {
+      type: 'object',
+      description: 'Lookup tables for code translation',
+      patternProperties: {
+        '.*': {
+          type: 'object',
+          description: 'Key-value pairs for code translation',
+          additionalProperties: {
+            type: 'string'
+          }
+        }
+      }
+    },
+    validation: {
+      type: 'object',
+      description: 'Validation rules for fields',
+      properties: {
+        ranges: {
+          type: 'object',
+          description: 'Numeric range validations',
+          patternProperties: {
+            '.*': {
+              type: 'object',
+              required: ['min', 'max'],
+              properties: {
+                min: {
+                  type: 'number',
+                  description: 'Minimum allowed value'
+                },
+                max: {
+                  type: 'number',
+                  description: 'Maximum allowed value'
+                },
+                description: {
+                  type: 'string',
+                  description: 'Human-readable description of the range'
+                }
+              }
+            }
+          }
+        },
+        flags: {
+          type: 'object',
+          description: 'Valid flag values',
+          required: ['valid_values'],
+          properties: {
+            valid_values: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              description: 'List of valid flag values'
+            }
+          }
+        },
+        operator_number: {
+          type: 'object',
+          description: 'Operator number validation rules',
+          properties: {
+            numeric_only: {
+              type: 'boolean',
+              description: 'If true, only numeric characters allowed'
+            },
+            min_length: {
+              type: 'number',
+              minimum: 0,
+              description: 'Minimum length'
+            },
+            max_length: {
+              type: 'number',
+              minimum: 0,
+              description: 'Maximum length'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// Generate the schema file
+const outputPath = path.join(process.cwd(), 'config.schema.json');
+fs.writeFileSync(outputPath, JSON.stringify(configSchema, null, 2));
+
+console.log('✓ Generated config.schema.json');
+console.log(`  Location: ${outputPath}`);
+console.log('\nTo use this schema in VS Code:');
+console.log('  1. Install the YAML extension');
+console.log('  2. Add this to your config.yaml:');
+console.log('     # yaml-language-server: $schema=./config.schema.json');

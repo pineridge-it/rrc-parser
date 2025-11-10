@@ -12,7 +12,8 @@
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "parse": "node dist/cli/index.js"
+    "parse": "node dist/cli/index.js",
+    "generate-schema": "ts-node scripts/generateConfigSchema.ts"
   },
   "keywords": [
     "parser",
