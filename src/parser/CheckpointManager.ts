@@ -161,6 +161,9 @@ export class CheckpointManager {
       
       // Load most recent checkpoint
       const latestCheckpoint = checkpointFiles[0];
+      if (!latestCheckpoint) {
+        return null;
+      }
       const data = await fs.promises.readFile(latestCheckpoint, 'utf8');
       const checkpoint: CheckpointState = JSON.parse(data);
       
@@ -261,7 +264,7 @@ export class CheckpointManager {
   private extractTimestamp(filepath: string): number {
     const basename = path.basename(filepath, '.json');
     const match = basename.match(/-(\d+)$/);
-    return match ? parseInt(match[1], 10) : 0;
+    return match && match[1] ? parseInt(match[1], 10) : 0;
   }
   
   /**
@@ -342,6 +345,9 @@ export class CheckpointManager {
     
     // Get info from latest checkpoint
     const latestFile = checkpointFiles[0];
+    if (!latestFile) {
+      return { count: 0, totalSize: 0 };
+    }
     const data = await fs.promises.readFile(latestFile, 'utf8');
     const checkpoint: CheckpointState = JSON.parse(data);
     

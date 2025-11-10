@@ -1,9 +1,19 @@
 "use strict";
 /**
  * Parsing statistics class
+ * Location: src/models/ParseStats.ts
+ *
+ * IMPROVEMENTS:
+ * - Added readonly for immutable properties
+ * - Better type safety
+ * - Improved documentation
+ * - Better formatting methods
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParseStats = void 0;
+/**
+ * Parse statistics tracker
+ */
 class ParseStats {
     constructor() {
         this.linesProcessed = 0;
@@ -55,6 +65,34 @@ class ParseStats {
         this.malformedDetails.push(`Line ${lineNumber}: ${message}`);
     }
     /**
+     * Get average record length for a type
+     * @param recordType - The record type
+     * @returns Average length or 0 if no records
+     */
+    getAverageLength(recordType) {
+        const lengths = this.recordLengths.get(recordType);
+        if (!lengths || lengths.length === 0) {
+            return 0;
+        }
+        const sum = lengths.reduce((acc, len) => acc + len, 0);
+        return sum / lengths.length;
+    }
+    /**
+     * Get min and max record lengths for a type
+     * @param recordType - The record type
+     * @returns Object with min and max lengths
+     */
+    getLengthRange(recordType) {
+        const lengths = this.recordLengths.get(recordType);
+        if (!lengths || lengths.length === 0) {
+            return { min: 0, max: 0 };
+        }
+        return {
+            min: Math.min(...lengths),
+            max: Math.max(...lengths)
+        };
+    }
+    /**
      * Convert to plain object
      * @returns Plain object representation
      */
@@ -75,17 +113,26 @@ class ParseStats {
      * @returns Formatted summary string
      */
     getSummary() {
+        const lostRecords = this.orphanedRecords - this.recoveredRecords;
         return `
 Processing Summary:
-  Lines Processed: ${this.linesProcessed.toLocaleString()}
-  Unique Permits: ${this.successfulPermits.toLocaleString()}
-  Malformed Records: ${this.malformedRecords.toLocaleString()}
-  Orphaned Records: ${this.orphanedRecords.toLocaleString()}
-    - Recovered: ${this.recoveredRecords.toLocaleString()}
-    - Lost: ${(this.orphanedRecords - this.recoveredRecords).toLocaleString()}
-  Validation Errors: ${this.validationErrors.toLocaleString()}
-  Validation Warnings: ${this.validationWarnings.toLocaleString()}
+  Lines Processed:      ${this.formatNumber(this.linesProcessed)}
+  Unique Permits:       ${this.formatNumber(this.successfulPermits)}
+  Malformed Records:    ${this.formatNumber(this.malformedRecords)}
+  Orphaned Records:     ${this.formatNumber(this.orphanedRecords)}
+    - Recovered:        ${this.formatNumber(this.recoveredRecords)}
+    - Lost:             ${this.formatNumber(lostRecords)}
+  Validation Errors:    ${this.formatNumber(this.validationErrors)}
+  Validation Warnings:  ${this.formatNumber(this.validationWarnings)}
     `.trim();
+    }
+    /**
+     * Format a number with locale-specific thousands separators
+     * @param num - Number to format
+     * @returns Formatted string
+     */
+    formatNumber(num) {
+        return num.toLocaleString();
     }
 }
 exports.ParseStats = ParseStats;

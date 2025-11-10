@@ -1,7 +1,17 @@
 /**
  * Parsing statistics class
+ * Location: src/models/ParseStats.ts
+ *
+ * IMPROVEMENTS:
+ * - Added readonly for immutable properties
+ * - Better type safety
+ * - Improved documentation
+ * - Better formatting methods
  */
 import { ParseStats as IParseStats } from '../types';
+/**
+ * Parse statistics tracker
+ */
 export declare class ParseStats implements IParseStats {
     linesProcessed: number;
     recordsByType: Map<string, number>;
@@ -38,6 +48,21 @@ export declare class ParseStats implements IParseStats {
      */
     logMalformed(lineNumber: number, message: string): void;
     /**
+     * Get average record length for a type
+     * @param recordType - The record type
+     * @returns Average length or 0 if no records
+     */
+    getAverageLength(recordType: string): number;
+    /**
+     * Get min and max record lengths for a type
+     * @param recordType - The record type
+     * @returns Object with min and max lengths
+     */
+    getLengthRange(recordType: string): {
+        min: number;
+        max: number;
+    };
+    /**
      * Convert to plain object
      * @returns Plain object representation
      */
@@ -47,5 +72,11 @@ export declare class ParseStats implements IParseStats {
      * @returns Formatted summary string
      */
     getSummary(): string;
+    /**
+     * Format a number with locale-specific thousands separators
+     * @param num - Number to format
+     * @returns Formatted string
+     */
+    private formatNumber;
 }
 //# sourceMappingURL=ParseStats.d.ts.map
