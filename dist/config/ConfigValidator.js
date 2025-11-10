@@ -37,7 +37,7 @@ class ConfigValidator {
     /**
      * Validate settings section
      */
-    static validateSettings(settings, errors) {
+    static validateSettings(settings, errors, warnings) {
         if (settings.minRecordLength !== undefined) {
             if (typeof settings.minRecordLength !== 'number') {
                 errors.push('settings.minRecordLength must be a number');
@@ -52,6 +52,9 @@ class ConfigValidator {
                 errors.push(`settings.encoding must be one of: ${validEncodings.join(', ')}. ` +
                     `Got: ${settings.encoding}`);
             }
+            else if (settings.encoding === 'utf-8') {
+                warnings.push(`settings.encoding 'utf-8' is deprecated; prefer 'utf8'`);
+            }
         }
         if (settings.strictMode !== undefined && typeof settings.strictMode !== 'boolean') {
             errors.push('settings.strictMode must be a boolean');
@@ -60,7 +63,7 @@ class ConfigValidator {
     /**
      * Validate schemas section
      */
-    static validateSchemas(schemas, errors) {
+    static validateSchemas(schemas, errors, warnings) {
         for (const [recordType, schema] of Object.entries(schemas)) {
             const prefix = `schema[${recordType}]`;
             // Validate record type format
@@ -90,7 +93,7 @@ class ConfigValidator {
     /**
      * Validate fields array
      */
-    static validateFields(fields, prefix, errors) {
+    static validateFields(fields, prefix, errors, warnings) {
         if (!Array.isArray(fields)) {
             errors.push(`${prefix} must be an array`);
             return;
@@ -164,7 +167,7 @@ class ConfigValidator {
     /**
      * Validate lookup tables
      */
-    static validateLookupTables(lookupTables, errors) {
+    static validateLookupTables(lookupTables, errors, warnings) {
         for (const [tableName, table] of Object.entries(lookupTables)) {
             if (typeof table !== 'object' || table === null) {
                 errors.push(`lookup_tables.${tableName} must be an object`);
@@ -185,7 +188,7 @@ class ConfigValidator {
     /**
      * Validate validation rules
      */
-    static validateValidationRules(validation, errors) {
+    static validateValidationRules(validation, errors, warnings) {
         // Validate ranges
         if (validation.ranges) {
             for (const [name, range] of Object.entries(validation.ranges)) {

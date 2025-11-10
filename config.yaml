@@ -160,26 +160,21 @@ schemas:
         end: 243
         type: str
       - name: surface_section
-        start: 242
-        end: 250
+        start: 244
+        end: 252
         type: str
       - name: surface_block
-        start: 250
-        end: 260
+        start: 252
+        end: 262
         type: str
       - name: surface_survey
-        start: 260
-        end: 315
+        start: 262
+        end: 317
         type: str
       - name: surface_abstract
-        start: 315
-        end: 321
+        start: 317
+        end: 323
         type: str
-      - name: horizontal_flag
-        start: 493
-        end: 494
-        type: str
-        validator: flag
       - name: directional_flag
         start: 481
         end: 482
@@ -188,6 +183,11 @@ schemas:
       - name: sidetrack_flag
         start: 482
         end: 483
+        type: str
+        validator: flag
+      - name: horizontal_flag
+        start: 493
+        end: 494
         type: str
         validator: flag
       - name: nearest_lease_line

@@ -103,7 +103,9 @@ function printSummary(result, schemas) {
     console.log(`Validation errors:    ${valSummary.totalErrors.toLocaleString()}`);
     console.log(`Validation warnings:  ${valSummary.totalWarnings.toLocaleString()}`);
     console.log('\nRecords by Type:');
-    const sortedTypes = Array.from(stats.recordsByType.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    // FIXED: Explicit typing to satisfy TypeScript
+    const entries = Array.from(stats.recordsByType.entries());
+    const sortedTypes = entries.sort((a, b) => a[0].localeCompare(b[0]));
     for (const [recType, count] of sortedTypes) {
         const schema = schemas.get(recType);
         const schemaName = schema ? schema.name : 'UNKNOWN';
@@ -154,7 +156,7 @@ async function main() {
         logger.info(`File size: ${fileStats.size.toLocaleString()} bytes`);
         // Setup progress reporter
         const estimatedLines = estimateLineCount(args.input);
-        const progress = args.verbose ? new ProgressReporter_1.ProgressReporter(estimatedLines, true) : null;
+        const progress = args.verbose ? new ProgressReporter_1.ProgressReporter(estimatedLines) : null;
         // Create parser
         const parser = new parser_1.PermitParser(config, {
             strictMode: args.strict || false,

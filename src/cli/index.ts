@@ -113,8 +113,11 @@ function printSummary(result: any, schemas: Map<string, any>): void {
   console.log(`Validation warnings:  ${valSummary.totalWarnings.toLocaleString()}`);
   
   console.log('\nRecords by Type:');
-  const sortedTypes = Array.from(stats.recordsByType.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   
+  // FIXED: Explicit typing to satisfy TypeScript
+  const entries: [string, number][] = Array.from(stats.recordsByType.entries());
+  const sortedTypes: [string, number][] = entries.sort((a, b) => a[0].localeCompare(b[0]));
+
   for (const [recType, count] of sortedTypes) {
     const schema = schemas.get(recType);
     const schemaName = schema ? schema.name : 'UNKNOWN';
@@ -174,7 +177,7 @@ async function main(): Promise<number> {
     
     // Setup progress reporter
     const estimatedLines = estimateLineCount(args.input);
-    const progress = args.verbose ? new ProgressReporter(estimatedLines, true) : null;
+    const progress = args.verbose ? new ProgressReporter(estimatedLines) : null;
     
     // Create parser
     const parser = new PermitParser(config, {
