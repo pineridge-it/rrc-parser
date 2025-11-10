@@ -166,15 +166,15 @@ schemas:
         type: str
       - name: surface_block
         start: 252
-        end: 262
+        end: 261
         type: str
       - name: surface_survey
-        start: 262
-        end: 317
+        start: 261
+        end: 316
         type: str
       - name: surface_abstract
-        start: 317
-        end: 323
+        start: 316
+        end: 322
         type: str
       - name: directional_flag
         start: 481
