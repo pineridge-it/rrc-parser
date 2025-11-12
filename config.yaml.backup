@@ -1,4 +1,4 @@
-# DAF420 Parser Configuration - CORRECTED VERSION
+# DAF420 Parser Configuration
 # Schema definitions and lookup tables
 # yaml-language-server: $schema=./config.schema.json
 
@@ -160,9 +160,6 @@ schemas:
         start: 242
         end: 243
         type: str
-      # CORRECTED SURFACE FIELDS - Based on diagnostic output
-      # Position 240-330 shows: "00N                  LEWIS, A M                                             481   00000004"
-      # The "481" at position 316 is actually the ABSTRACT NUMBER, not a bleeding value!
       - name: surface_section
         start: 244
         end: 252
@@ -171,18 +168,14 @@ schemas:
         start: 252
         end: 261
         type: str
-      # surface_survey spans from 261-316 (55 chars), contains "LEWIS, A M" padded with spaces
       - name: surface_survey
         start: 261
         end: 316
         type: str
-      # surface_abstract is at 316-322, showing "481   " (abstract number 481)
-      # This is CORRECT - abstract numbers ARE numeric values!
       - name: surface_abstract
         start: 316
         end: 322
         type: str
-      # FLAGS - These were correct in original config
       - name: directional_flag
         start: 481
         end: 482
@@ -422,13 +415,11 @@ schemas:
     expected_min_length: 26
     storage_key: gis_surface
     fields:
-      # CORRECTED - Diagnostic shows longitude comes FIRST at position 2-14
       - name: longitude
         start: 2
         end: 14
         type: float
         validator: longitude
-      # Latitude comes SECOND at position 14-26
       - name: latitude
         start: 14
         end: 26
@@ -440,7 +431,6 @@ schemas:
     expected_min_length: 26
     storage_key: gis_bottomhole
     fields:
-      # Same order as GIS_SURFACE
       - name: longitude
         start: 2
         end: 14
@@ -733,7 +723,7 @@ validation:
   ranges:
     depth:
       min: 0
-      max: 40000
+      max: 10000
       description: ft
     longitude:
       min: -107.5
