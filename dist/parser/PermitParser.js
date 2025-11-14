@@ -261,12 +261,12 @@ class PermitParser {
         return parsed;
     }
     parseGIS(coordStr) {
-        const digits = coordStr.replace(/\D/g, '');
-        if (!digits || digits.length < 9)
+        // FIXED: Coordinates are already in decimal degree format in the file
+        // Just trim whitespace and parse as float directly
+        const trimmed = coordStr.trim();
+        if (!trimmed)
             return null;
-        const padded = digits.padStart(12, '0');
-        const str = padded.slice(0, 5) + '.' + padded.slice(5);
-        const num = parseFloat(str);
+        const num = parseFloat(trimmed);
         return isNaN(num) ? null : num.toFixed(7);
     }
     /** Safe date parsing – match is guaranteed when used */

@@ -413,35 +413,35 @@ schemas:
     expected_min_length: 26
     storage_key: gis_surface
     fields:
-      # CORRECTED - Diagnostic shows longitude comes FIRST at position 2-14
-      - name: longitude
-        start: 2
-        end: 14
-        type: float
-        validator: longitude
-      # Latitude comes SECOND at position 14-26
-      - name: latitude
-        start: 14
-        end: 26
-        type: float
-        validator: latitude
+    # FIXED: Correct field positions - longitude is 13 chars at positions 3-15 (1-indexed)
+    - name: longitude
+      start: 3
+      end: 16
+      type: float
+      validator: longitude
+    # Latitude is 12 chars at positions 16-27 (1-indexed)
+    - name: latitude
+      start: 16
+      end: 28
+      type: float
+      validator: latitude
 
   "15":
     name: GIS_BOTTOMHOLE
     expected_min_length: 26
     storage_key: gis_bottomhole
     fields:
-      # Same order as GIS_SURFACE
-      - name: longitude
-        start: 2
-        end: 14
-        type: float
-        validator: longitude
-      - name: latitude
-        start: 14
-        end: 26
-        type: float
-        validator: latitude
+    # Same corrected positions as GIS_SURFACE
+    - name: longitude
+      start: 3
+      end: 16
+      type: float
+      validator: longitude
+    - name: latitude
+      start: 16
+      end: 28
+      type: float
+      validator: latitude
 
 # Lookup tables
 lookup_tables:
