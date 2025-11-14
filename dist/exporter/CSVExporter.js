@@ -1,15 +1,7 @@
 "use strict";
 /**
- * CSV export engine
+ * CSV export engine with FIXED ADDRESS HANDLING and COUNTY CODE PADDING
  * Location: src/exporter/CSVExporter.ts
- *
- * IMPROVEMENTS:
- * - Removed all 'as any' type casts
- * - Added proper type guards and null safety
- * - Better error handling
- * - Extracted field access into type-safe helper functions
- * - Added comprehensive documentation
- * - Improved code organization
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CSVExporter = void 0;
@@ -62,19 +54,21 @@ class CSVExporter {
         const gisBh = data.gis_bottomhole || {};
         const fields = data.dafield || [];
         const addresses = data.daaddress || [];
-        // Get county code from either DAROOT or DAPERMIT
+        // Get county code from either DAROOT or DAPERMIT (now with padding)
         const countyCode = this.getCountyCode(daroot, dapermit);
         const appType = this.getApplicationType(dapermit);
         // Lookup tables
         const countyCodes = this.config.getLookup('county_codes');
         const appTypeCodes = this.config.getLookup('app_type_codes');
+        // Try to get county name with fallback (try both padded and unpadded)
+        const countyName = this.lookupCountyName(countyCode, countyCodes);
         return {
             permit_number: permitNum.padStart(7, '0'),
             lease_name: this.getStringValue(daroot.lease_name, dapermit.lease_name),
             operator_name: this.getStringValue(daroot.operator_name),
             operator_number: this.getStringValue(daroot.operator_number, dapermit.operator_number),
             county_code: countyCode,
-            county_name: countyCodes[countyCode] || '',
+            county_name: countyName,
             district: this.getStringValue(daroot.district, dapermit.district),
             issue_date: this.getDateValue(daroot.issue_date, dapermit.issued_date),
             received_date: this.getDateValue(daroot.received_date, dapermit.received_date),
@@ -107,14 +101,21 @@ class CSVExporter {
         };
     }
     /**
-     * Get county code from records with fallback
+     * FIXED: Get county code from records with fallback and zero-padding
      * @param daroot - Root record
      * @param dapermit - Permit record
-     * @returns County code string
+     * @returns County code string (zero-padded to 3 digits)
      */
     getCountyCode(daroot, dapermit) {
         const code = daroot.county_code ?? dapermit.county_code;
-        return this.convertToString(code);
+        const codeStr = this.convertToString(code).trim();
+        // Zero-pad to 3 digits for lookup consistency
+        // Example: "47" becomes "047" to match lookup table keys
+        // Only pad if we have a valid numeric code
+        if (codeStr && /^\d+$/.test(codeStr)) {
+            return codeStr.padStart(3, '0');
+        }
+        return codeStr;
     }
     /**
      * Get application type from permit record
@@ -167,15 +168,65 @@ class CSVExporter {
             .join('; ');
     }
     /**
-     * Extract address from address records
+     * FIXED: Extract and concatenate all address lines from address records
+     *
+     * DAADDRESS records (type 11) contain:
+     *   address_key  → columns 3-4
+     *   address_line → columns 5-47 (43 characters, right-padded with spaces)
+     *
+     * Multiple records are used for long addresses, identified by address_key:
+     *   "00" = Street address
+     *   "01" = City, State, ZIP
+     *   etc.
+     *
      * @param addresses - Array of address records
-     * @returns Address string or empty string
+     * @returns Complete address string with lines separated by spaces
      */
     extractAddress(addresses) {
-        if (addresses.length === 0 || !addresses[0]) {
+        if (addresses.length === 0) {
             return '';
         }
-        return this.trimValue(addresses[0].address_line);
+        // Sort by address_key to preserve order (00 → 01 → 02 ...)
+        const sortedAddresses = [...addresses].sort((a, b) => {
+            const keyA = this.trimValue(a.address_key);
+            const keyB = this.trimValue(b.address_key);
+            return keyA.localeCompare(keyB);
+        });
+        // Use trimEnd() instead of trim() to keep leading digits like "00", "13", etc.
+        const addressParts = sortedAddresses
+            .map(addr => (addr.address_line || '').trimEnd())
+            .filter(line => line.length > 0);
+        // Join with a single space and collapse any accidental double-spaces
+        return addressParts
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+    /**
+     * Lookup county name from county code with fallback for both padded and unpadded codes
+     * @param countyCode - The county code (may or may not be padded)
+     * @param countyCodes - The county code lookup table
+     * @returns County name or empty string if not found
+     */
+    lookupCountyName(countyCode, countyCodes) {
+        // First try direct lookup
+        if (countyCodes[countyCode]) {
+            return countyCodes[countyCode];
+        }
+        // If not found and it's a numeric code, try with different padding
+        if (/^\d+$/.test(countyCode)) {
+            // If already padded, try unpadded version
+            const unpaddedCode = countyCode.replace(/^0+/, '');
+            if (countyCodes[unpaddedCode]) {
+                return countyCodes[unpaddedCode];
+            }
+            // If not padded, try padded version
+            const paddedCode = countyCode.padStart(3, '0');
+            if (countyCodes[paddedCode]) {
+                return countyCodes[paddedCode];
+            }
+        }
+        return '';
     }
     /**
      * Convert a value to string safely

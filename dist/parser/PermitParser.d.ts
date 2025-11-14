@@ -41,92 +41,25 @@ export declare class PermitParser {
     private pendingChildren;
     private checkpointCount;
     private lastCheckpointLine;
+    private readonly COUNTY_NAMES;
     constructor(config?: Config, options?: ParserOptions);
-    /**
-     * Parse a DAF420 file with full checkpoint/resume support
-     * @param inputPath - Path to the input file
-     * @returns Promise resolving to parse results
-     */
     parseFile(inputPath: string): Promise<ParseResult>;
-    /**
-     * Save checkpoint asynchronously (fire-and-forget)
-     * @param lineNumber - Current line number
-     * @param inputPath - Path to the input file
-     */
     private saveCheckpointAsync;
-    /**
-     * Restore full parser state from checkpoint
-     * @param checkpoint - Checkpoint data to restore from
-     */
     private restoreFromCheckpoint;
-    /**
-     * Process a single line from the input file
-     * @param lineNumber - Current line number
-     * @param record - Record string to process
-     */
     private processLine;
-    /**
-     * Validate the basic structure of a record
-     * @param lineNumber - Current line number
-     * @param record - Record string to validate
-     * @returns True if valid, false otherwise
-     */
     private validateRecordStructure;
-    /**
-     * Parse a record according to its schema
-     * @param record - Record string
-     * @param recType - Record type
-     * @param lineNumber - Line number for error reporting
-     * @returns Parsed record data or null on error
-     */
     private parseRecord;
-    /**
-     * Route a parsed record to the appropriate handler
-     * @param recType - Record type
-     * @param parsed - Parsed record data
-     * @param lineNumber - Line number for error reporting
-     */
+    private parseGIS;
+    /** Safe date parsing – match is guaranteed when used */
+    private parseDate;
     private routeRecord;
-    /**
-     * Handle a permit (02) record
-     * @param parsed - Parsed record data
-     * @param lineNumber - Line number for error reporting
-     */
     private handlePermitRecord;
-    /**
-     * Handle a child record (not root or permit)
-     * @param recType - Record type
-     * @param parsed - Parsed record data
-     * @param lineNumber - Line number for error reporting
-     */
     private handleChildRecord;
-    /**
-     * Finalize parsing and compute final statistics
-     */
     private finalizeParsing;
-    /**
-     * Convert permits map to plain objects
-     * @returns Record of permit number to permit data
-     */
     private getPermitsAsObjects;
-    /**
-     * Get current parsing statistics
-     * @returns Parse statistics
-     */
     getStats(): ParseStats;
-    /**
-     * Get validation report
-     * @returns Validation report
-     */
     getValidationReport(): ValidationReport;
-    /**
-     * Get performance report
-     * @returns Performance metrics
-     */
     getPerformanceReport(): Record<string, unknown>;
-    /**
-     * Reset parser state for reuse
-     */
     reset(): void;
 }
 //# sourceMappingURL=PermitParser.d.ts.map

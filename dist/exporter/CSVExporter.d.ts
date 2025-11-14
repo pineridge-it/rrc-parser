@@ -1,14 +1,6 @@
 /**
- * CSV export engine
+ * CSV export engine with FIXED ADDRESS HANDLING and COUNTY CODE PADDING
  * Location: src/exporter/CSVExporter.ts
- *
- * IMPROVEMENTS:
- * - Removed all 'as any' type casts
- * - Added proper type guards and null safety
- * - Better error handling
- * - Extracted field access into type-safe helper functions
- * - Added comprehensive documentation
- * - Improved code organization
  */
 import { Config } from '../config';
 import { PermitData } from '../types';
@@ -32,10 +24,10 @@ export declare class CSVExporter {
      */
     private buildRow;
     /**
-     * Get county code from records with fallback
+     * FIXED: Get county code from records with fallback and zero-padding
      * @param daroot - Root record
      * @param dapermit - Permit record
-     * @returns County code string
+     * @returns County code string (zero-padded to 3 digits)
      */
     private getCountyCode;
     /**
@@ -71,11 +63,28 @@ export declare class CSVExporter {
      */
     private extractFieldNumbers;
     /**
-     * Extract address from address records
+     * FIXED: Extract and concatenate all address lines from address records
+     *
+     * DAADDRESS records (type 11) contain:
+     *   address_key  → columns 3-4
+     *   address_line → columns 5-47 (43 characters, right-padded with spaces)
+     *
+     * Multiple records are used for long addresses, identified by address_key:
+     *   "00" = Street address
+     *   "01" = City, State, ZIP
+     *   etc.
+     *
      * @param addresses - Array of address records
-     * @returns Address string or empty string
+     * @returns Complete address string with lines separated by spaces
      */
     private extractAddress;
+    /**
+     * Lookup county name from county code with fallback for both padded and unpadded codes
+     * @param countyCode - The county code (may or may not be padded)
+     * @param countyCodes - The county code lookup table
+     * @returns County name or empty string if not found
+     */
+    private lookupCountyName;
     /**
      * Convert a value to string safely
      * @param value - Value to convert
