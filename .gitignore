@@ -4,3 +4,6 @@ dist/
 .DS_Store
 *.log
 .env
+
+# bv (beads viewer) local config and caches
+.bv/
