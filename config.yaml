@@ -1,0 +1,746 @@
+# DAF420 Parser Configuration - CORRECTED VERSION
+# Schema definitions and lookup tables
+# yaml-language-server: $schema=./config.schema.json
+
+settings:
+  min_record_length: 10
+  strict_mode: false
+  encoding: latin1
+schemas:
+  '01':
+    name: DAROOT
+    expected_min_length: 127
+    storage_key: null
+    fields:
+    - name: status_number
+      start: 3
+      end: 9
+      type: str
+      required: true
+    - name: sequence_number
+      start: 10
+      end: 11
+      type: str
+    - name: county_code
+      start: 12
+      end: 14
+      type: str
+      validator: county_code
+    - name: lease_name
+      start: 15
+      end: 46
+      type: str
+      required: true
+    - name: district
+      start: 47
+      end: 48
+      type: str
+      validator: district
+    - name: operator_number
+      start: 49
+      end: 54
+      type: str
+      validator: operator_number
+    - name: received_date
+      start: 59
+      end: 66
+      type: date
+    - name: operator_name
+      start: 67
+      end: 98
+      type: str
+    - name: status_flag
+      start: 101
+      end: 102  # FIXED: was 101
+      type: str
+    - name: permit_number
+      start: 113
+      end: 119
+      type: str
+      required: true
+    - name: issue_date
+      start: 120
+      end: 127
+      type: date
+  '02':
+    name: DAPERMIT
+    expected_min_length: 510
+    storage_key: null
+    fields:
+      - name: permit_number
+        start: 2
+        end: 9
+        type: str
+        required: true
+      - name: sequence_number
+        start: 9
+        end: 11
+        type: str
+      - name: county_code
+        start: 11
+        end: 14
+        type: str
+        validator: county_code
+      - name: lease_name
+        start: 14
+        end: 46
+        type: str
+      - name: district
+        start: 46
+        end: 48
+        type: str
+        validator: district
+      - name: well_number
+        start: 48
+        end: 54
+        type: str
+      - name: total_depth
+        start: 54
+        end: 59
+        type: int
+        validator: depth
+      - name: operator_number
+        start: 59
+        end: 65
+        type: str
+        validator: operator_number
+      - name: application_type
+        start: 65
+        end: 67
+        type: str
+        validator: app_type
+      - name: received_date
+        start: 121
+        end: 129
+        type: date
+      - name: issued_date
+        start: 129
+        end: 137
+        type: date
+      - name: amended_date
+        start: 137
+        end: 145
+        type: date
+      - name: extended_date
+        start: 145
+        end: 153
+        type: date
+      - name: spud_date
+        start: 153
+        end: 161
+        type: date
+      - name: surface_casing_date
+        start: 161
+        end: 169
+        type: date
+      - name: well_status
+        start: 169
+        end: 170
+        type: str
+      - name: well_status_date
+        start: 170
+        end: 178
+        type: date
+      - name: expire_date
+        start: 178
+        end: 186
+        type: date
+      - name: cancellation_date
+        start: 186
+        end: 194
+        type: date
+      - name: cancellation_reason
+        start: 194
+        end: 224
+        type: str
+      - name: location_format
+        start: 242
+        end: 243
+        type: str
+      # CORRECTED SURFACE FIELDS - Based on diagnostic output
+      # Position 240-330 shows: "00N                  LEWIS, A M                                             481   00000004"
+      # The "481" at position 316 is actually the ABSTRACT NUMBER, not a bleeding value!
+      - name: surface_section
+        start: 244
+        end: 252
+        type: str
+      - name: surface_block
+        start: 252
+        end: 261
+        type: str
+      # surface_survey spans from 261-316 (55 chars), contains "LEWIS, A M" padded with spaces
+      - name: surface_survey
+        start: 261
+        end: 316
+        type: str
+      # surface_abstract is at 316-322, showing "481   " (abstract number 481)
+      # This is CORRECT - abstract numbers ARE numeric values!
+      - name: surface_abstract
+        start: 316
+        end: 322
+        type: str
+      # FLAGS - These were correct in original config
+      - name: directional_flag
+        start: 481
+        end: 482
+        type: str
+        validator: flag
+      - name: sidetrack_flag
+        start: 482
+        end: 483
+        type: str
+        validator: flag
+      - name: horizontal_flag
+        start: 493
+        end: 494
+        type: str
+        validator: flag
+      - name: nearest_lease_line
+        start: 495
+        end: 502
+        type: int
+
+  "03":
+    name: DAFIELD
+    expected_min_length: 32
+    storage_key: dafield
+    fields:
+    - name: field_number
+      start: 2
+      end: 10
+      type: str
+    - name: application_well_code
+      start: 10
+      end: 11
+      type: str
+      validator: well_type
+    - name: completion_well_code
+      start: 11
+      end: 12
+      type: str
+      validator: well_type
+    - name: field_completion_code
+      start: 12
+      end: 13
+      type: str
+    - name: field_transfer_code
+      start: 13
+      end: 14
+      type: str
+    - name: validation_date
+      start: 14
+      end: 22
+      type: date
+    - name: completion_date
+      start: 22
+      end: 30
+      type: date
+    - name: rule37_flag
+      start: 30
+      end: 31
+      type: str
+      validator: flag
+    - name: rule38_flag
+      start: 31
+      end: 32
+      type: str
+      validator: flag
+  '04':
+    name: DALEASE
+    expected_min_length: 55
+    storage_key: dalease
+    fields:
+    - name: district
+      start: 2
+      end: 4
+      type: str
+      validator: district
+    - name: lease_name
+      start: 4
+      end: 36
+      type: str
+    - name: total_depth
+      start: 36
+      end: 41
+      type: int
+    - name: well_number
+      start: 41
+      end: 47
+      type: str
+    - name: acres
+      start: 47
+      end: 55
+      type: float
+  '05':
+    name: DASURVEY
+    expected_min_length: 214
+    storage_key: dasurvey
+    fields:
+    - name: bh_section
+      start: 2
+      end: 10
+      type: str
+    - name: bh_block
+      start: 10
+      end: 20
+      type: str
+    - name: bh_abstract
+      start: 20
+      end: 26
+      type: str
+    - name: bh_survey
+      start: 26
+      end: 81
+      type: str
+    - name: bh_acres
+      start: 81
+      end: 89
+      type: float
+    - name: bh_nearest_well
+      start: 89
+      end: 117
+      type: str
+    - name: bh_lease_feet_1
+      start: 117
+      end: 125
+      type: float
+    - name: bh_lease_direction_1
+      start: 125
+      end: 138
+      type: str
+    - name: bh_lease_feet_2
+      start: 138
+      end: 146
+      type: float
+    - name: bh_lease_direction_2
+      start: 146
+      end: 159
+      type: str
+    - name: bh_survey_feet_1
+      start: 159
+      end: 167
+      type: float
+    - name: bh_survey_direction_1
+      start: 167
+      end: 180
+      type: str
+    - name: bh_survey_feet_2
+      start: 180
+      end: 188
+      type: float
+    - name: bh_survey_direction_2
+      start: 188
+      end: 201
+      type: str
+    - name: bh_county
+      start: 201
+      end: 214
+      type: str
+  '06':
+    name: DACANRES
+    expected_min_length: 42
+    storage_key: dacanres
+    fields:
+    - name: sequence
+      start: 2
+      end: 4
+      type: str
+    - name: restriction_type
+      start: 4
+      end: 6
+      type: str
+    - name: restriction_remark
+      start: 6
+      end: 41
+      type: str
+    - name: restriction_flag
+      start: 41
+      end: 42
+      type: str
+      validator: flag
+  '07':
+    name: DAAREAS
+    expected_min_length: 10
+    storage_key: daareas
+    fields:
+    - name: area_code
+      start: 2
+      end: 10
+      type: str
+  '08':  # FIXED: added quotes
+    name: DAREMARKS
+    expected_min_length: 83
+    storage_key: daremarks
+    fields:
+    - name: sequence
+      start: 2
+      end: 5
+      type: str
+    - name: file_date
+      start: 5
+      end: 13
+      type: date
+    - name: remark_text
+      start: 13
+      end: 83
+      type: str
+  '09':  # FIXED: added quotes
+    name: DAAREARES
+    expected_min_length: 10
+    storage_key: daareares
+    fields:
+    - name: area_code
+      start: 2
+      end: 10
+      type: str
+  '11':
+    name: DAADDRESS
+    expected_min_length: 47
+    storage_key: daaddress
+    fields:
+    - name: address_key
+      start: 3
+      end: 4
+      type: str
+      required: true
+    - name: address_line
+      start: 5
+      end: 47
+      type: str
+      required: true
+  '14':
+    name: GIS_SURFACE
+    expected_min_length: 26
+    storage_key: gis_surface
+    fields:
+    # FIXED: Correct field positions - longitude is 13 chars at positions 3-15 (1-indexed)
+    - name: longitude
+      start: 3
+      end: 16
+      type: float
+      validator: longitude
+    # Latitude is 12 chars at positions 16-27 (1-indexed)
+    - name: latitude
+      start: 16
+      end: 28
+      type: float
+      validator: latitude
+
+  "15":
+    name: GIS_BOTTOMHOLE
+    expected_min_length: 26
+    storage_key: gis_bottomhole
+    fields:
+    # Same corrected positions as GIS_SURFACE
+    - name: longitude
+      start: 3
+      end: 16
+      type: float
+      validator: longitude
+    - name: latitude
+      start: 16
+      end: 28
+      type: float
+      validator: latitude
+
+# Lookup tables
+lookup_tables:
+  county_codes:
+    '001': Anderson
+    '003': Andrews
+    '005': Angelina
+    '007': Aransas
+    '009': Archer
+    '011': Armstrong
+    '013': Atascosa
+    '015': Austin
+    '017': Bailey
+    '019': Bandera
+    '021': Bastrop
+    '023': Baylor
+    '025': Bee
+    '027': Bell
+    '029': Bexar
+    '031': Blanco
+    '033': Borden
+    '035': Bosque
+    '037': Bowie
+    '039': Brazoria
+    '041': Brazos
+    '043': Brewster
+    '045': Briscoe
+    '047': Brooks
+    '049': Brown
+    '051': Burleson
+    '053': Burnet
+    '055': Caldwell
+    '057': Calhoun
+    '059': Callahan
+    '061': Cameron
+    '063': Camp
+    '065': Carson
+    '067': Cass
+    '069': Castro
+    '071': Chambers
+    '073': Cherokee
+    '075': Childress
+    '077': Clay
+    '079': Cochran
+    '081': Coke
+    '083': Coleman
+    '085': Collin
+    '087': Collingsworth
+    '089': Colorado
+    '091': Comal
+    '093': Comanche
+    '095': Concho
+    '097': Cooke
+    '099': Coryell
+    '101': Cottle
+    '103': Crane
+    '105': Crockett
+    '107': Crosby
+    '109': Culberson
+    '111': Dallam
+    '113': Dallas
+    '115': Dawson
+    '117': Deaf Smith
+    '119': Delta
+    '121': Denton
+    '123': DeWitt
+    '125': Dickens
+    '127': Dimmit
+    '129': Donley
+    '131': Duval
+    '133': Eastland
+    '135': Ector
+    '137': Edwards
+    '139': Ellis
+    '141': El Paso
+    '143': Erath
+    '145': Falls
+    '147': Fannin
+    '149': Fayette
+    '151': Fisher
+    '153': Floyd
+    '155': Foard
+    '157': Fort Bend
+    '159': Franklin
+    '161': Freestone
+    '163': Frio
+    '165': Gaines
+    '167': Galveston
+    '169': Garza
+    '171': Gillespie
+    '173': Glasscock
+    '175': Goliad
+    '177': Gonzales
+    '179': Gray
+    '181': Grayson
+    '183': Gregg
+    '185': Grimes
+    '187': Guadalupe
+    '189': Hale
+    '191': Hall
+    '193': Hamilton
+    '195': Hansford
+    '197': Hardeman
+    '199': Hardin
+    '201': Harris
+    '203': Harrison
+    '205': Hartley
+    '207': Haskell
+    '209': Hays
+    '211': Hemphill
+    '213': Henderson
+    '215': Hidalgo
+    '217': Hill
+    '219': Hockley
+    '221': Hood
+    '223': Hopkins
+    '225': Houston
+    '227': Howard
+    '229': Hudspeth
+    '231': Hunt
+    '233': Hutchinson
+    '235': Irion
+    '237': Jack
+    '239': Jackson
+    '241': Jasper
+    '243': Jeff Davis
+    '245': Jefferson
+    '247': Jim Hogg
+    '249': Jim Wells
+    '251': Johnson
+    '253': Jones
+    '255': Karnes
+    '257': Kaufman
+    '259': Kendall
+    '261': Kenedy
+    '263': Kent
+    '265': Kerr
+    '267': Kimble
+    '269': King
+    '271': Kinney
+    '273': Kleberg
+    '275': Knox
+    '277': Lamar
+    '279': Lamb
+    '281': Lampasas
+    '283': La Salle
+    '285': Lavaca
+    '287': Lee
+    '289': Leon
+    '291': Liberty
+    '293': Limestone
+    '295': Lipscomb
+    '297': Live Oak
+    '299': Llano
+    '301': Loving
+    '303': Lubbock
+    '305': Lynn
+    '307': McCulloch
+    '309': McLennan
+    '311': McMullen
+    '313': Madison
+    '315': Marion
+    '317': Martin
+    '319': Mason
+    '321': Matagorda
+    '323': Maverick
+    '325': Medina
+    '327': Menard
+    '329': Midland
+    '331': Milam
+    '333': Mills
+    '335': Mitchell
+    '337': Montague
+    '339': Montgomery
+    '341': Moore
+    '343': Morris
+    '345': Motley
+    '347': Nacogdoches
+    '349': Navarro
+    '351': Newton
+    '353': Nolan
+    '355': Nueces
+    '357': Ochiltree
+    '359': Oldham
+    '361': Orange
+    '363': Palo Pinto
+    '365': Panola
+    '367': Parker
+    '369': Parmer
+    '371': Pecos
+    '373': Polk
+    '375': Potter
+    '377': Presidio
+    '379': Rains
+    '381': Randall
+    '383': Reagan
+    '385': Real
+    '387': Red River
+    '389': Reeves
+    '391': Refugio
+    '393': Roberts
+    '395': Robertson
+    '397': Rockwall
+    '399': Runnels
+    '401': Rusk
+    '403': Sabine
+    '405': San Augustine
+    '407': San Jacinto
+    '409': San Patricio
+    '411': San Saba
+    '413': Schleicher
+    '415': Scurry
+    '417': Shackelford
+    '419': Shelby
+    '421': Sherman
+    '423': Smith
+    '425': Somervell
+    '427': Starr
+    '429': Stephens
+    '431': Sterling
+    '433': Stonewall
+    '435': Sutton
+    '437': Swisher
+    '439': Tarrant
+    '441': Taylor
+    '443': Terrell
+    '445': Terry
+    '447': Throckmorton
+    '449': Titus
+    '451': Tom Green
+    '453': Travis
+    '455': Trinity
+    '457': Tyler
+    '459': Upshur
+    '461': Upton
+    '463': Uvalde
+    '465': Val Verde
+    '467': Van Zandt
+    '469': Victoria
+    '471': Walker
+    '473': Waller
+    '475': Ward
+    '477': Washington
+    '479': Webb
+    '481': Wharton
+    '483': Wheeler
+    '485': Wichita
+    '487': Wilbarger
+    '489': Willacy
+    '491': Williamson
+    '493': Wilson
+    '495': Winkler
+    '497': Wise
+    '499': Wood
+    '501': Yoakum
+    '503': Young
+    '505': Zapata
+    '507': Zavala
+  app_type_codes:
+    '01': Drill
+    '02': Deepen (Below Casing)
+    '04': Plug Back
+    '06': Amended
+    '07': Re-enter
+    08: Sidetrack
+    '12': Drill (Horizontal)
+  well_type_codes:
+    O: Oil
+    G: Gas
+    B: Oil & Gas
+    I: Injection
+    E: Enhanced Recovery
+    T: Exploratory
+    P: Disposal
+validation:
+  ranges:
+    depth:
+      min: 0
+      max: 40000
+      description: ft
+    longitude:
+      min: -107.5
+      max: -93.0
+      description: TX range
+    latitude:
+      min: 25.0
+      max: 37.0
+      description: TX range
+  flags:
+    valid_values:
+    - Y
+    - N
+    - '0'
+    - '9'
+    - ' '
+  operator_number:
+    min_length: 5
+    max_length: 6
+    numeric_only: true
+  district:
+    # No specific validation rules, just presence check
+    pass: true
