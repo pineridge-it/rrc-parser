@@ -92,7 +92,11 @@ export class Validator {
     }
     
     const { min, max, description } = rangeConfig;
-    
+
+    if (min === undefined || max === undefined) {
+      return true;
+    }
+
     try {
       const num = parseNumeric(value, validatorName);
       

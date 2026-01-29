@@ -2,12 +2,12 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE IF NOT EXISTS permits_clean (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  raw_id UUID,
+  raw_id UUID REFERENCES permits_raw(id) ON DELETE SET NULL,
   permit_number VARCHAR(50) NOT NULL,
   permit_type VARCHAR(50),
   status VARCHAR(50),
   operator_name_raw VARCHAR(255),
-  operator_id UUID,
+  operator_id UUID REFERENCES operators(id) ON DELETE SET NULL,
   county VARCHAR(100),
   district VARCHAR(50),
   lease_name VARCHAR(255),
@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS permits_clean (
 
 CREATE INDEX IF NOT EXISTS idx_permits_clean_location ON permits_clean USING GIST(location);
 
+CREATE INDEX IF NOT EXISTS idx_permits_clean_raw ON permits_clean(raw_id);
 CREATE INDEX IF NOT EXISTS idx_permits_clean_operator ON permits_clean(operator_id);
 CREATE INDEX IF NOT EXISTS idx_permits_clean_county ON permits_clean(county);
 CREATE INDEX IF NOT EXISTS idx_permits_clean_filed_date ON permits_clean(filed_date DESC);
@@ -44,8 +45,24 @@ CREATE INDEX IF NOT EXISTS idx_permits_clean_updated_at ON permits_clean(updated
 
 ALTER TABLE permits_clean ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY permits_clean_workspace_isolation ON permits_clean
+CREATE POLICY permits_clean_read_access ON permits_clean
+  FOR SELECT
   USING (true);
+
+-- Trigger for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+DROP TRIGGER IF EXISTS update_permits_clean_updated_at ON permits_clean;
+CREATE TRIGGER update_permits_clean_updated_at
+  BEFORE UPDATE ON permits_clean
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
 
 COMMENT ON TABLE permits_clean IS 'Normalized, validated permit data with PostGIS geometry for spatial queries';
 COMMENT ON COLUMN permits_clean.id IS 'Unique identifier for the permit record';

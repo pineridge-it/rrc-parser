@@ -86,7 +86,7 @@ export class PermitParser {
     this.validator = new Validator(this.config);
     this.validationReport = new ValidationReport();
     this.stats = new ParseStats();
-    this.logger = new ConsoleLogger(options.verbose ?? false);
+    this.logger = new ConsoleLogger();
     this.perfMonitor = new PerformanceMonitor(options.enablePerformanceMonitoring);
     this.onProgress = options.onProgress;
 
@@ -271,7 +271,7 @@ export class PermitParser {
       let value = record.substring(startIdx, startIdx + length);
       value = value.substring(0, length);
 
-      if (fieldSpec.type === 'str') {
+      if (fieldSpec.type === 'string') {
         value = value.trimEnd();
       }
 

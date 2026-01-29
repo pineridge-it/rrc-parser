@@ -1,9 +1,0 @@
-"use strict";
-/**
- * Central export for validator classes
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-tslib_1.__exportStar(require("./Validator"), exports);
-tslib_1.__exportStar(require("./ValidationReport"), exports);
-//# sourceMappingURL=index.js.map

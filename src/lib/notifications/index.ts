@@ -9,7 +9,6 @@ import {
   AlertEvent,
   Notification,
   NotificationChannelType,
-  NotificationStatus,
   DeliveryResult,
   NotificationPreferences,
   WorkerConfig,
@@ -157,6 +156,9 @@ class RateLimiter {
 
     if (this.requests.length >= this.config.maxRequests) {
       const oldestRequest = this.requests[0];
+      if (!oldestRequest) {
+        return { allowed: true };
+      }
       const retryAfter = new Date(oldestRequest + this.config.windowMs);
       return { allowed: false, retryAfter };
     }
@@ -251,7 +253,7 @@ export class EmailWorker implements NotificationWorker {
 
   async retry(
     notification: Notification,
-    preferences: NotificationPreferences
+    _preferences: NotificationPreferences
   ): Promise<DeliveryResult> {
     if (notification.attempts >= this.config.maxRetries) {
       return {
@@ -271,7 +273,7 @@ export class EmailWorker implements NotificationWorker {
 
     // Reconstruct event from notification metadata
     const event = notification.metadata.event as AlertEvent;
-    return this.processEvent(event, preferences);
+    return this.processEvent(event, _preferences);
   }
 
   private buildTemplate(event: AlertEvent): EmailTemplateData {
@@ -402,7 +404,7 @@ export class SMSWorker implements NotificationWorker {
 
   async retry(
     notification: Notification,
-    preferences: NotificationPreferences
+    _preferences: NotificationPreferences
   ): Promise<DeliveryResult> {
     if (notification.attempts >= this.config.maxRetries) {
       return {
@@ -421,7 +423,7 @@ export class SMSWorker implements NotificationWorker {
     await new Promise(resolve => setTimeout(resolve, delay));
 
     const event = notification.metadata.event as AlertEvent;
-    return this.processEvent(event, preferences);
+    return this.processEvent(event, _preferences);
   }
 
   private buildMessage(event: AlertEvent): SMSData {
@@ -462,16 +464,10 @@ export class SMSWorker implements NotificationWorker {
  * In-app notification worker
  */
 export class InAppWorker implements NotificationWorker {
-  private config: WorkerConfig;
   private notificationStore: Map<UUID, Notification> = new Map();
 
-  constructor(config?: Partial<WorkerConfig>) {
-    this.config = {
-      maxRetries: config?.maxRetries ?? 1,
-      baseDelayMs: config?.baseDelayMs ?? 0,
-      maxDelayMs: config?.maxDelayMs ?? 0,
-      rateLimit: config?.rateLimit ?? { maxRequests: 1000, windowMs: 1000 },
-    };
+  constructor(_config?: Partial<WorkerConfig>) {
+    // In-app notifications don't need configuration
   }
 
   getChannelType(): NotificationChannelType {
@@ -512,8 +508,8 @@ export class InAppWorker implements NotificationWorker {
   }
 
   async retry(
-    notification: Notification,
-    preferences: NotificationPreferences
+    _notification: Notification,
+    _preferences: NotificationPreferences
   ): Promise<DeliveryResult> {
     // In-app notifications always succeed on first attempt
     // Retry is essentially a no-op
@@ -695,6 +691,9 @@ export class DigestAggregator {
     }
 
     const oldestEvent = events[0];
+    if (!oldestEvent) {
+      return false;
+    }
     const now = new Date();
     const ageMs = now.getTime() - oldestEvent.createdAt.getTime();
 

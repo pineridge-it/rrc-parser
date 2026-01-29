@@ -8,13 +8,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
-import { 
-  ISettings, 
-  IValidationRules, 
+import {
+  ISettings,
+  IValidationRules,
   LookupTables,
   RawConfigData,
   RawFieldData,
-  IFieldSpec
+  IFieldSpec,
+  FieldType
 } from '../types';
 import { RecordSchema } from './RecordSchema';
 import { ConfigValidator } from './ConfigValidator';
@@ -126,7 +127,7 @@ export class Config {
           name: fieldData.name,
           start: fieldData.start,
           end: fieldData.end,
-          type: fieldData.type || 'str',
+          type: (fieldData.type || 'string') as FieldType,
           required: fieldData.required || false,
           validator: fieldData.validator
         }));

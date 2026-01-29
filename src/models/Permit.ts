@@ -33,6 +33,7 @@ import {
  * Permit class representing a complete permit with all related records
  */
 export class Permit implements PermitData {
+  // Permit data properties
   daroot: DaRootRecord | null = null;
   dapermit: DaPermitRecord | null = null;
   dafield: DaFieldRecord[] = [];
@@ -80,32 +81,32 @@ export class Permit implements PermitData {
    * @param data - The record data
    */
   private addToArrayCollection(storageKey: StorageKey, data: RecordData): void {
-    const collection = this[storageKey];
+    const collection = (this as unknown as Record<string, unknown>)[storageKey];
     if (Array.isArray(collection)) {
-      collection.push(data as any);
+      collection.push(data as unknown);
     }
   }
-  
+
   /**
    * Check if the permit has a specific record type
    * @param storageKey - The storage key to check
    * @returns True if the permit has records of this type
    */
   hasRecord(storageKey: StorageKey): boolean {
-    const value = this[storageKey];
+    const value = (this as unknown as Record<string, unknown>)[storageKey];
     if (Array.isArray(value)) {
       return value.length > 0;
     }
     return value !== null;
   }
-  
+
   /**
    * Get the count of records for a specific type
    * @param storageKey - The storage key
    * @returns Count of records (1 for single records, array length for collections)
    */
   getRecordCount(storageKey: StorageKey): number {
-    const value = this[storageKey];
+    const value = (this as unknown as Record<string, unknown>)[storageKey];
     if (Array.isArray(value)) {
       return value.length;
     }

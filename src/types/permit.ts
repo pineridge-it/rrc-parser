@@ -125,7 +125,8 @@ export interface DaAddressRecord extends RecordData {
 /**
  * GIS Surface record structure
  */
-export interface GisSurfaceRecord extends RecordData {
+export interface GisSurfaceRecord {
+  [key: string]: string | number | boolean | null | undefined;
   segment: string;
   latitude?: number | null;
   longitude?: number | null;
@@ -134,7 +135,8 @@ export interface GisSurfaceRecord extends RecordData {
 /**
  * GIS Bottomhole record structure
  */
-export interface GisBottomholeRecord extends RecordData {
+export interface GisBottomholeRecord {
+  [key: string]: string | number | boolean | null | undefined;
   segment: string;
   latitude?: number | null;
   longitude?: number | null;
