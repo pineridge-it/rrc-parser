@@ -12,8 +12,9 @@ The AOI drawing tools allow users to draw custom areas on the map for spatial an
 Defines the available drawing modes:
 - `polygon`: Freehand polygon drawing
 - `rectangle`: Rectangular area selection
-- `circle`: Circular area selection
-- `buffer`: Buffered point selection
+- `circle`: Circular area selection (uses `circleRadius`, optionally with `bufferDistance`)
+- `county`: Pre-defined county boundary selection
+- `buffer`: Buffered point selection (applies `bufferDistance` to any geometry)
 
 ### DrawingTool Interface
 Represents the active drawing tool with properties:
@@ -37,17 +38,19 @@ The PermitMap class has been extended with several new properties and methods to
 
 ### New Properties
 - `isDrawing`: Boolean indicating if a drawing operation is in progress
-- `drawingMode`: Current drawing mode (polygon, rectangle, circle, buffer)
+- `drawingMode`: Current drawing mode (polygon, rectangle, circle, county, buffer)
 - `drawingPoints`: Array of coordinate points for the current drawing
-- `bufferDistance`: Buffer distance in meters for buffer mode
+- `circleRadius`: Radius in miles for circle drawing mode (separate from buffer)
+- `bufferDistance`: Buffer distance in miles applied to geometry after drawing
 - `drawingCallback`: Callback function triggered when drawing is completed
 - `cancelCallback`: Callback function triggered when drawing is cancelled
 
 ### New Methods
 - `startDrawing(mode: DrawingMode)`: Initializes a new drawing operation
-- `setBufferDistance(distance: number)`: Sets the buffer distance for buffer mode
+- `setCircleRadius(radius: number)`: Sets the radius for circle drawing mode
+- `setBufferDistance(distance: number)`: Sets the buffer distance applied after drawing
 - `getPreviewGeometry()`: Returns a preview of the current drawing as GeoJSON geometry
-- `finishDrawing()`: Completes the drawing operation and returns an AOI object
+- `finishDrawing()`: Completes the drawing operation, applies buffer if set, and returns an AOI object
 - `cancelDrawing()`: Cancels the current drawing operation
 - `setDrawingCallbacks(onFinish: Function, onCancel: Function)`: Sets callbacks for drawing completion/cancellation
 
