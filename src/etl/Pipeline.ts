@@ -1,12 +1,19 @@
 import { PermitParser, ParserOptions } from '../parser/PermitParser';
 import { Config } from '../config';
 import { ParseResult } from '../parser/PermitParser';
+import { QAGateRunner, QAGateConfig } from '../qa';
+import { PermitData } from '../types/permit';
+import { IngestionMonitor, IngestionMonitorConfig } from '../monitoring';
 
 export interface EtlPipelineOptions {
   config?: Config;
   parserOptions?: ParserOptions;
   enableCheckpoints?: boolean;
   checkpointPath?: string;
+  qaConfig?: Partial<QAGateConfig>;
+  enableQAGates?: boolean;
+  enableMonitoring?: boolean;
+  monitorConfig?: IngestionMonitorConfig;
 }
 
 export interface EtlResult {
@@ -17,11 +24,32 @@ export interface EtlResult {
   startTime: Date;
   endTime: Date;
   durationMs: number;
+  qaPassed: boolean;
+  qaResults?: Array<{
+    stage: string;
+    passed: boolean;
+    errors: string[];
+    warnings: string[];
+    criticalErrors: string[];
+  }>;
+  monitoring?: {
+    runId: string;
+    sloStatus: Array<{
+      name: string;
+      status: 'healthy' | 'warning' | 'critical';
+      currentValue: number;
+    }>;
+    activeAlerts: number;
+  };
 }
 
 export class EtlPipeline {
   private readonly config: Config;
   private readonly parserOptions: ParserOptions;
+  private readonly qaRunner: QAGateRunner | null;
+  private readonly enableQAGates: boolean;
+  private readonly monitor: IngestionMonitor | null;
+  private readonly enableMonitoring: boolean;
 
   constructor(options: EtlPipelineOptions = {}) {
     this.config = options.config || new Config();
@@ -33,6 +61,17 @@ export class EtlPipeline {
       verbose: true,
       ...options.parserOptions
     };
+    this.enableQAGates = options.enableQAGates ?? true;
+    this.qaRunner = this.enableQAGates ? new QAGateRunner(options.qaConfig) : null;
+    this.enableMonitoring = options.enableMonitoring ?? true;
+    this.monitor = this.enableMonitoring ? new IngestionMonitor(options.monitorConfig) : null;
+  }
+
+  /**
+   * Get the monitor instance (for testing/inspection)
+   */
+  getMonitor(): IngestionMonitor | null {
+    return this.monitor;
   }
 
   /**
@@ -46,6 +85,13 @@ export class EtlPipeline {
     let permitsProcessed = 0;
     let permitsUpserted = 0;
     let permitsSkipped = 0;
+    let qaPassed = true;
+    let monitorRunId: string | undefined;
+
+    // Record run start if monitoring is enabled
+    if (this.monitor) {
+      monitorRunId = this.monitor.recordRunStart(inputPath);
+    }
 
     try {
       console.log(`Starting ETL pipeline for ${inputPath}`);
@@ -60,6 +106,76 @@ export class EtlPipeline {
       
       permitsProcessed = Object.keys(parseResult.permits).length;
       console.log(`Parsed ${permitsProcessed} permits`);
+
+      // Step 3: Run QA Gates on parsed data
+      if (this.qaRunner) {
+        console.log('Step 3: QA Gates - Running quality checks');
+
+        // Convert permits to records for QA checks
+        const records = Object.values(parseResult.permits).map((permit: PermitData) => {
+          const root = permit.daroot;
+          const dapermit = permit.dapermit;
+          const gis = permit.gis_surface;
+
+          return {
+            permitNumber: root?.permit_number || '',
+            apiNumber: dapermit?.api_number || dapermit?.permit_number || '',
+            operator: root?.operator_name || '',
+            wellName: root?.lease_name || '',
+            county: root?.county_code || '',
+            district: root?.district || '',
+            fields: permit.dafield?.map(f => f.field_name).filter(Boolean) || [],
+            wellType: dapermit?.well_type || '',
+            status: root?.status_flag || '',
+            approvalDate: dapermit?.issued_date || null,
+            expirationDate: dapermit?.extended_date || null,
+            latitude: gis?.latitude || null,
+            longitude: gis?.longitude || null,
+            ...permit
+          };
+        });
+
+        const qaResult = await this.qaRunner.runStage({
+          stage: 'post-transform',
+          records,
+          expectedSchema: {
+            permitNumber: 'string',
+            apiNumber: 'string',
+            operator: 'string',
+            wellName: 'string',
+            county: 'string',
+            district: 'string',
+            field: 'string',
+            wellType: 'string',
+            status: 'string',
+            approvalDate: 'string',
+            latitude: 'number',
+            longitude: 'number'
+          }
+        });
+
+        qaPassed = qaResult.passed;
+        
+        // Log QA results
+        console.log(`QA Gate ${qaResult.passed ? 'PASSED' : 'FAILED'} (${qaResult.stage})`);
+        if (qaResult.warnings.length > 0) {
+          console.log(`  Warnings: ${qaResult.warnings.length}`);
+          qaResult.warnings.forEach(w => console.log(`    - ${w}`));
+        }
+        if (qaResult.errors.length > 0) {
+          console.log(`  Errors: ${qaResult.errors.length}`);
+          qaResult.errors.forEach(e => console.log(`    - ${e}`));
+        }
+        if (qaResult.criticalErrors.length > 0) {
+          console.log(`  CRITICAL: ${qaResult.criticalErrors.length}`);
+          qaResult.criticalErrors.forEach(e => console.log(`    - ${e}`));
+        }
+
+        // Add QA errors to pipeline errors if gate failed
+        if (!qaResult.passed) {
+          errors.push(...qaResult.errors, ...qaResult.criticalErrors);
+        }
+      }
       
     } catch (error) {
       const errorMsg = `ETL pipeline failed: ${error instanceof Error ? error.message : String(error)}`;
@@ -69,10 +185,55 @@ export class EtlPipeline {
       if (error instanceof Error && error.stack) {
         console.error(error.stack);
       }
+
+      // Record error in monitor with error handling
+      if (this.monitor && monitorRunId) {
+        try {
+          this.monitor.recordError(monitorRunId, error instanceof Error ? error : new Error(String(error)));
+        } catch (monitorError) {
+          // Log but don't throw - original error is more important
+          console.error('Failed to record error in monitor:', monitorError);
+        }
+      }
     }
 
     const endTime = new Date();
     const durationMs = endTime.getTime() - startTime.getTime();
+
+    // Build QA results summary
+    const qaResults = this.qaRunner?.getResults().map(r => ({
+      stage: r.stage,
+      passed: r.passed,
+      errors: r.errors,
+      warnings: r.warnings,
+      criticalErrors: r.criticalErrors
+    }));
+
+    // Record run completion in monitor
+    if (this.monitor && monitorRunId) {
+      this.monitor.recordRunComplete(monitorRunId, {
+        recordsProcessed: permitsProcessed,
+        recordsFailed: errors.length,
+        errorCount: errors.length,
+        qaPassed,
+        qaResults: qaResults ? {
+          warnings: qaResults.reduce((sum, r) => sum + r.warnings.length, 0),
+          errors: qaResults.reduce((sum, r) => sum + r.errors.length, 0),
+          criticalErrors: qaResults.reduce((sum, r) => sum + r.criticalErrors.length, 0)
+        } : undefined
+      });
+    }
+
+    // Build monitoring summary for result
+    const monitoring = this.monitor ? {
+      runId: monitorRunId!,
+      sloStatus: this.monitor.checkSLOs().map(s => ({
+        name: s.config.name,
+        status: s.status,
+        currentValue: s.currentValue
+      })),
+      activeAlerts: this.monitor.getDashboardMetrics().activeAlerts.length
+    } : undefined;
 
     return {
       permitsProcessed,
@@ -81,7 +242,10 @@ export class EtlPipeline {
       errors,
       startTime,
       endTime,
-      durationMs
+      durationMs,
+      qaPassed,
+      qaResults,
+      monitoring
     };
   }
 }
