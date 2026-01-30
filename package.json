@@ -27,6 +27,7 @@
   "author": "Pineridge IT",
   "license": "MIT",
   "devDependencies": {
+    "@faker-js/faker": "^10.2.0",
     "@types/geojson": "^7946.0.16",
     "@types/jest": "^29.5.11",
     "@types/js-yaml": "^4.0.9",

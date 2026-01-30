@@ -3,13 +3,14 @@
  * Handles export job creation, processing, and management
  */
 
-import { 
-  ExportRequest, 
-  ExportJob, 
-  ExportFormat, 
+import {
+  ExportRequest,
+  ExportJob,
+  ExportFormat,
   ExportStatus,
-  getExportFormatConfig 
+  getExportFormatConfig
 } from '../../types/export';
+import { UsageService } from '../usage';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -20,6 +21,7 @@ interface ExportServiceConfig {
   downloadExpiryHours: number;
   maxConcurrentJobs: number;
   storagePath: string;
+  enforceUsageLimits: boolean;
 }
 
 /**
@@ -29,8 +31,19 @@ const DEFAULT_CONFIG: ExportServiceConfig = {
   downloadBaseUrl: process.env.EXPORT_DOWNLOAD_URL || 'https://api.permitmap.io/exports',
   downloadExpiryHours: 24,
   maxConcurrentJobs: 5,
-  storagePath: process.env.EXPORT_STORAGE_PATH || '/tmp/exports'
+  storagePath: process.env.EXPORT_STORAGE_PATH || '/tmp/exports',
+  enforceUsageLimits: true
 };
+
+/**
+ * Error thrown when usage limit is exceeded
+ */
+export class UsageLimitExceededError extends Error {
+  constructor(resource: string, current: number, limit: number) {
+    super(`Usage limit exceeded for ${resource}: ${current}/${limit}`);
+    this.name = 'UsageLimitExceededError';
+  }
+}
 
 /**
  * Export Service class
@@ -38,17 +51,36 @@ const DEFAULT_CONFIG: ExportServiceConfig = {
 export class ExportService {
   private config: ExportServiceConfig;
   private activeJobs: Map<string, AbortController> = new Map();
+  private usageService: UsageService;
 
   constructor(config: Partial<ExportServiceConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+    this.usageService = new UsageService();
   }
 
   /**
    * Create a new export job
    */
   async createExport(request: ExportRequest): Promise<ExportJob> {
+    // Check usage limits if enforcement is enabled
+    if (this.config.enforceUsageLimits) {
+      const checkResult = await this.usageService.checkLimit(
+        request.workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+        'exports',
+        1
+      );
+
+      if (!checkResult.allowed) {
+        throw new UsageLimitExceededError(
+          'exports',
+          checkResult.current,
+          checkResult.limit
+        );
+      }
+    }
+
     const formatConfig = getExportFormatConfig(request.format);
-    
+
     const job: ExportJob = {
       id: uuidv4(),
       workspaceId: request.workspaceId,
