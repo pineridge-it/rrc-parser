@@ -66,7 +66,31 @@ The PermitMap class has been extended with several new properties and methods to
 ### Geometry Generation
 - Polygon mode creates a GeoJSON Polygon from collected points
 - Rectangle mode calculates bounds from two points
-- Circle mode generates a circular polygon approximation
+- Circle mode generates a circular polygon approximation using `circleRadius`
+- Buffer mode applies `bufferDistance` to any geometry using turf.js (when installed)
+
+## Circle Radius vs Buffer Distance
+
+It's important to understand the distinction between these two properties:
+
+- **`circleRadius`**: Defines the radius of a circle when drawing in 'circle' mode. This is the size of the circle itself.
+- **`bufferDistance`**: An additional offset applied to ANY geometry after drawing is complete. This expands the geometry outward.
+
+### Example: Circle with Buffer
+```javascript
+// Draw a 1-mile circle with an additional 0.5-mile buffer
+// Result: Total radius of 1.5 miles from center
+const permitMap = new PermitMap({ container: '#map' });
+
+permitMap.setCircleRadius(1);        // Circle radius: 1 mile
+permitMap.setBufferDistance(0.5);    // Additional buffer: 0.5 mile
+permitMap.startDrawing('circle');
+
+// After user places center point and finishes:
+// - Inner circle: 1 mile radius
+// - With buffer: 1.5 miles total radius
+const aoi = permitMap.finishDrawing();
+```
 - Buffer mode creates a buffer around a point using turf.js or similar library
 
 ## Usage Example
@@ -90,8 +114,10 @@ const aoi = permitMap.finishDrawing();
 
 ### DrawingMode
 ```typescript
-type DrawingMode = 'polygon' | 'rectangle' | 'circle' | 'buffer';
+type DrawingMode = 'polygon' | 'rectangle' | 'circle' | 'county' | 'buffer';
 ```
+
+**Note:** The `'buffer'` mode was added to support applying buffer distances to any geometry type. The `'county'` mode allows selecting pre-defined county boundaries.
 
 ### DrawingTool
 ```typescript
@@ -111,6 +137,53 @@ interface AOIDrawer {
   createdAt: Date;
 }
 ```
+
+## API Reference
+
+### PermitMap Methods
+
+#### `startDrawing(mode: DrawingMode): void`
+Initializes a new drawing operation with the specified mode.
+
+**Parameters:**
+- `mode`: The drawing mode - 'polygon', 'rectangle', 'circle', 'county', or 'buffer'
+
+#### `setCircleRadius(radius: number): void`
+Sets the radius for circle drawing mode. This defines the size of the circle itself, before any buffer is applied.
+
+**Parameters:**
+- `radius`: Radius in miles (default: 1)
+
+**Example:**
+```typescript
+map.setCircleRadius(2); // 2-mile radius circle
+```
+
+#### `setBufferDistance(distance: number): void`
+Sets the buffer distance to be applied to the geometry after drawing is complete. This expands the geometry outward by the specified distance.
+
+**Parameters:**
+- `distance`: Buffer distance in miles (default: 0)
+
+**Example:**
+```typescript
+map.setBufferDistance(0.5); // Add 0.5-mile buffer
+```
+
+#### `finishDrawing(): AOI | null`
+Completes the current drawing operation. If a buffer distance is set, it will be applied to the geometry before creating the AOI.
+
+**Returns:**
+- `AOI` object if drawing was active and valid
+- `null` if no drawing was in progress or geometry was invalid
+
+**Note:** Buffer application requires `@turf/buffer` to be installed. Without it, the geometry is returned unbuffered with a console warning.
+
+#### `cancelDrawing(): void`
+Cancels the current drawing operation and triggers the cancel callback if set.
+
+#### `setDrawingCallbacks(onComplete: Function, onCancel: Function): void`
+Sets callback functions for drawing completion and cancellation events.
 
 ## Integration with Existing Code
 
