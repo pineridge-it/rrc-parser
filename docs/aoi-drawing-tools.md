@@ -192,6 +192,32 @@ The drawing tools integrate with the existing map functionality through:
 - The `aoiToGeoJSON()` utility function for converting AOIs to GeoJSON format
 - Event handlers for map interactions during drawing operations
 
+## Migration Notes
+
+### From v1.0 to v1.1
+
+**Breaking Changes:**
+- Circle drawing now uses `setCircleRadius()` instead of `setBufferDistance()` to define the circle size
+- `setBufferDistance()` now applies an additional buffer after drawing (to any geometry type)
+
+**Migration Example:**
+```typescript
+// OLD (v1.0) - Used bufferDistance for circle radius
+map.setBufferDistance(1);
+map.startDrawing('circle');
+
+// NEW (v1.1) - Use circleRadius for circle, bufferDistance for additional buffer
+map.setCircleRadius(1);      // Circle is 1 mile radius
+map.setBufferDistance(0.5);  // Plus 0.5 mile buffer = 1.5 miles total
+map.startDrawing('circle');
+```
+
+**New Features:**
+- Added `'county'` drawing mode for selecting county boundaries
+- Added `'buffer'` mode for applying buffers to any geometry
+- Added `setCircleRadius()` method for explicit circle sizing
+- Buffer is now applied in `finishDrawing()` when `bufferDistance > 0`
+
 ## Future Enhancements
 
 Potential improvements for future iterations:
@@ -200,3 +226,4 @@ Potential improvements for future iterations:
 - Measurement tools for distance/area calculation
 - Import/export of AOI geometries
 - Styling options for drawn AOIs
+- Real-time buffer preview during drawing
