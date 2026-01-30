@@ -92,8 +92,8 @@ export class PerformanceMonitor {
     count: number 
   }> {
     const report: Record<string, any> = {};
-    
-    for (const [label, metrics] of this.metrics.entries()) {
+
+    this.metrics.forEach((metrics, label) => {
       report[label] = {
         avg: `${(metrics.totalTime / metrics.count).toFixed(2)}ms`,
         max: `${metrics.maxTime.toFixed(2)}ms`,
@@ -101,7 +101,7 @@ export class PerformanceMonitor {
         total: `${metrics.totalTime.toFixed(2)}ms`,
         count: metrics.count
       };
-    }
+    });
     
     return report;
   }

@@ -72,22 +72,24 @@ export interface ILogger {
  * Console-based logger implementation
  */
 export class ConsoleLogger implements ILogger {
-  debug(message: string, ...args: unknown[]): void {
-    if (process.env.DEBUG) {
-      console.debug(`[DEBUG] ${message}`, ...args);
+  constructor(private verbose: boolean = false) {}
+
+  debug(message: string): void {
+    if (this.verbose) {
+      console.log(`[DEBUG] ${message}`);
     }
   }
 
-  info(message: string, ...args: unknown[]): void {
-    console.info(`[INFO] ${message}`, ...args);
+  info(message: string): void {
+    console.info(`[INFO] ${message}`);
   }
 
-  warn(message: string, ...args: unknown[]): void {
-    console.warn(`[WARN] ${message}`, ...args);
+  warn(message: string): void {
+    console.warn(`[WARN] ${message}`);
   }
 
-  error(message: string, ...args: unknown[]): void {
-    console.error(`[ERROR] ${message}`, ...args);
+  error(message: string): void {
+    console.error(`[ERROR] ${message}`);
   }
 }
 

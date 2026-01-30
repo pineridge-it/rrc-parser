@@ -1,5 +1,8 @@
 /**
- * FINAL – 0 TypeScript errors (100% clean)
+ * Enhanced PermitParser with Checkpoint/Recovery Support
+ * Location: src/parser/PermitParser.ts
+ *
+ * REPLACE your existing src/parser/PermitParser.ts with this version
  */
 import * as fs from 'fs';
 import * as readline from 'readline';
@@ -16,16 +19,10 @@ import {
   ConsoleLogger,
   StorageKey
 } from '../types';
+import { parseDate, parseIntValue, parseFloatValue } from '../utils';
 import { ParseError } from '../utils/ParseError';
 import { PerformanceMonitor } from '../utils/PerformanceMonitor';
 
-// === CONSTANTS ===
-const DEFAULT_CHECKPOINT_INTERVAL = 10000;
-const MAX_CHECKPOINTS = 3;
-const PROGRESS_UPDATE_FREQUENCY = 100;
-const DEFAULT_ENCODING = 'latin1';
-
-// === INTERFACES ===
 export interface ParserOptions {
   strictMode?: boolean;
   verbose?: boolean;
@@ -41,7 +38,7 @@ export interface ParseResult {
   permits: Record<string, PermitData>;
   stats: ParseStats;
   validationReport: ValidationReport;
-  performance?: Record<string, unknown>;
+  performance?: Record<string, any>;
   resumedFromCheckpoint?: boolean;
   checkpointInfo?: {
     enabled: boolean;
@@ -50,85 +47,89 @@ export interface ParseResult {
   };
 }
 
-interface CheckpointData {
-  lastProcessedLine: number;
-  permits: Record<string, PermitData>;
-  stats: ParseStats;
-  inputFilePath: string;
-}
-
-// === MAIN CLASS ===
 export class PermitParser {
-  private readonly config: Config;
-  private readonly strictMode: boolean;
-  private readonly validator: Validator;
-  private readonly options: ParserOptions;
+  private config: Config;
+  private strictMode: boolean;
+  private validator: Validator;
   private validationReport: ValidationReport;
   private stats: ParseStats;
-  private readonly logger: ILogger;
-  private readonly perfMonitor: PerformanceMonitor;
-  private readonly checkpointManager?: CheckpointManager;
-  private readonly onProgress?: (lineNumber: number, stats: ParseStats) => void;
+  private logger: ILogger;
+  private perfMonitor: PerformanceMonitor;
+  private checkpointManager?: CheckpointManager;
+  private onProgress?: (lineNumber: number, stats: ParseStats) => void;
 
+  // State machine variables
   private permits: Map<string, Permit> = new Map();
   private currentPermit: string | null = null;
   private pendingRoot: RecordData | null = null;
   private pendingChildren: Array<{ recordType: string; data: RecordData }> = [];
-  private checkpointCount = 0;
-  private lastCheckpointLine = 0;
 
-  private readonly COUNTY_NAMES: Record<string, string> = {};
+  // Checkpoint tracking
+  private checkpointCount: number = 0;
+  private lastCheckpointLine: number = 0;
 
   constructor(config?: Config, options: ParserOptions = {}) {
     this.config = config || new Config();
     this.strictMode = options.strictMode ?? false;
-    this.options = options;
     this.validator = new Validator(this.config);
     this.validationReport = new ValidationReport();
     this.stats = new ParseStats();
-    this.logger = new ConsoleLogger();
+    this.logger = new ConsoleLogger(options.verbose ?? false);
     this.perfMonitor = new PerformanceMonitor(options.enablePerformanceMonitoring);
     this.onProgress = options.onProgress;
 
-    Object.assign(this.COUNTY_NAMES, this.config.lookupTables?.county_codes || {});
-
+    // Initialize checkpoint manager if enabled
     if (options.enableCheckpoints !== false) {
       const checkpointPath = options.checkpointPath ||
         path.join(process.cwd(), '.checkpoints', 'parser-checkpoint.json');
+
       this.checkpointManager = new CheckpointManager(checkpointPath, {
         enabled: true,
-        checkpointInterval: options.checkpointInterval ?? DEFAULT_CHECKPOINT_INTERVAL,
-        maxCheckpoints: MAX_CHECKPOINTS,
+        checkpointInterval: options.checkpointInterval ?? 10000,
+        maxCheckpoints: 3,
         validateChecksum: true
       });
     }
   }
 
-  async parseFile(inputPath: string): Promise<ParseResult> {
+  /**
+   * Parse a DAF420 file with full checkpoint/resume support
+   */
+  async parseFile(inputPath: string, options: ParserOptions = {}): Promise<ParseResult> {
     return this.perfMonitor.timeAsync('parseFile', async () => {
       let resumedFromCheckpoint = false;
       let startLine = 1;
 
-      if (this.checkpointManager && (this.options.resumeFromCheckpoint ?? true)) {
+      // Attempt to resume from checkpoint
+      if (this.checkpointManager && (options.resumeFromCheckpoint ?? true)) {
         const checkpoint = await this.checkpointManager.loadCheckpoint(inputPath);
+
         if (checkpoint) {
-          this.logger.info('Resuming from checkpoint...');
-          this.restoreFromCheckpoint(checkpoint as CheckpointData);
+          this.logger.info('Resuming parsing from checkpoint...');
+          this.restoreFromCheckpoint(checkpoint);
           startLine = checkpoint.lastProcessedLine + 1;
           resumedFromCheckpoint = true;
           this.logger.info(`Resumed from line ${startLine}`);
+          this.logger.info(`Recovered ${Object.keys(checkpoint.permits).length} permits`);
         }
       }
 
       return new Promise<ParseResult>((resolve, reject) => {
-        const encoding = this.config.settings.encoding as BufferEncoding || DEFAULT_ENCODING;
-        const fileStream = fs.createReadStream(inputPath, { encoding });
-        const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
+        const fileStream = fs.createReadStream(inputPath, {
+          encoding: this.config.settings.encoding as BufferEncoding
+        });
+
+        const rl = readline.createInterface({
+          input: fileStream,
+          crlfDelay: Infinity
+        });
 
         let lineNumber = 0;
 
         rl.on('line', (line: string) => {
           lineNumber++;
+
+          // Skip already-processed lines
           if (lineNumber < startLine) return;
 
           try {
@@ -136,13 +137,17 @@ export class PermitParser {
               this.processLine(lineNumber, line.trimEnd());
             });
 
-            if (this.checkpointManager && this.checkpointManager.shouldSaveCheckpoint(lineNumber)) {
+            // Periodic checkpoint save
+            if (this.checkpointManager &&
+                this.checkpointManager.shouldSaveCheckpoint(lineNumber)) {
               this.saveCheckpointAsync(lineNumber, inputPath).catch(err => {
+                this.logger.warn(`Checkpoint save failed: ${err.message}`);
                 this.logger.warn(`Checkpoint save failed: ${err.message}`);
               });
             }
 
-            if (this.onProgress && lineNumber % PROGRESS_UPDATE_FREQUENCY === 0) {
+            // Progress callback
+            if (this.onProgress && lineNumber % 100 === 0) {
               this.onProgress(lineNumber, this.stats);
             }
           } catch (error) {
@@ -151,7 +156,7 @@ export class PermitParser {
               fileStream.destroy();
               reject(error);
             } else {
-              this.logger.error(`Error on line ${lineNumber}: ${error instanceof Error ? error.message : error}`);
+              this.logger.error(`Error on line ${lineNumber}: ${(error as Error).message}`);
             }
           }
         });
@@ -159,15 +164,19 @@ export class PermitParser {
         rl.on('close', async () => {
           try {
             this.finalizeParsing();
+
+            // Final checkpoint save before clearing
             if (this.checkpointManager && this.lastCheckpointLine < lineNumber) {
               await this.saveCheckpointAsync(lineNumber, inputPath);
             }
+
+            // Clear checkpoints on successful completion
             if (this.checkpointManager && resumedFromCheckpoint) {
               await this.checkpointManager.clearCheckpoint();
-              this.logger.info('Checkpoints cleared');
+              this.logger.info('Checkpoints cleared after successful parse');
             }
 
-            resolve({
+            const result: ParseResult = {
               permits: this.getPermitsAsObjects(),
               stats: this.stats,
               validationReport: this.validationReport,
@@ -178,7 +187,9 @@ export class PermitParser {
                 lastSavedLine: this.lastCheckpointLine,
                 checkpointsCreated: this.checkpointCount
               } : undefined
-            });
+            };
+
+            resolve(result);
           } catch (err) {
             reject(err);
           }
@@ -190,41 +201,80 @@ export class PermitParser {
     });
   }
 
+  /**
+   * Save checkpoint asynchronously (fire-and-forget)
+   */
   private async saveCheckpointAsync(lineNumber: number, inputPath: string): Promise<void> {
     if (!this.checkpointManager) return;
-    const data: CheckpointData = {
-      lastProcessedLine: lineNumber,
-      permits: this.getPermitsAsObjects(),
-      stats: this.stats,
-      inputFilePath: inputPath
-    };
-    await this.checkpointManager.saveCheckpoint(data);
-    this.lastCheckpointLine = lineNumber;
-    this.checkpointCount++;
-    this.logger.info(`Checkpoint saved at line ${lineNumber}`);
+
+    try {
+      await this.checkpointManager.saveCheckpoint({
+        lastProcessedLine: lineNumber,
+        permits: this.getPermitsAsObjects(),
+        stats: this.stats,
+        inputFilePath: inputPath
+      });
+
+      this.lastCheckpointLine = lineNumber;
+      this.checkpointCount++;
+      this.logger.info(`Checkpoint saved at line ${lineNumber}`);
+    } catch (error) {
+      this.logger.warn(`Failed to save checkpoint: ${(error as Error).message}`);
+    }
   }
 
-  private restoreFromCheckpoint(checkpoint: CheckpointData): void {
+  /**
+   * Restore full parser state from checkpoint
+   */
+  private restoreFromCheckpoint(checkpoint: {
+    lastProcessedLine: number;
+    permits: Record<string, PermitData>;
+    stats: ParseStats;
+  }): void {
+    // Restore permits
     this.permits.clear();
-    for (const [num, data] of Object.entries(checkpoint.permits)) {
-      const permit = new Permit(num);
-      Object.assign(permit, data);
-      this.permits.set(num, permit);
+    for (const [permitNum, data] of Object.entries(checkpoint.permits)) {
+      const permit = new Permit(permitNum);
+      permit.daroot = data.daroot;
+      permit.dapermit = data.dapermit;
+      permit.dafield = data.dafield;
+      permit.dalease = data.dalease;
+      permit.dasurvey = data.dasurvey;
+      permit.dacanres = data.dacanres;
+      permit.daareas = data.daareas;
+      permit.daremarks = data.daremarks;
+      permit.daareares = data.daareares;
+      permit.daaddress = data.daaddress;
+      permit.gis_surface = data.gis_surface;
+      permit.gis_bottomhole = data.gis_bottomhole;
+
+      this.permits.set(permitNum, permit);
     }
+
+    // Restore stats
     this.stats = checkpoint.stats;
+
+    // Update internal tracking
     this.currentPermit = null;
     this.pendingRoot = null;
     this.pendingChildren = [];
     this.lastCheckpointLine = checkpoint.lastProcessedLine;
-    this.checkpointCount = 1;
+    this.checkpointCount = 1; // at least one exists
   }
 
+  /**
+   * Process a single line from the input file
+   */
   private processLine(lineNumber: number, record: string): void {
     this.stats.linesProcessed++;
-    if (!this.validateRecordStructure(lineNumber, record)) return;
+
+    if (!this.validateRecordStructure(lineNumber, record)) {
+      return;
+    }
 
     const recType = record.substring(0, 2);
     const recLen = record.length;
+
     this.stats.addRecordLength(recType, recLen);
     this.stats.incrementRecordType(recType);
 
@@ -235,10 +285,16 @@ export class PermitParser {
 
     try {
       const parsed = this.parseRecord(record, recType, lineNumber);
-      if (parsed) this.routeRecord(recType, parsed, lineNumber);
+      if (parsed) {
+        this.routeRecord(recType, parsed, lineNumber);
+      }
     } catch (error) {
-      this.stats.logMalformed(lineNumber, `Parse error: ${error instanceof Error ? error.message : error}`);
-      if (this.strictMode) throw error;
+      const msg = error instanceof Error ? error.message : String(error);
+      this.stats.logMalformed(lineNumber, `Parse error: ${msg}`);
+
+      if (this.strictMode) {
+        throw error instanceof ParseError ? error : new ParseError(msg, lineNumber, recType, error as Error);
+      }
     }
   }
 
@@ -247,109 +303,73 @@ export class PermitParser {
       this.stats.logMalformed(lineNumber, `Too short (${record.length} bytes)`);
       return false;
     }
-    const recType = record.substring(0, 2);
+
+    const recType = record.length >= 2 ? record.substring(0, 2) : '';
     if (!/^\d{2}$/.test(recType)) {
       this.stats.logMalformed(lineNumber, `Invalid type '${recType}'`);
       return false;
     }
+
     if (!this.config.getSchema(recType)) {
       this.stats.logMalformed(lineNumber, `Unknown record type ${recType}`);
       return false;
     }
+
     return true;
   }
 
   private parseRecord(record: string, recType: string, lineNumber: number): RecordData | null {
     const schema = this.config.getSchema(recType);
-    if (!schema) throw new ParseError(`Unknown record type: ${recType}`, lineNumber, recType);
+    if (!schema) {
+      throw new ParseError(`Unknown record type: ${recType}`, lineNumber, recType);
+    }
 
-    const parsed: RecordData = {};
-
-    for (const fieldSpec of schema.fields) {
-      const startIdx = fieldSpec.start - 1;
-      const length = fieldSpec.end - fieldSpec.start;
-      let value = record.substring(startIdx, startIdx + length);
-      value = value.substring(0, length);
-
-      if (fieldSpec.type === 'string') {
-        value = value.trimEnd();
-      }
-
-      parsed[fieldSpec.name] = value;
+    let parsed: RecordData;
+    try {
+      parsed = schema.parseRecord(record);
+    } catch (error) {
+      throw new ParseError(`Failed to parse ${recType}`, lineNumber, recType, error instanceof Error ? error : undefined);
     }
 
     for (const fieldSpec of schema.fields) {
-      let raw = parsed[fieldSpec.name] as string;
+      const rawValue = parsed[fieldSpec.name] as string;
 
+      // Type conversion
       try {
-        if (fieldSpec.type === 'date') {
-          parsed[fieldSpec.name] = this.parseDate(raw);
-        } else if (fieldSpec.type === 'int') {
-          parsed[fieldSpec.name] = parseInt(raw.replace(/\D/g, '') || '0', 10);
-        } else if (fieldSpec.type === 'float') {
-          parsed[fieldSpec.name] = this.parseGIS(raw);
-        }
-      } catch (e) {
-        this.logger.warn(`Conversion failed for ${fieldSpec.name}: ${raw}`);
+        if (fieldSpec.type === 'date') parsed[fieldSpec.name] = parseDate(rawValue);
+        else if (fieldSpec.type === 'int') parsed[fieldSpec.name] = parseIntValue(rawValue);
+        else if (fieldSpec.type === 'float') parsed[fieldSpec.name] = parseFloatValue(rawValue);
+      } catch (convErr) {
+        this.logger.warn(`Line ${lineNumber}: Failed converting ${fieldSpec.name}: ${rawValue}`);
       }
 
-      // Lookup county name with proper padding
-      if (fieldSpec.name === 'county_code' && raw) {
-        const countyCode = raw.trim();
-        // Try direct lookup first
-        let countyName = this.COUNTY_NAMES[countyCode];
-        
-        // If not found and it's numeric, try padded version
-        if (!countyName && /^\d+$/.test(countyCode)) {
-          const paddedCode = countyCode.padStart(3, '0');
-          countyName = this.COUNTY_NAMES[paddedCode];
-        }
-        
-        // If still not found, try unpadded version (remove leading zeros)
-        if (!countyName && /^0+\d+$/.test(countyCode)) {
-          const unpaddedCode = countyCode.replace(/^0+/, '');
-          countyName = this.COUNTY_NAMES[unpaddedCode];
-        }
-        
-        if (countyName) {
-          parsed.county_name = countyName;
-        }
-      }
-
-      if (fieldSpec.validator && raw) {
+      // Validation
+      if (fieldSpec.validator && rawValue) {
         const context = `line_${lineNumber}_${fieldSpec.name}`;
-        if (!this.validator.validate(fieldSpec.validator, raw, context)) {
-          this.validationReport.addWarning(fieldSpec.name, raw, `Invalid ${fieldSpec.validator}`, fieldSpec.validator, { lineNumber });
+        if (!this.validator.validate(fieldSpec.validator, rawValue, context)) {
+          this.validationReport.addWarning(
+            fieldSpec.name,
+            rawValue,
+            `Failed ${fieldSpec.validator}`,
+            fieldSpec.validator,
+            { lineNumber }
+          );
         }
       }
-      if (fieldSpec.required && !raw.trim()) {
-        this.validationReport.addError(fieldSpec.name, '', 'Required field missing', 'required', { lineNumber });
+
+      // Required field
+      if (fieldSpec.required && !rawValue) {
+        this.validationReport.addError(
+          fieldSpec.name,
+          '',
+          'Required field missing',
+          'required',
+          { lineNumber }
+        );
       }
     }
 
     return parsed;
-  }
-
-  private parseGIS(coordStr: string): string | null {
-    // FIXED: Coordinates are already in decimal degree format in the file
-    // Just trim whitespace and parse as float directly
-    const trimmed = coordStr.trim();
-    if (!trimmed) return null;
-    const num = parseFloat(trimmed);
-    return isNaN(num) ? null : num.toFixed(7);
-  }
-
-  /** Safe date parsing – match is guaranteed when used */
-  private parseDate(dateStr: string): string | null {
-    const trimmed = dateStr.trim();
-    if (!trimmed || trimmed.length < 6) return null;
-    const match = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{2})$/);
-    if (!match) return null;
-
-    const [, month, day, year] = match;  // Non-null assertion safe: match exists
-    const yr = parseInt(year!, 10);      // year is string, ! tells TS it's not undefined
-    const fullYear = yr < 50 ? 2000 + yr : 1900 + yr;
-    return `${fullYear}-${month!.padStart(2, '0')}-${day!.padStart(2, '0')}`;
   }
 
   private routeRecord(recType: string, parsed: RecordData, lineNumber: number): void {
@@ -358,53 +378,69 @@ export class PermitParser {
     } else if (recType === '02') {
       this.handlePermitRecord(parsed, lineNumber);
     } else {
-      this.handleChildRecord(recType, parsed);
+      this.handleChildRecord(recType, parsed, lineNumber);
     }
   }
 
   private handlePermitRecord(parsed: RecordData, lineNumber: number): void {
-    const permitNum = (parsed.permit_number as string)?.trim();
+    const permitNum = (parsed.permit_number as string || '').trim();
+
     if (!permitNum || !/^\d+$/.test(permitNum)) {
       this.stats.logOrphan(lineNumber, `Invalid permit# '${permitNum}'`);
+      this.currentPermit = null;
       return;
     }
 
     if (!this.permits.has(permitNum)) {
       this.permits.set(permitNum, new Permit(permitNum));
     }
-    const permit = this.permits.get(permitNum)!;
 
+    const permit = this.permits.get(permitNum)!;
     permit.dapermit = { ...(permit.dapermit || {}), ...parsed } as any;
+
     if (this.pendingRoot) {
       permit.daroot = { ...(permit.daroot || {}), ...this.pendingRoot } as any;
       this.pendingRoot = null;
     }
 
     this.currentPermit = permitNum;
-    for (const child of this.pendingChildren) {
-      const schema = this.config.getSchema(child.recordType);
-      if (schema?.storageKey) {
-        permit.addChildRecord(schema.storageKey as StorageKey, child.data);
+
+    // Apply buffered children
+    if (this.pendingChildren.length > 0) {
+      for (const { recordType, data } of this.pendingChildren) {
+        const schema = this.config.getSchema(recordType);
+        if (schema?.storageKey) {
+          permit.addChildRecord(schema.storageKey as StorageKey, data);
+          this.stats.recoveredRecords++;
+        }
       }
+      this.pendingChildren = [];
     }
-    this.pendingChildren = [];
+
     this.stats.successfulPermits = this.permits.size;
   }
 
-  private handleChildRecord(recType: string, parsed: RecordData): void {
+  private handleChildRecord(recType: string, parsed: RecordData, lineNumber: number): void {
     const schema = this.config.getSchema(recType);
     if (!schema?.storageKey) return;
+
     if (!this.currentPermit) {
       this.pendingChildren.push({ recordType: recType, data: parsed });
+      this.stats.logOrphan(lineNumber, `${schema.name} buffered`);
       return;
     }
-    this.permits.get(this.currentPermit)?.addChildRecord(schema.storageKey as StorageKey, parsed);
+
+    const permit = this.permits.get(this.currentPermit);
+    if (permit) {
+      permit.addChildRecord(schema.storageKey as StorageKey, parsed);
+    }
   }
 
   private finalizeParsing(): void {
     if (this.pendingChildren.length > 0) {
-      this.logger.warn(`Ended with ${this.pendingChildren.length} orphaned children`);
+      this.logger.warn(`Parse ended with ${this.pendingChildren.length} orphaned child records`);
     }
+
     const summary = this.validator.getSummary();
     this.stats.validationErrors = summary.errorCount;
     this.stats.validationWarnings = summary.warningCount;
@@ -412,15 +448,15 @@ export class PermitParser {
 
   private getPermitsAsObjects(): Record<string, PermitData> {
     const result: Record<string, PermitData> = {};
-    for (const [num, permit] of this.permits.entries()) {
+    this.permits.forEach((permit, num) => {
       result[num] = permit.toObject();
-    }
+    });
     return result;
   }
 
   getStats(): ParseStats { return this.stats; }
   getValidationReport(): ValidationReport { return this.validationReport; }
-  getPerformanceReport(): Record<string, unknown> { return this.perfMonitor.getReport(); }
+  getPerformanceReport(): Record<string, any> { return this.perfMonitor.getReport(); }
 
   reset(): void {
     this.permits.clear();
