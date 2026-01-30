@@ -10,3 +10,5 @@ export * from './operator';
 export * from './export';
 export * from './usage';
 export * from './map';
+export * from './aoi';
+export * from './saved-search';
