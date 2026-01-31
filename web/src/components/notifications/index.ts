@@ -1,3 +1,5 @@
 export { NotificationProvider, useNotifications } from './NotificationContext'
 export { default as NotificationCenter } from './NotificationCenter'
+export { default as NotificationPreferences } from './NotificationPreferences'
+export { default as BannerNotificationContainer, type BannerNotification } from './BannerNotification'
 export * from './types'

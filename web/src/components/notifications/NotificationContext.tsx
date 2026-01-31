@@ -1,24 +1,33 @@
 'use client'
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import { Notification } from './types'
-
-interface NotificationContextType {
-  notifications: Notification[]
-  unreadCount: number
-  addNotification: (notification: Omit<Notification, 'id' | 'isRead' | 'createdAt'>) => void
-  markAsRead: (id: string) => void
-  markAllAsRead: () => void
-  clearNotifications: () => void
-}
+import { Notification, NotificationContextType } from './types'
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('notifications')
-      return saved ? JSON.parse(saved) : []
+      try {
+        const saved = localStorage.getItem('notifications')
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          // Validate that parsed data is an array
+          if (Array.isArray(parsed)) {
+            // Convert date strings back to Date objects
+            return parsed.map(notification => ({
+              ...notification,
+              createdAt: new Date(notification.createdAt),
+              readAt: notification.readAt ? new Date(notification.readAt) : undefined,
+              expiresAt: notification.expiresAt ? new Date(notification.expiresAt) : undefined
+            }))
+          }
+        }
+      } catch (error) {
+        console.error('Failed to parse notifications from localStorage:', error)
+        // Clear corrupted data
+        localStorage.removeItem('notifications')
+      }
     }
     return []
   })
@@ -28,9 +37,30 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Save notifications to localStorage whenever they change
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('notifications', JSON.stringify(notifications))
+      // Convert Date objects to strings for JSON serialization
+      const notificationsToSave = notifications.map(notification => ({
+        ...notification,
+        createdAt: notification.createdAt.toISOString(),
+        readAt: notification.readAt?.toISOString(),
+        expiresAt: notification.expiresAt?.toISOString()
+      }))
+      localStorage.setItem('notifications', JSON.stringify(notificationsToSave))
     }
   }, [notifications])
+
+  // Clean up expired notifications periodically
+  useEffect(() => {
+    const cleanupInterval = setInterval(() => {
+      const now = new Date()
+      setNotifications(prev =>
+        prev.filter(notification =>
+          !notification.expiresAt || notification.expiresAt > now
+        )
+      )
+    }, 60000) // Check every minute
+
+    return () => clearInterval(cleanupInterval)
+  }, [])
 
   const addNotification = (notification: Omit<Notification, 'id' | 'isRead' | 'createdAt'>) => {
     const newNotification: Notification = {
@@ -39,7 +69,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       isRead: false,
       createdAt: new Date()
     }
-    
+
     setNotifications(prev => [newNotification, ...prev])
   }
 
@@ -64,6 +94,14 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setNotifications([])
   }
 
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id))
+  }
+
+  const getUnreadCountByCategory = (category: Notification['category']) => {
+    return notifications.filter(n => !n.isRead && n.category === category).length
+  }
+
   return (
     <NotificationContext.Provider
       value={{
@@ -72,7 +110,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         addNotification,
         markAsRead,
         markAllAsRead,
-        clearNotifications
+        clearNotifications,
+        removeNotification,
+        getUnreadCountByCategory
       }}
     >
       {children}
