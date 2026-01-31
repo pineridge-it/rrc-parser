@@ -5,6 +5,6 @@ COMPLETED: 4. Fix validation rules implementation in ConfigValidator
 COMPLETED: 5. Improve checkpoint management in CheckpointManager
 COMPLETED: 6. Fix CSV export performance issues
 COMPLETED: 7. Add proper input validation in CLI
-8. Improve memory usage in PermitParser
-9. Fix date parsing logic
+COMPLETED: 8. Improve memory usage in PermitParser
+COMPLETED: 9. Fix date parsing logic
 10. Add better logging and error reporting

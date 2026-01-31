@@ -73,12 +73,12 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Sign In Failed', {
-        description: error.message || 'Invalid email or password. Please try again.'
+      toast("error", "Sign In Failed", {
+        description: error.message || "Invalid email or password. Please try again."
       })
     } else {
-      toast("success",('Welcome Back!', {
-        description: 'You have been successfully signed in.'
+      toast("success", "Welcome Back!", {
+        description: "You have been successfully signed in."
       })
     }
 
