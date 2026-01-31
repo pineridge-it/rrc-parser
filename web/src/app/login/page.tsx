@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useOnboarding } from '@/components/onboarding/OnboardingContext'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [showMagicLink, setShowMagicLink] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
   const { signIn, sendMagicLink, loading, error } = useAuth()
+  const { state } = useOnboarding()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/dashboard'
@@ -28,7 +30,12 @@ export default function LoginPage() {
     } else {
       const { error } = await signIn(email, password)
       if (!error) {
-        router.push(redirect)
+        // Redirect to onboarding if not complete, otherwise go to dashboard
+        if (!state.isOnboardingComplete) {
+          router.push('/onboarding')
+        } else {
+          router.push(redirect)
+        }
       }
     }
   }

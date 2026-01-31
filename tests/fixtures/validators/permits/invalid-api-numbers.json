@@ -1,0 +1,22 @@
+[
+  {
+    "api_number": "43-123-45678",
+    "description": "Wrong state code (not Texas)"
+  },
+  {
+    "api_number": "42-1234-45678",
+    "description": "Wrong county code format"
+  },
+  {
+    "api_number": "42-123-456789",
+    "description": "Wrong well number format"
+  },
+  {
+    "api_number": "42-abc-defgh",
+    "description": "Non-numeric values"
+  },
+  {
+    "api_number": "42-123",
+    "description": "Incomplete API number"
+  }
+]

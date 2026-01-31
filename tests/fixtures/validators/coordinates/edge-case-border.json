@@ -1,0 +1,22 @@
+[
+  {
+    "lat": 25.8,
+    "lng": -106.6,
+    "description": "Exact boundary - minimum values"
+  },
+  {
+    "lat": 36.5,
+    "lng": -93.5,
+    "description": "Exact boundary - maximum values"
+  },
+  {
+    "lat": 25.80001,
+    "lng": -106.59999,
+    "description": "Just inside boundary"
+  },
+  {
+    "lat": 36.49999,
+    "lng": -93.50001,
+    "description": "Just inside boundary"
+  }
+]

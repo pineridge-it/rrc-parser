@@ -1,0 +1,14 @@
+[
+  {
+    "total_depth": "1000",
+    "surface_elevation": "500",
+    "bottom_hole_location": "1500",
+    "description": "Valid depth relationship"
+  },
+  {
+    "total_depth": "2000",
+    "surface_elevation": "1000",
+    "bottom_hole_location": "3000",
+    "description": "Another valid depth relationship"
+  }
+]

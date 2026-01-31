@@ -1,0 +1,22 @@
+[
+  {
+    "lat": 31.8884969,
+    "lng": -95.9133597,
+    "description": "Valid Texas coordinate"
+  },
+  {
+    "lat": 32.1796576,
+    "lng": -102.4089551,
+    "description": "Another valid Texas coordinate"
+  },
+  {
+    "lat": 25.8,
+    "lng": -106.6,
+    "description": "Boundary coordinate (minimum values)"
+  },
+  {
+    "lat": 36.5,
+    "lng": -93.5,
+    "description": "Boundary coordinate (maximum values)"
+  }
+]

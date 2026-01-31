@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: rrc_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5433:5432"  # Non-standard port to avoid conflicts
+    volumes:
+      - ./database/schema:/docker-entrypoint-initdb.d:ro
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d rrc_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      
+  redis-test:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+
+volumes:
+  postgres_test_data:
+  redis_test_data:

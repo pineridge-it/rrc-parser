@@ -21,7 +21,7 @@ interface UsageWarningsProps {
   className?: string;
 }
 
-export function UsageWarnings({ warnings, onUpgrade, className = '' }: UsageWarningsProps): JSX.Element | null {
+export function UsageWarnings({ warnings, onUpgrade, className = '' }: UsageWarningsProps): React.ReactElement | null {
   if (warnings.length === 0) {
     return null;
   }
@@ -87,7 +87,7 @@ interface UsageMeterProps {
   className?: string;
 }
 
-export function UsageMeter({ current, limit, label, className = '' }: UsageMeterProps): JSX.Element {
+export function UsageMeter({ current, limit, label, className = '' }: UsageMeterProps): React.ReactElement {
   const percentage = limit > 0 ? (current / limit) * 100 : 0;
   const isSoftLimit = percentage >= 80 && percentage < 100;
   const isHardLimit = percentage >= 100;
@@ -127,7 +127,7 @@ interface UsageDashboardProps {
   className?: string;
 }
 
-export function UsageDashboard({ usage, onUpgrade, className = '' }: UsageDashboardProps): JSX.Element {
+export function UsageDashboard({ usage, onUpgrade, className = '' }: UsageDashboardProps): React.ReactElement {
   return (
     <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">

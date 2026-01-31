@@ -1,3 +1,5 @@
+import { UUID } from './common';
+import { Operator } from './operator';
 
 /**
  * Permit and record type definitions
@@ -225,4 +227,91 @@ export interface CSVRow {
   restriction_count: number;
   remark_count: number;
   address: string;
+}
+
+/**
+ * Permit amendment structure
+ */
+export interface PermitAmendment {
+  id: UUID;
+  permitId: UUID;
+  amendmentDate: string;
+  amendmentType: string;
+  description: string;
+  createdAt: string;
+}
+
+/**
+ * Well structure
+ */
+export interface Well {
+  id: UUID;
+  apiNumber: string;
+  wellName: string;
+  permitId: UUID;
+  createdAt: string;
+}
+
+/**
+ * Permit detail structure for the detail page
+ */
+export interface PermitDetail {
+  id: UUID;
+  permitNumber: string;
+  status: string;
+  operator: Operator;
+  leaseName?: string;
+  wellNumber?: string;
+  district?: string;
+  county?: string;
+  countyCode?: string;
+  issueDate?: string;
+  receivedDate?: string;
+  amendedDate?: string;
+  extendedDate?: string;
+  spudDate?: string;
+  wellStatus?: string;
+  totalDepth?: number;
+  applicationType?: string;
+  wellType?: string;
+  horizontalFlag?: boolean;
+  directionalFlag?: boolean;
+  sidetrackFlag?: boolean;
+  surfaceLocation?: {
+    section?: string;
+    block?: string;
+    survey?: string;
+    abstract?: string;
+    latitude?: number;
+    longitude?: number;
+  };
+  bottomholeLocation?: {
+    latitude?: number;
+    longitude?: number;
+  };
+  fields: {
+    fieldNumber?: string;
+    fieldName?: string;
+  }[];
+  restrictions: string[];
+  remarks: string[];
+  amendments: PermitAmendment[];
+  relatedWells: Well[];
+  nearbyPermits: UUID[]; // Just IDs for now, can be expanded to full permit objects
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Permit detail props for components
+ */
+export interface PermitDetailProps {
+  permitId: UUID;
+}
+
+/**
+ * Request for permit detail
+ */
+export interface PermitDetailRequest {
+  permitId: UUID;
 }

@@ -1,0 +1,13 @@
+[
+  {
+    "surface_latitude": "31.8884969",
+    "surface_longitude": "-95.9133597",
+    "county": "Houston",
+    "description": "Valid cross-field relationship"
+  },
+  {
+    "permit_type": "NEW",
+    "well_type": "OIL",
+    "description": "Valid permit-well type relationship"
+  }
+]

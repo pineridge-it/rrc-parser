@@ -1,0 +1,18 @@
+[
+  {
+    "permit_number": "12345",
+    "operator_name": "TEST OPERATOR",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-01",
+    "total_depth": 1000,
+    "well_status": "ACTIVE"
+  },
+  {
+    "permit_number": "12346",
+    "operator_name": "TEST OPERATOR 2",
+    "county": "TEST COUNTY 2",
+    "issued_date": "2023-01-02",
+    "total_depth": 2000,
+    "well_status": "INACTIVE"
+  }
+]

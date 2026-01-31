@@ -1,0 +1,221 @@
+# Web Application E2E Tests
+
+This directory contains end-to-end tests for the web application using Playwright for browser automation.
+
+## Test Structure
+
+The tests are organized to cover the main user workflows:
+
+1. `app.test.ts` - Core application workflows including signup, login, permit map, search, alert creation, and notifications
+
+## Key Test Scenarios
+
+### User Authentication
+- User signup with valid credentials
+- User login with existing account
+- Authentication flow integrity
+- Session management
+
+### Permit Map
+- Map component loading
+- Permit display on map
+- Map interaction (zoom, pan)
+- Permit marker clustering
+
+### Permit Search
+- Search by various criteria (county, operator, date range)
+- Search result display
+- Search result filtering
+- Search result sorting
+
+### Alert Management
+- Alert rule creation
+- Alert rule editing
+- Alert rule deletion
+- Alert rule activation/deactivation
+
+### Notifications
+- Notification display
+- Notification marking as read
+- Notification filtering
+- Notification clearing
+
+## Test Environment
+
+E2E tests require a complete environment:
+- Next.js frontend (running on test port)
+- API server (running on test port)
+- PostgreSQL database (test instance)
+- Redis (for sessions/cache)
+- Supabase Auth (or mock for local)
+
+## Configuration
+
+Tests use the configuration defined in `tests/e2e/config/web.config.ts`:
+
+```typescript
+export const WEB_E2E_CONFIG = {
+  // Test environment
+  baseUrl: process.env.WEB_TEST_URL || 'http://localhost:3000',
+  
+  // Authentication
+  testUser: {
+    email: process.env.WEB_TEST_USER_EMAIL || 'test@example.com',
+    password: process.env.WEB_TEST_USER_PASSWORD || 'testpass123',
+  },
+  
+  // Timeouts
+  pageLoadTimeout: 30000,
+  actionTimeout: 10000,
+  
+  // Test data
+  testPermits: 100,
+  testAlerts: 10
+};
+```
+
+## Test Philosophy
+
+Following the production-like data principle, all tests use:
+- Real browser automation with Playwright
+- Real user workflows
+- Real data persistence verification
+- Real authentication flows
+- Real API interactions
+
+## Test Dependencies
+
+These tests require:
+- Running Next.js frontend
+- Running API server
+- Running PostgreSQL database
+- Running Redis instance
+- Running Supabase Auth or equivalent
+- Playwright test runner
+
+## Performance Considerations
+
+Web application E2E tests involve:
+- Browser startup time
+- Page load times
+- Network latency for API calls
+- Database query times
+- Authentication overhead
+
+Tests should account for these delays in timeout configurations.
+
+## Running Tests
+
+### Running All Web E2E Tests
+
+```bash
+npm run test:e2e:web
+```
+
+### Running Specific Tests
+
+```bash
+npm run test:e2e:web -- tests/e2e/web/app.test.ts
+```
+
+### Running Tests with Visual Debugging
+
+```bash
+npm run test:e2e:web -- --headed
+```
+
+### Running Tests with Verbose Output
+
+```bash
+npm run test:e2e:web -- --verbose
+```
+
+## Writing Tests
+
+### Basic Test Structure
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Feature Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    // Setup for each test
+    await page.goto('/');
+  });
+
+  test('should perform action', async ({ page }) => {
+    // Test implementation
+    await page.click('button[data-testid="action-button"]');
+    await expect(page.locator('[data-testid="result"]')).toBeVisible();
+  });
+});
+```
+
+### Using Test Data Factories
+
+```typescript
+import { PermitFactory } from '../../factories/permit.factory';
+
+test('should display permits on map', async ({ page }) => {
+  // Create test data using factories
+  const permits = PermitFactory.createMany(10);
+  
+  // Navigate to map page
+  await page.goto('/map');
+  
+  // Verify permits displayed
+  await expect(page.locator('.permit-marker')).toHaveCount(10);
+});
+```
+
+## Troubleshooting
+
+### Tests Fail Due to Element Not Found
+
+1. Check if the element has a `data-testid` attribute:
+   ```html
+   <button data-testid="submit-button">Submit</button>
+   ```
+
+2. Use the correct selector in tests:
+   ```typescript
+   await page.click('[data-testid="submit-button"]');
+   ```
+
+### Tests Fail Due to Timing Issues
+
+1. Increase timeout for specific actions:
+   ```typescript
+   await page.click('[data-testid="slow-action"]', { timeout: 60000 });
+   ```
+
+2. Wait for specific conditions:
+   ```typescript
+   await page.waitForSelector('[data-testid="loaded-content"]');
+   ```
+
+### Tests Fail Due to Authentication
+
+1. Verify test user credentials:
+   ```bash
+   echo $WEB_TEST_USER_EMAIL
+   echo $WEB_TEST_USER_PASSWORD
+   ```
+
+2. Check if test user exists in database:
+   ```sql
+   SELECT * FROM users WHERE email = 'test@example.com';
+   ```
+
+## Best Practices
+
+1. Use `data-testid` attributes for reliable element selection
+2. Clean up test data after each test to prevent state leakage
+3. Use realistic test data generated by factories
+4. Test both happy path and error cases
+5. Keep tests independent and able to run in any order
+6. Use appropriate timeout values for actions
+7. Group related tests in describes
+8. Use meaningful test names that describe the behavior
+9. Minimize the use of waits and sleeps
+10. Mock external services when appropriate (payment providers, email services)

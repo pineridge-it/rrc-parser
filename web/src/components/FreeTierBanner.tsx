@@ -14,7 +14,7 @@ interface FreeTierBannerProps {
   className?: string;
 }
 
-export function FreeTierBanner({ onUpgrade, onDismiss, className = '' }: FreeTierBannerProps): JSX.Element {
+export function FreeTierBanner({ onUpgrade, onDismiss, className = '' }: FreeTierBannerProps): React.ReactElement {
   return (
     <div className={`relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 ${className}`}>
       <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -59,7 +59,7 @@ interface FreeTierUsageCardProps {
   className?: string;
 }
 
-export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTierUsageCardProps): JSX.Element {
+export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTierUsageCardProps): React.ReactElement {
   const getStatusColor = (percentage: number): string => {
     if (percentage >= 100) return 'text-red-600 bg-red-50';
     if (percentage >= 80) return 'text-amber-600 bg-amber-50';

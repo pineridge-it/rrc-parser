@@ -1,0 +1,17 @@
+[
+  {
+    "issued_date": "invalid-date",
+    "expires_date": "2024-01-01",
+    "description": "Invalid issued date format"
+  },
+  {
+    "issued_date": "2023-01-01",
+    "expires_date": "not-a-date",
+    "description": "Invalid expires date format"
+  },
+  {
+    "issued_date": "",
+    "expires_date": "2024-01-01",
+    "description": "Empty issued date"
+  }
+]

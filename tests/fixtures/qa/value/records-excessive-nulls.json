@@ -1,0 +1,26 @@
+[
+  {
+    "permit_number": null,
+    "operator_name": "",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-01",
+    "latitude": 31.8884969,
+    "longitude": -95.9133597
+  },
+  {
+    "permit_number": "",
+    "operator_name": null,
+    "county": "TEST COUNTY 2",
+    "issued_date": "2023-01-02",
+    "latitude": 32.1796576,
+    "longitude": -102.4089551
+  },
+  {
+    "permit_number": "12347",
+    "operator_name": "TEST OPERATOR 3",
+    "county": "TEST COUNTY 3",
+    "issued_date": null,
+    "latitude": null,
+    "longitude": null
+  }
+]

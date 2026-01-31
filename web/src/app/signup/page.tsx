@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useOnboarding } from '@/components/onboarding/OnboardingContext'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +16,7 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState('')
   const [signupComplete, setSignupComplete] = useState(false)
   const { signUp, loading, error } = useAuth()
+  const { resetOnboarding } = useOnboarding()
   const router = useRouter()
 
   const validatePassword = () => {
@@ -38,7 +40,10 @@ export default function SignupPage() {
     const { error, data } = await signUp(email, password, fullName)
     
     if (!error && data?.user) {
-      setSignupComplete(true)
+      // Reset onboarding state for new user
+      resetOnboarding()
+      // Redirect to onboarding flow
+      router.push('/onboarding')
     }
   }
 

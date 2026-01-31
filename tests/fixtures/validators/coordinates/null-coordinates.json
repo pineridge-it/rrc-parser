@@ -1,0 +1,17 @@
+[
+  {
+    "lat": null,
+    "lng": -95.9133597,
+    "description": "Null latitude"
+  },
+  {
+    "lat": 31.8884969,
+    "lng": null,
+    "description": "Null longitude"
+  },
+  {
+    "lat": null,
+    "lng": null,
+    "description": "Both coordinates null"
+  }
+]

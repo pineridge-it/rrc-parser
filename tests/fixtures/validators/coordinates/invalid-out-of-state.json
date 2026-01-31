@@ -1,0 +1,27 @@
+[
+  {
+    "lat": 20.0,
+    "lng": -95.9133597,
+    "description": "Latitude below Texas bounds"
+  },
+  {
+    "lat": 40.0,
+    "lng": -102.4089551,
+    "description": "Latitude above Texas bounds"
+  },
+  {
+    "lat": 31.8884969,
+    "lng": -110.0,
+    "description": "Longitude below Texas bounds"
+  },
+  {
+    "lat": 32.1796576,
+    "lng": -90.0,
+    "description": "Longitude above Texas bounds"
+  },
+  {
+    "lat": 0.0,
+    "lng": 0.0,
+    "description": "Completely outside Texas"
+  }
+]

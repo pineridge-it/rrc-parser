@@ -1,0 +1,602 @@
+[
+  {
+    "permit_number": "10001",
+    "operator_name": "LARGE BATCH OPERATOR 1",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-01"
+  },
+  {
+    "permit_number": "10002",
+    "operator_name": "LARGE BATCH OPERATOR 2",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-02"
+  },
+  {
+    "permit_number": "10003",
+    "operator_name": "LARGE BATCH OPERATOR 3",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-03"
+  },
+  {
+    "permit_number": "10004",
+    "operator_name": "LARGE BATCH OPERATOR 4",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-04"
+  },
+  {
+    "permit_number": "10005",
+    "operator_name": "LARGE BATCH OPERATOR 5",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-05"
+  },
+  {
+    "permit_number": "10006",
+    "operator_name": "LARGE BATCH OPERATOR 6",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-06"
+  },
+  {
+    "permit_number": "10007",
+    "operator_name": "LARGE BATCH OPERATOR 7",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-07"
+  },
+  {
+    "permit_number": "10008",
+    "operator_name": "LARGE BATCH OPERATOR 8",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-08"
+  },
+  {
+    "permit_number": "10009",
+    "operator_name": "LARGE BATCH OPERATOR 9",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-09"
+  },
+  {
+    "permit_number": "10010",
+    "operator_name": "LARGE BATCH OPERATOR 10",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-10"
+  },
+  {
+    "permit_number": "10011",
+    "operator_name": "LARGE BATCH OPERATOR 11",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-11"
+  },
+  {
+    "permit_number": "10012",
+    "operator_name": "LARGE BATCH OPERATOR 12",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-12"
+  },
+  {
+    "permit_number": "10013",
+    "operator_name": "LARGE BATCH OPERATOR 13",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-13"
+  },
+  {
+    "permit_number": "10014",
+    "operator_name": "LARGE BATCH OPERATOR 14",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-14"
+  },
+  {
+    "permit_number": "10015",
+    "operator_name": "LARGE BATCH OPERATOR 15",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-15"
+  },
+  {
+    "permit_number": "10016",
+    "operator_name": "LARGE BATCH OPERATOR 16",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-16"
+  },
+  {
+    "permit_number": "10017",
+    "operator_name": "LARGE BATCH OPERATOR 17",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-17"
+  },
+  {
+    "permit_number": "10018",
+    "operator_name": "LARGE BATCH OPERATOR 18",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-18"
+  },
+  {
+    "permit_number": "10019",
+    "operator_name": "LARGE BATCH OPERATOR 19",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-19"
+  },
+  {
+    "permit_number": "10020",
+    "operator_name": "LARGE BATCH OPERATOR 20",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-20"
+  },
+  {
+    "permit_number": "10021",
+    "operator_name": "LARGE BATCH OPERATOR 21",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-21"
+  },
+  {
+    "permit_number": "10022",
+    "operator_name": "LARGE BATCH OPERATOR 22",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-22"
+  },
+  {
+    "permit_number": "10023",
+    "operator_name": "LARGE BATCH OPERATOR 23",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-23"
+  },
+  {
+    "permit_number": "10024",
+    "operator_name": "LARGE BATCH OPERATOR 24",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-24"
+  },
+  {
+    "permit_number": "10025",
+    "operator_name": "LARGE BATCH OPERATOR 25",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-25"
+  },
+  {
+    "permit_number": "10026",
+    "operator_name": "LARGE BATCH OPERATOR 26",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-26"
+  },
+  {
+    "permit_number": "10027",
+    "operator_name": "LARGE BATCH OPERATOR 27",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-27"
+  },
+  {
+    "permit_number": "10028",
+    "operator_name": "LARGE BATCH OPERATOR 28",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-28"
+  },
+  {
+    "permit_number": "10029",
+    "operator_name": "LARGE BATCH OPERATOR 29",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-29"
+  },
+  {
+    "permit_number": "10030",
+    "operator_name": "LARGE BATCH OPERATOR 30",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-30"
+  },
+  {
+    "permit_number": "10031",
+    "operator_name": "LARGE BATCH OPERATOR 31",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-31"
+  },
+  {
+    "permit_number": "10032",
+    "operator_name": "LARGE BATCH OPERATOR 32",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-01"
+  },
+  {
+    "permit_number": "10033",
+    "operator_name": "LARGE BATCH OPERATOR 33",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-02"
+  },
+  {
+    "permit_number": "10034",
+    "operator_name": "LARGE BATCH OPERATOR 34",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-03"
+  },
+  {
+    "permit_number": "10035",
+    "operator_name": "LARGE BATCH OPERATOR 35",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-04"
+  },
+  {
+    "permit_number": "10036",
+    "operator_name": "LARGE BATCH OPERATOR 36",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-05"
+  },
+  {
+    "permit_number": "10037",
+    "operator_name": "LARGE BATCH OPERATOR 37",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-06"
+  },
+  {
+    "permit_number": "10038",
+    "operator_name": "LARGE BATCH OPERATOR 38",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-07"
+  },
+  {
+    "permit_number": "10039",
+    "operator_name": "LARGE BATCH OPERATOR 39",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-08"
+  },
+  {
+    "permit_number": "10040",
+    "operator_name": "LARGE BATCH OPERATOR 40",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-09"
+  },
+  {
+    "permit_number": "10041",
+    "operator_name": "LARGE BATCH OPERATOR 41",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-10"
+  },
+  {
+    "permit_number": "10042",
+    "operator_name": "LARGE BATCH OPERATOR 42",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-11"
+  },
+  {
+    "permit_number": "10043",
+    "operator_name": "LARGE BATCH OPERATOR 43",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-12"
+  },
+  {
+    "permit_number": "10044",
+    "operator_name": "LARGE BATCH OPERATOR 44",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-13"
+  },
+  {
+    "permit_number": "10045",
+    "operator_name": "LARGE BATCH OPERATOR 45",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-14"
+  },
+  {
+    "permit_number": "10046",
+    "operator_name": "LARGE BATCH OPERATOR 46",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-15"
+  },
+  {
+    "permit_number": "10047",
+    "operator_name": "LARGE BATCH OPERATOR 47",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-16"
+  },
+  {
+    "permit_number": "10048",
+    "operator_name": "LARGE BATCH OPERATOR 48",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-17"
+  },
+  {
+    "permit_number": "10049",
+    "operator_name": "LARGE BATCH OPERATOR 49",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-18"
+  },
+  {
+    "permit_number": "10050",
+    "operator_name": "LARGE BATCH OPERATOR 50",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-19"
+  },
+  {
+    "permit_number": "10051",
+    "operator_name": "LARGE BATCH OPERATOR 51",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-20"
+  },
+  {
+    "permit_number": "10052",
+    "operator_name": "LARGE BATCH OPERATOR 52",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-21"
+  },
+  {
+    "permit_number": "10053",
+    "operator_name": "LARGE BATCH OPERATOR 53",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-22"
+  },
+  {
+    "permit_number": "10054",
+    "operator_name": "LARGE BATCH OPERATOR 54",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-23"
+  },
+  {
+    "permit_number": "10055",
+    "operator_name": "LARGE BATCH OPERATOR 55",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-24"
+  },
+  {
+    "permit_number": "10056",
+    "operator_name": "LARGE BATCH OPERATOR 56",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-25"
+  },
+  {
+    "permit_number": "10057",
+    "operator_name": "LARGE BATCH OPERATOR 57",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-26"
+  },
+  {
+    "permit_number": "10058",
+    "operator_name": "LARGE BATCH OPERATOR 58",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-27"
+  },
+  {
+    "permit_number": "10059",
+    "operator_name": "LARGE BATCH OPERATOR 59",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-02-28"
+  },
+  {
+    "permit_number": "10060",
+    "operator_name": "LARGE BATCH OPERATOR 60",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-01"
+  },
+  {
+    "permit_number": "10061",
+    "operator_name": "LARGE BATCH OPERATOR 61",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-02"
+  },
+  {
+    "permit_number": "10062",
+    "operator_name": "LARGE BATCH OPERATOR 62",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-03"
+  },
+  {
+    "permit_number": "10063",
+    "operator_name": "LARGE BATCH OPERATOR 63",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-04"
+  },
+  {
+    "permit_number": "10064",
+    "operator_name": "LARGE BATCH OPERATOR 64",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-05"
+  },
+  {
+    "permit_number": "10065",
+    "operator_name": "LARGE BATCH OPERATOR 65",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-06"
+  },
+  {
+    "permit_number": "10066",
+    "operator_name": "LARGE BATCH OPERATOR 66",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-07"
+  },
+  {
+    "permit_number": "10067",
+    "operator_name": "LARGE BATCH OPERATOR 67",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-08"
+  },
+  {
+    "permit_number": "10068",
+    "operator_name": "LARGE BATCH OPERATOR 68",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-09"
+  },
+  {
+    "permit_number": "10069",
+    "operator_name": "LARGE BATCH OPERATOR 69",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-10"
+  },
+  {
+    "permit_number": "10070",
+    "operator_name": "LARGE BATCH OPERATOR 70",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-11"
+  },
+  {
+    "permit_number": "10071",
+    "operator_name": "LARGE BATCH OPERATOR 71",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-12"
+  },
+  {
+    "permit_number": "10072",
+    "operator_name": "LARGE BATCH OPERATOR 72",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-13"
+  },
+  {
+    "permit_number": "10073",
+    "operator_name": "LARGE BATCH OPERATOR 73",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-14"
+  },
+  {
+    "permit_number": "10074",
+    "operator_name": "LARGE BATCH OPERATOR 74",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-15"
+  },
+  {
+    "permit_number": "10075",
+    "operator_name": "LARGE BATCH OPERATOR 75",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-16"
+  },
+  {
+    "permit_number": "10076",
+    "operator_name": "LARGE BATCH OPERATOR 76",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-17"
+  },
+  {
+    "permit_number": "10077",
+    "operator_name": "LARGE BATCH OPERATOR 77",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-18"
+  },
+  {
+    "permit_number": "10078",
+    "operator_name": "LARGE BATCH OPERATOR 78",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-19"
+  },
+  {
+    "permit_number": "10079",
+    "operator_name": "LARGE BATCH OPERATOR 79",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-20"
+  },
+  {
+    "permit_number": "10080",
+    "operator_name": "LARGE BATCH OPERATOR 80",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-21"
+  },
+  {
+    "permit_number": "10081",
+    "operator_name": "LARGE BATCH OPERATOR 81",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-22"
+  },
+  {
+    "permit_number": "10082",
+    "operator_name": "LARGE BATCH OPERATOR 82",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-23"
+  },
+  {
+    "permit_number": "10083",
+    "operator_name": "LARGE BATCH OPERATOR 83",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-24"
+  },
+  {
+    "permit_number": "10084",
+    "operator_name": "LARGE BATCH OPERATOR 84",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-25"
+  },
+  {
+    "permit_number": "10085",
+    "operator_name": "LARGE BATCH OPERATOR 85",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-26"
+  },
+  {
+    "permit_number": "10086",
+    "operator_name": "LARGE BATCH OPERATOR 86",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-27"
+  },
+  {
+    "permit_number": "10087",
+    "operator_name": "LARGE BATCH OPERATOR 87",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-28"
+  },
+  {
+    "permit_number": "10088",
+    "operator_name": "LARGE BATCH OPERATOR 88",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-29"
+  },
+  {
+    "permit_number": "10089",
+    "operator_name": "LARGE BATCH OPERATOR 89",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-30"
+  },
+  {
+    "permit_number": "10090",
+    "operator_name": "LARGE BATCH OPERATOR 90",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-03-31"
+  },
+  {
+    "permit_number": "10091",
+    "operator_name": "LARGE BATCH OPERATOR 91",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-01"
+  },
+  {
+    "permit_number": "10092",
+    "operator_name": "LARGE BATCH OPERATOR 92",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-02"
+  },
+  {
+    "permit_number": "10093",
+    "operator_name": "LARGE BATCH OPERATOR 93",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-03"
+  },
+  {
+    "permit_number": "10094",
+    "operator_name": "LARGE BATCH OPERATOR 94",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-04"
+  },
+  {
+    "permit_number": "10095",
+    "operator_name": "LARGE BATCH OPERATOR 95",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-05"
+  },
+  {
+    "permit_number": "10096",
+    "operator_name": "LARGE BATCH OPERATOR 96",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-06"
+  },
+  {
+    "permit_number": "10097",
+    "operator_name": "LARGE BATCH OPERATOR 97",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-07"
+  },
+  {
+    "permit_number": "10098",
+    "operator_name": "LARGE BATCH OPERATOR 98",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-08"
+  },
+  {
+    "permit_number": "10099",
+    "operator_name": "LARGE BATCH OPERATOR 99",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-09"
+  },
+  {
+    "permit_number": "10100",
+    "operator_name": "LARGE BATCH OPERATOR 100",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-04-10"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "permit_number": "12345",
+    "operator_name": "TEST OPERATOR",
+    "county": "TEST COUNTY",
+    "issued_date": "2023-01-01",
+    "new_unexpected_field": "NEW_VALUE",
+    "another_new_field": 123
+  },
+  {
+    "permit_number": "12346",
+    "operator_name": "TEST OPERATOR 2",
+    "county": "TEST COUNTY 2",
+    "issued_date": "2023-01-02",
+    "new_unexpected_field": "NEW_VALUE_2"
+  }
+]

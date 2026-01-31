@@ -1,0 +1,12 @@
+[
+  {
+    "issued_date": "2024-02-29",
+    "expires_date": "2025-02-28",
+    "description": "Leap year date"
+  },
+  {
+    "issued_date": "2023-02-29",
+    "expires_date": "2024-02-29",
+    "description": "Invalid leap year date (2023 is not a leap year)"
+  }
+]

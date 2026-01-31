@@ -1,0 +1,20 @@
+[
+  {
+    "total_depth": "-1000",
+    "surface_elevation": "500",
+    "bottom_hole_location": "1500",
+    "description": "Negative total depth"
+  },
+  {
+    "total_depth": "1000",
+    "surface_elevation": "1500",
+    "bottom_hole_location": "500",
+    "description": "Surface elevation greater than bottom hole location"
+  },
+  {
+    "total_depth": "abc",
+    "surface_elevation": "500",
+    "bottom_hole_location": "1500",
+    "description": "Non-numeric total depth"
+  }
+]

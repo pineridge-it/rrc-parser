@@ -1,0 +1,1 @@
+[{"county": "TEST COUNTY", "issued_date": "2023-01-01", "total_depth": "1000", "operator_name": "TEST OPERATOR", "permit_number": 12345}, {"county": "TEST COUNTY 2", "issued_date": "2023-01-02", "total_depth": 2000, "operator_name": 123, "permit_number": "12346"}]

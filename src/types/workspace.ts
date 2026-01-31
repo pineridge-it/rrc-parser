@@ -1,68 +1,50 @@
-/**
- * Workspace types for multi-tenant support
- */
+import { UUID } from './common';
 
-export type PlanType = 'free' | 'pro' | 'enterprise';
+export interface WorkspaceMember {
+  id: UUID;
+  workspaceId: UUID;
+  userId: UUID;
+  role: 'admin' | 'member' | 'viewer';
+  isActive: boolean;
+  invitedBy?: UUID;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
-
-export interface Workspace {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  is_active: boolean;
-  settings: WorkspaceSettings;
-  plan: PlanType;
-  billing_email?: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at?: string;
+export interface WorkspaceInvitation {
+  id: UUID;
+  workspaceId: UUID;
+  email: string;
+  role: 'admin' | 'member' | 'viewer';
+  invitedBy: UUID;
+  expiresAt: string;
+  acceptedAt?: string;
+  createdAt: string;
 }
 
 export interface WorkspaceSettings {
-  default_map_center?: [number, number];
-  default_map_zoom?: number;
-  email_notifications_enabled?: boolean;
-  data_retention_days?: number;
-  custom_fields?: Record<string, unknown>;
-}
-
-export interface WorkspaceMember {
-  id: string;
-  workspace_id: string;
-  user_id: string;
-  role: WorkspaceRole;
-  is_active: boolean;
-  invited_by?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface WorkspaceWithMembers extends Workspace {
-  members: WorkspaceMember[];
-}
-
-export interface WorkspaceCreateInput {
+  id: UUID;
   name: string;
-  slug: string;
-  description?: string;
-  billing_email?: string;
+  billingContact?: string;
+  logoUrl?: string;
+  updatedAt: string;
 }
 
-export interface WorkspaceUpdateInput {
-  name?: string;
-  description?: string;
-  settings?: Partial<WorkspaceSettings>;
-  billing_email?: string;
-}
-
-export interface WorkspaceMemberInviteInput {
+export interface WorkspaceInvitationCreateRequest {
   email: string;
-  role: WorkspaceRole;
+  role: 'admin' | 'member' | 'viewer';
 }
 
-export interface WorkspaceMemberUpdateInput {
-  role?: WorkspaceRole;
-  is_active?: boolean;
+export interface WorkspaceMemberRoleUpdateRequest {
+  role: 'admin' | 'member' | 'viewer';
+}
+
+export interface WorkspaceSettingsUpdateRequest {
+  name?: string;
+  billingContact?: string;
+  logoUrl?: string;
+}
+
+export interface AcceptInvitationRequest {
+  token: string;
 }
