@@ -35,3 +35,22 @@ export {
   dataFreshnessService,
   DEFAULT_FRESHNESS_CONFIG
 } from './DataFreshnessService';
+
+// Logging exports
+export {
+  createLogger,
+  getRequestContext,
+  runWithContext,
+  runWithContextAsync,
+  generateCorrelationId,
+  asyncLocalStorage,
+} from '../services/logger';
+
+export type {
+  LogLevel,
+  LogEntry,
+  LoggerConfig,
+  RequestContext,
+  LogFormatter,
+  Logger,
+} from '../types/logging';
