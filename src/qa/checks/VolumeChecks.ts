@@ -35,10 +35,8 @@ export class VolumeChecks {
       passed = false;
       severity = 'critical';
       checks.push('Zero records detected');
-    }
-
-    // Check minimum records
-    if (currentCount < this.thresholds.minRecords) {
+    } else if (currentCount < this.thresholds.minRecords) {
+      // Only check minimum if not already flagged as zero records
       passed = false;
       severity = 'error';
       checks.push(`Record count (${currentCount}) below minimum (${this.thresholds.minRecords})`);
@@ -56,7 +54,10 @@ export class VolumeChecks {
       const deltaPercent = Math.abs((currentCount - previousCount) / previousCount) * 100;
       if (deltaPercent > this.thresholds.maxDeltaPercent) {
         passed = false;
-        severity = 'error';
+        // Only update severity if current is less severe than error
+        if (severity !== 'critical') {
+          severity = 'error';
+        }
         checks.push(`Volume delta (${deltaPercent.toFixed(1)}%) exceeds threshold (${this.thresholds.maxDeltaPercent}%)`);
       }
     }

@@ -122,9 +122,9 @@ export class SchemaChecks {
         missingFields
       },
       severity,
-      message: hasDrift 
-        ? `Schema drift detected: ${newFields.length} new fields, ${missingFields.length} missing`
-        : 'No schema drift detected',
+      message: passed
+        ? 'No schema drift detected'
+        : `Schema drift detected: ${newFields.length} new fields, ${missingFields.length} missing`,
       timestamp: new Date()
     };
   }
