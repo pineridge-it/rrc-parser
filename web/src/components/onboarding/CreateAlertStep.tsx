@@ -2,6 +2,7 @@
 
 import { useOnboarding } from './OnboardingContext'
 import { useState } from 'react'
+import { Input } from '@/components/ui/input'
 
 export default function CreateAlertStep() {
   const { completeStep, skipStep, state } = useOnboarding()
@@ -29,16 +30,13 @@ export default function CreateAlertStep() {
 
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="mb-6">
-          <label htmlFor="alert-name" className="block text-sm font-medium text-gray-700 mb-1">
-            Alert Name
-          </label>
-          <input
-            type="text"
+          <Input
             id="alert-name"
+            label="Alert Name"
+            placeholder="e.g., New permits in my area"
+            floatingLabel
             value={alertName}
             onChange={(e) => setAlertName(e.target.value)}
-            placeholder="e.g., New permits in my area"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 

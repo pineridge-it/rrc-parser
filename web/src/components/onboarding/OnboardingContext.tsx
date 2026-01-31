@@ -37,9 +37,22 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<OnboardingState>(() => {
     if (typeof window !== 'undefined') {
-      const savedState = localStorage.getItem('onboardingState')
-      if (savedState) {
-        return JSON.parse(savedState)
+      try {
+        const savedState = localStorage.getItem('onboardingState')
+        if (savedState) {
+          const parsed = JSON.parse(savedState)
+          // Validate parsed data has required fields
+          if (parsed && typeof parsed === 'object' &&
+              'currentStep' in parsed &&
+              'completedSteps' in parsed &&
+              Array.isArray(parsed.completedSteps)) {
+            return parsed
+          }
+        }
+      } catch (error) {
+        console.error('Failed to parse onboarding state from localStorage:', error)
+        // Clear corrupted data
+        localStorage.removeItem('onboardingState')
       }
     }
     return {
