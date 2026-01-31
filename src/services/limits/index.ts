@@ -185,7 +185,7 @@ export class LimitsEnforcer {
     const limits = PLAN_LIMITS[plan];
     const usage = await this.usageService.getUsage(workspaceId);
 
-    const aoiPercentage = (usage.aois.current / limits.aois) * 100;
+    const aoiPercentage = limits.aois > 0 ? (usage.aois.current / limits.aois) * 100 : 0;
     const alertsPercentage = limits.alertsPerMonth > 0
       ? (usage.alertsThisMonth.current / limits.alertsPerMonth) * 100
       : 0;

@@ -142,7 +142,6 @@ export class PermitParser {
                 this.checkpointManager.shouldSaveCheckpoint(lineNumber)) {
               this.saveCheckpointAsync(lineNumber, inputPath).catch(err => {
                 this.logger.warn(`Checkpoint save failed: ${err.message}`);
-                this.logger.warn(`Checkpoint save failed: ${err.message}`);
               });
             }
 

@@ -199,14 +199,11 @@ export class EmailService {
    * Configure email service settings
    */
   async configure(settings: Partial<EmailServiceConfig>): Promise<void> {
-    const response = await this.fetchWithAuth('/email/config', {
+    await this.fetchWithAuth('/email/config', {
       method: 'PATCH',
       body: JSON.stringify(settings)
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to configure email service: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**

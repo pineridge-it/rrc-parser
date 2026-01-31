@@ -125,13 +125,10 @@ export class WatchlistService {
    * Remove an item from the user's watchlist
    */
   async removeFromWatchlist(id: UUID): Promise<void> {
-    const response = await this.fetchWithAuth(`/watchlist/${id}`, {
+    await this.fetchWithAuth(`/watchlist/${id}`, {
       method: 'DELETE'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to remove item from watchlist: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
@@ -142,11 +139,6 @@ export class WatchlistService {
       method: 'PATCH',
       body: JSON.stringify({ notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update watchlist item: ${response.status}`);
-    }
-
     return response.json();
   }
 

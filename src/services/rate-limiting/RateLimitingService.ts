@@ -115,14 +115,11 @@ export class RateLimitingService {
     ruleId: UUID,
     channelType: string
   ): Promise<void> {
-    const response = await this.fetchWithAuth('/rate-limit/record', {
+    await this.fetchWithAuth('/rate-limit/record', {
       method: 'POST',
       body: JSON.stringify({ workspaceId, channelId, ruleId, channelType })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to record usage: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
@@ -145,13 +142,10 @@ export class RateLimitingService {
    * Reset rate limit counters (admin only)
    */
   async resetRateLimits(workspaceId: UUID): Promise<void> {
-    const response = await this.fetchWithAuth(`/rate-limit/reset/${workspaceId}`, {
+    await this.fetchWithAuth(`/rate-limit/reset/${workspaceId}`, {
       method: 'POST'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to reset rate limits: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**

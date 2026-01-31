@@ -78,42 +78,33 @@ export class OperatorAdminService {
    * Approve a suggested operator match
    */
   async approveMatch(aliasId: UUID, notes?: string): Promise<void> {
-    const response = await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}/approve`, {
+    await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}/approve`, {
       method: 'POST',
       body: JSON.stringify({ notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to approve match: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
    * Reject a suggested operator match
    */
   async rejectMatch(aliasId: UUID, createNewOperator: boolean = false, notes?: string): Promise<void> {
-    const response = await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}/reject`, {
+    await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}/reject`, {
       method: 'POST',
       body: JSON.stringify({ createNewOperator, notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to reject match: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
    * Merge two operators together
    */
   async mergeOperators(sourceId: UUID, targetId: UUID, notes?: string): Promise<void> {
-    const response = await this.fetchWithAuth(`/operators/admin/merge`, {
+    await this.fetchWithAuth(`/operators/admin/merge`, {
       method: 'POST',
       body: JSON.stringify({ sourceId, targetId, notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to merge operators: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
@@ -124,10 +115,6 @@ export class OperatorAdminService {
       method: 'POST',
       body: JSON.stringify({ operatorId, aliasIds, newName, notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to split operator: ${response.status}`);
-    }
 
     return response.json();
   }
@@ -141,10 +128,6 @@ export class OperatorAdminService {
       body: JSON.stringify({ operatorId, alias, notes })
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to add alias: ${response.status}`);
-    }
-
     return response.json();
   }
 
@@ -152,14 +135,11 @@ export class OperatorAdminService {
    * Remove an alias from an operator
    */
   async removeAlias(aliasId: UUID, notes?: string): Promise<void> {
-    const response = await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}`, {
+    await this.fetchWithAuth(`/operators/admin/aliases/${aliasId}`, {
       method: 'DELETE',
       body: JSON.stringify({ notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to remove alias: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
@@ -184,10 +164,6 @@ export class OperatorAdminService {
       body: JSON.stringify({ updates, notes })
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to update operator: ${response.status}`);
-    }
-
     return response.json();
   }
 
@@ -199,10 +175,6 @@ export class OperatorAdminService {
       method: 'PATCH',
       body: JSON.stringify({ isActive, notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update operator status: ${response.status}`);
-    }
 
     return response.json();
   }
@@ -220,10 +192,6 @@ export class OperatorAdminService {
       body: JSON.stringify({ aliasIds, notes })
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to bulk approve: ${response.status}`);
-    }
-
     return response.json();
   }
 
@@ -239,10 +207,6 @@ export class OperatorAdminService {
       method: 'POST',
       body: JSON.stringify({ aliasIds, createNewOperators, notes })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to bulk reject: ${response.status}`);
-    }
 
     return response.json();
   }

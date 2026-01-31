@@ -120,13 +120,9 @@ export class WorkspaceService {
    * Revoke an invitation
    */
   async revokeInvitation(invitationId: UUID): Promise<void> {
-    const response = await this.fetchWithAuth(`/workspace/invitations/${invitationId}`, {
+    await this.fetchWithAuth(`/workspace/invitations/${invitationId}`, {
       method: 'DELETE'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to revoke invitation: ${response.status}`);
-    }
   }
 
   /**
@@ -153,13 +149,10 @@ export class WorkspaceService {
    * Remove a member from the workspace
    */
   async removeMember(memberId: UUID): Promise<void> {
-    const response = await this.fetchWithAuth(`/workspace/members/${memberId}`, {
+    await this.fetchWithAuth(`/workspace/members/${memberId}`, {
       method: 'DELETE'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to remove member: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**

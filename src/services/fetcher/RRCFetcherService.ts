@@ -159,13 +159,9 @@ export class RRCFetcherService {
    * Reset fetcher statistics
    */
   async resetStats(): Promise<void> {
-    const response = await this.fetchWithAuth('/fetcher/stats/reset', {
+    await this.fetchWithAuth('/fetcher/stats/reset', {
       method: 'POST'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to reset stats: ${response.status}`);
-    }
   }
 
   /**
@@ -183,14 +179,11 @@ export class RRCFetcherService {
    * Adjust rate limit dynamically
    */
   async adjustRateLimit(newLimit: number): Promise<void> {
-    const response = await this.fetchWithAuth('/fetcher/rate-limit/adjust', {
+    await this.fetchWithAuth('/fetcher/rate-limit/adjust', {
       method: 'POST',
       body: JSON.stringify({ newLimit })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to adjust rate limit: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**

@@ -148,13 +148,10 @@ export class PermitLoaderService {
    * Rollback a batch by ID
    */
   async rollbackBatch(batchId: UUID): Promise<void> {
-    const response = await this.fetchWithAuth(`/permits/load/rollback/${batchId}`, {
+    await this.fetchWithAuth(`/permits/load/rollback/${batchId}`, {
       method: 'POST'
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to rollback batch: ${response.status}`);
-    }
+    // fetchWithAuth already throws on non-ok responses
   }
 
   /**
