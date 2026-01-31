@@ -2,8 +2,7 @@ import {
   UUID
 } from '../../types/common';
 import {
-  PermitDetail,
-  PermitDetailRequest
+  PermitDetail
 } from '../../types/permit';
 
 export interface PermitServiceConfig {

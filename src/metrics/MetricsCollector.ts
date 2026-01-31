@@ -1,15 +1,12 @@
 import {
-  MetricType,
   Metric,
   CounterMetric,
   GaugeMetric,
   HistogramMetric,
-  HistogramBucket,
   MetricValue,
   MetricsSnapshot,
   MetricsCollectorConfig,
   DEFAULT_HISTOGRAM_BUCKETS,
-  PrometheusMetricLine
 } from './types';
 
 /**
@@ -93,7 +90,7 @@ export class MetricsCollector {
       throw new Error(`Metric ${name} is not a counter`);
     }
 
-    const counter = metric as CounterMetric;
+    const counter = metric;
     counter.values.push({
       value,
       timestamp: new Date(),
@@ -113,7 +110,7 @@ export class MetricsCollector {
       throw new Error(`Metric ${name} is not a gauge`);
     }
 
-    const gauge = metric as GaugeMetric;
+    const gauge = metric;
     gauge.values.push({
       value,
       timestamp: new Date(),
@@ -133,7 +130,7 @@ export class MetricsCollector {
       throw new Error(`Metric ${name} is not a histogram`);
     }
 
-    const histogram = metric as HistogramMetric;
+    const histogram = metric;
     histogram.sum += value;
     histogram.count += 1;
 
@@ -204,7 +201,7 @@ export class MetricsCollector {
       lines.push(`# TYPE ${metric.name} ${metric.type}`);
 
       if (metric.type === 'histogram') {
-        lines.push(...this.formatHistogram(metric as HistogramMetric));
+        lines.push(...this.formatHistogram(metric));
       } else {
         lines.push(...this.formatSimpleMetric(metric));
       }

@@ -2,7 +2,11 @@
  * Operator and operator alias type definitions
  */
 
-export type UUID = string;
+import { UUID } from './common';
+
+// Re-export UUID and OperatorReviewItem from operator-admin
+export { UUID } from './common';
+export { OperatorReviewItem } from './operator-admin';
 
 /**
  * Canonical operator entity

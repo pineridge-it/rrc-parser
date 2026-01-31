@@ -6,8 +6,6 @@
 import {
   ExportRequest,
   ExportJob,
-  ExportFormat,
-  ExportStatus,
   getExportFormatConfig
 } from '../../types/export';
 import { UsageService } from '../usage';
@@ -134,7 +132,11 @@ export class ExportService {
     }
 
     const job = await this.loadJob(jobId);
-    if (job && job.status === 'pending' || job.status === 'processing') {
+    if (!job) {
+      return false;
+    }
+
+    if (job.status === 'pending' || job.status === 'processing') {
       job.status = 'failed';
       job.errorMessage = 'Cancelled by user';
       job.updatedAt = new Date();
@@ -220,7 +222,7 @@ export class ExportService {
   /**
    * Fetch permits based on filters
    */
-  private async fetchPermits(filters: ExportRequest['filters'], signal: AbortSignal): Promise<any[]> {
+  private async fetchPermits(_filters: ExportRequest['filters'], _signal: AbortSignal): Promise<any[]> {
     // This would integrate with the permit service
     // Placeholder implementation
     return [];
@@ -254,9 +256,9 @@ export class ExportService {
    * Generate CSV export
    */
   private async generateCSV(
-    job: ExportJob, 
-    permits: any[], 
-    signal: AbortSignal
+    job: ExportJob,
+    permits: any[],
+    _signal: AbortSignal
   ): Promise<Buffer> {
     const fields = job.fields || this.getDefaultFields();
     const headers = fields.join(',');
@@ -293,9 +295,9 @@ export class ExportService {
    * Generate GeoJSON export
    */
   private async generateGeoJSON(
-    job: ExportJob, 
-    permits: any[], 
-    signal: AbortSignal
+    job: ExportJob,
+    permits: any[],
+    _signal: AbortSignal
   ): Promise<Buffer> {
     const features = permits.map(permit => ({
       type: 'Feature',
@@ -315,9 +317,9 @@ export class ExportService {
    * Generate Shapefile export
    */
   private async generateShapefile(
-    job: ExportJob, 
-    permits: any[], 
-    signal: AbortSignal
+    _job: ExportJob,
+    _permits: any[],
+    _signal: AbortSignal
   ): Promise<Buffer> {
     // Would use a library like shp-write
     // Placeholder
@@ -328,9 +330,9 @@ export class ExportService {
    * Generate KML export
    */
   private async generateKML(
-    job: ExportJob, 
-    permits: any[], 
-    signal: AbortSignal
+    job: ExportJob,
+    permits: any[],
+    _signal: AbortSignal
   ): Promise<Buffer> {
     const placemarks = permits.map(permit => {
       const properties = this.filterFields(permit, job.fields);
@@ -400,7 +402,7 @@ export class ExportService {
   /**
    * Get permit geometry
    */
-  private getPermitGeometry(permit: any): any {
+  private getPermitGeometry(_permit: any): any {
     // Placeholder - would extract actual coordinates from permit data
     return {
       type: 'Point',
@@ -411,7 +413,7 @@ export class ExportService {
   /**
    * Store file and return download URL
    */
-  private async storeFile(fileName: string, buffer: Buffer): Promise<string> {
+  private async storeFile(fileName: string, _buffer: Buffer): Promise<string> {
     // Placeholder - would store in S3 or similar
     return `${this.config.downloadBaseUrl}/${fileName}`;
   }
@@ -419,14 +421,14 @@ export class ExportService {
   /**
    * Save job to database
    */
-  private async saveJob(job: ExportJob): Promise<void> {
+  private async saveJob(_job: ExportJob): Promise<void> {
     // Placeholder - would save to database
   }
 
   /**
    * Load job from database
    */
-  private async loadJob(jobId: string): Promise<ExportJob | null> {
+  private async loadJob(_jobId: string): Promise<ExportJob | null> {
     // Placeholder - would load from database
     return null;
   }
@@ -434,7 +436,7 @@ export class ExportService {
   /**
    * Load jobs for workspace
    */
-  private async loadJobsForWorkspace(workspaceId: string, limit: number): Promise<ExportJob[]> {
+  private async loadJobsForWorkspace(_workspaceId: string, _limit: number): Promise<ExportJob[]> {
     // Placeholder - would load from database
     return [];
   }

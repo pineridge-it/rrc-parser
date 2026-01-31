@@ -37,17 +37,7 @@ export function loggingContextMiddleware(
     ended = true;
     
     const durationMs = Date.now() - startTime;
-    
-    const logData = {
-      correlationId,
-      method: req.method,
-      path: req.path,
-      statusCode: res.statusCode,
-      durationMs,
-      userAgent: req.headers['user-agent'],
-      contentLength: res.getHeader('content-length'),
-    };
-    
+
     if (res.statusCode >= 500) {
       console.error(`[${correlationId}] ${req.method} ${req.path} ${res.statusCode} (${durationMs}ms)`);
     } else if (res.statusCode >= 400) {

@@ -84,11 +84,10 @@ export class EtlMetrics {
    * @param stageName Name of the stage (fetch, parse, transform, load)
    * @returns Function to stop the timer
    */
-  startStageTimer(stageName: string): () => void {
+  startStageTimer(_stageName: string): () => void {
     const stopTimer = this.collector.startTimer('etl_stage_duration_seconds');
     return () => {
       // Record with stage label
-      const duration = process.hrtime.bigint();
       // The timer will record the duration, but we need to add the stage label
       // This is a simplified version - in production, you'd want label support in the timer
       stopTimer();

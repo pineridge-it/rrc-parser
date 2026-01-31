@@ -2,8 +2,7 @@
  * Areas of Interest Service with Free Tier Limits
  */
 
-import { UUID } from 'crypto';
-import { LimitsEnforcer, FreeTierLimitExceededError } from '../limits';
+import { LimitsEnforcer } from '../limits';
 
 export interface AOICreateRequest {
   name: string;
@@ -57,7 +56,7 @@ export class AOIService {
   /**
    * Get AOI count for workspace
    */
-  async getAOICount(workspaceId: string): Promise<number> {
+  async getAOICount(_workspaceId: string): Promise<number> {
     // TODO: Implement database query
     return 0;
   }
@@ -65,7 +64,7 @@ export class AOIService {
   /**
    * List AOIs for workspace
    */
-  async listAOIs(workspaceId: string): Promise<AOI[]> {
+  async listAOIs(_workspaceId: string): Promise<AOI[]> {
     // TODO: Implement database query
     return [];
   }
@@ -73,7 +72,7 @@ export class AOIService {
   /**
    * Delete an AOI
    */
-  async deleteAOI(aoiId: string): Promise<void> {
+  async deleteAOI(_aoiId: string): Promise<void> {
     // TODO: Implement database delete
   }
 

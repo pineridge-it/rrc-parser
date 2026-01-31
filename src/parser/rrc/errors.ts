@@ -20,13 +20,17 @@ export class RrcParseError extends Error {
       cause?: Error;
     } = {}
   ) {
-    super(message, { cause: options.cause });
+    super(message);
     this.name = 'RrcParseError';
     this.lineNumber = lineNumber;
     this.recordType = recordType;
     this.rawRecord = options.rawRecord;
     this.fieldName = options.fieldName;
     this.recoverable = options.recoverable ?? true;
+    // Store cause as a property for debugging
+    if (options.cause) {
+      (this as Error & { cause?: Error }).cause = options.cause;
+    }
   }
 
   toJSON() {

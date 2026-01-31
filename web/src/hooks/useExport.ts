@@ -45,7 +45,7 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const { toast } = useToast();
+  const { toast, error: toastError, success: toastSuccess } = useToast();
 
   /**
    * Fetch export jobs for the workspace
@@ -70,7 +70,7 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch exports';
       setError(errorMessage);
-      toast.error('Export Error', {
+      toastError('Export Error', {
         description: errorMessage
       });
     } finally {
@@ -105,14 +105,14 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
       
       const job: ExportJob = await response.json();
       setJobs(prev => [job, ...prev]);
-      toast.success('Export Created', {
+      toastSuccess('Export Created', {
         description: 'Your export job has been created successfully. It will begin processing shortly.'
       });
       return job;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create export';
       setError(errorMessage);
-      toast.error('Export Creation Failed', {
+      toastError('Export Creation Failed', {
         description: errorMessage
       });
       return null;
@@ -144,14 +144,14 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
           : job
       ));
 
-      toast.success('Export Cancelled', {
+      toastSuccess('Export Cancelled', {
         description: 'Your export job has been cancelled successfully.'
       });
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to cancel export';
       setError(errorMessage);
-      toast.error('Export Cancellation Failed', {
+      toastError('Export Cancellation Failed', {
         description: errorMessage
       });
       return false;
@@ -165,7 +165,7 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
     if (!job.downloadUrl || job.status !== 'completed') {
       const errorMessage = 'Export is not ready for download';
       setError(errorMessage);
-      toast.error('Download Failed', {
+      toastError('Download Failed', {
         description: errorMessage
       });
       return;
@@ -173,7 +173,7 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
 
     // Open download in new tab/window
     window.open(job.downloadUrl, '_blank');
-    toast.success('Download Started', {
+    toastSuccess('Download Started', {
       description: 'Your export file download has started.'
     });
   }, [toast]);

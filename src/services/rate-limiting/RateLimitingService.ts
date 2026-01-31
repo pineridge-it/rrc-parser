@@ -1,6 +1,7 @@
 import {
-  UUID
-} from '../../types/common';
+  UUID,
+  RateLimitStatus
+} from '../../types';
 
 export interface RateLimitConfig {
   alertsPerDay: number;
@@ -9,7 +10,7 @@ export interface RateLimitConfig {
   cooldownMinutes: number;
 }
 
-export interface RateLimitStatus {
+export interface RateLimitServiceStatus {
   alertsToday: number;
   smsThisMonth: number;
   isLimited: boolean;

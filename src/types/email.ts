@@ -1,5 +1,3 @@
-import { UUID } from './common';
-
 export interface EmailRecipient {
   email: string;
   name?: string;

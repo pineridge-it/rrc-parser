@@ -1,6 +1,9 @@
 import { UUID } from './common';
 import { Operator } from './operator';
 
+// Re-export CleanPermit from loader to maintain single source of truth
+export { CleanPermit } from './loader';
+
 /**
  * Permit and record type definitions
  */

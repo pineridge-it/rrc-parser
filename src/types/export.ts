@@ -2,7 +2,7 @@
  * Export type definitions for Data Export System
  */
 
-import { PermitFilters } from '../../web/src/types/permit';
+import { PermitFilters } from './analytics';
 
 /**
  * Supported export formats

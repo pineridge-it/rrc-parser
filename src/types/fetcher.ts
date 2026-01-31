@@ -1,5 +1,3 @@
-import { UUID } from './common';
-
 export interface FetcherConfig {
   baseUrl: string;
   rateLimit: number;  // requests per second
@@ -17,7 +15,7 @@ export interface FetchResult {
   error?: string;
 }
 
-export interface DateRange {
+export interface FetchDateRange {
   startDate: Date;
   endDate: Date;
 }
@@ -29,7 +27,7 @@ export interface RRCFetcherServiceConfig {
 }
 
 export interface FetchPermitsRequest {
-  dateRange: DateRange;
+  dateRange: FetchDateRange;
 }
 
 export interface FetchPermitDetailRequest {
@@ -67,7 +65,7 @@ export interface FetchError {
   retryCount: number;
 }
 
-export interface RateLimitStatus {
+export interface FetcherRateLimitStatus {
   isLimited: boolean;
   retryAfter?: number;
 }

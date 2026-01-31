@@ -6,12 +6,10 @@ import {
   RrcParseResult,
   RrcParserStats,
   ParseErrorContext,
-  RecordSchema,
-  MalformedHandlerResult,
-  RrcPermit
+  MalformedHandlerResult
 } from './types';
-import { recordSchemas, getSchema, isSupportedRecordType } from './recordParsers';
-import { RrcParseError, RrcMalformedRecordError, RrcOrphanRecordError } from './errors';
+import { getSchema, isSupportedRecordType } from './recordParsers';
+import { RrcParseError, RrcMalformedRecordError } from './errors';
 import { PermitData } from '../../types/permit';
 
 /**
@@ -159,7 +157,8 @@ class PermitBuilder {
  * - Error handling with context
  */
 export class RrcPermitParser extends EventEmitter {
-  private options: Required<RrcParserOptions>;
+  private options: Required<Omit<RrcParserOptions, 'onParseError' | 'onProgress'>> &
+    Pick<RrcParserOptions, 'onParseError' | 'onProgress'>;
   private stats: ParserStats;
   private errors: ParseErrorContext[] = [];
   private warnings: string[] = [];

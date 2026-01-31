@@ -18,20 +18,7 @@ export interface UsageServiceConfig {
   hardLimitThreshold: number;
 }
 
-const DEFAULT_CONFIG: UsageServiceConfig = {
-  supabaseUrl: process.env.SUPABASE_URL || '',
-  supabaseKey: process.env.SUPABASE_SERVICE_KEY || '',
-  softLimitThreshold: SOFT_LIMIT_THRESHOLD,
-  hardLimitThreshold: HARD_LIMIT_THRESHOLD,
-};
-
 export class UsageService {
-  private config: UsageServiceConfig;
-
-  constructor(config: Partial<UsageServiceConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
-  }
-
   /**
    * Get current usage for a workspace
    */
@@ -176,13 +163,13 @@ export class UsageService {
 
   // Placeholder methods for database interactions
   
-  private async getWorkspacePlan(workspaceId: UUID): Promise<PlanType> {
+  private async getWorkspacePlan(_workspaceId: UUID): Promise<PlanType> {
     // TODO: Implement database query
     // Placeholder - should query workspaces table
     return 'free';
   }
 
-  private async getAOICount(workspaceId: UUID): Promise<number> {
+  private async getAOICount(_workspaceId: UUID): Promise<number> {
     // TODO: Implement database query
     // Placeholder - should count AOIs for workspace
     return 0;
@@ -190,14 +177,14 @@ export class UsageService {
 
   private async getOrCreateCurrentPeriod(workspaceId: UUID): Promise<UsagePeriod> {
     const now = new Date();
-    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const _periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     // TODO: Implement database query/insert
     // Placeholder
     return {
       workspaceId: workspaceId.toString(),
-      periodStart,
+      periodStart: _periodStart,
       periodEnd,
       alertsSent: 0,
       exportsCount: 0,
@@ -207,7 +194,7 @@ export class UsageService {
 
   private async updateUsageField(
     workspaceId: string,
-    periodStart: Date,
+    _periodStart: Date,
     field: string,
     amount: number
   ): Promise<void> {

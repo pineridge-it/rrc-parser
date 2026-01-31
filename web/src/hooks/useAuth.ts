@@ -21,7 +21,7 @@ export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<AuthError | null>(null)
-  const { toast } = useToast()
+  const { toast, error: toastError, success: toastSuccess } = useToast()
   // Use useMemo to prevent creating a new client on every render
   const supabase = useMemo(() => createClient(), [])
 
@@ -38,7 +38,7 @@ export function useAuth(): UseAuthReturn {
         if ((err as AuthError).message?.includes('Auth session missing')) {
           // This is expected when user is not logged in, don't show error toast
         } else {
-          toast('error', 'Authentication Error', {
+          toastError('Authentication Error', {
             description: 'Failed to get user session. Please try refreshing the page.'
           })
         }
@@ -73,11 +73,11 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error", "Sign In Failed", {
+      toastError("Sign In Failed", {
         description: error.message || "Invalid email or password. Please try again."
       })
     } else {
-      toast("success", "Welcome Back!", {
+      toastSuccess("Welcome Back!", {
         description: "You have been successfully signed in."
       })
     }
@@ -103,11 +103,11 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Sign Up Failed', {
+      toastError('Sign Up Failed', {
         description: error.message || 'Failed to create account. Please try again.'
       })
     } else {
-      toast("success",('Account Created!', {
+      toastSuccess('Account Created!', {
         description: 'Please check your email to verify your account.'
       })
     }
@@ -124,12 +124,12 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Sign Out Failed', {
+      toastError('Sign Out Failed', {
         description: error.message || 'Failed to sign out. Please try again.'
       })
     } else {
       setUser(null)
-      toast("success",('Signed Out', {
+      toastSuccess('Signed Out', {
         description: 'You have been successfully signed out.'
       })
     }
@@ -148,11 +148,11 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Password Reset Failed', {
+      toastError('Password Reset Failed', {
         description: error.message || 'Failed to send password reset email. Please try again.'
       })
     } else {
-      toast("success",('Password Reset Email Sent!', {
+      toastSuccess('Password Reset Email Sent!', {
         description: 'Check your email for a link to reset your password.'
       })
     }
@@ -171,11 +171,11 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Password Update Failed', {
+      toastError('Password Update Failed', {
         description: error.message || 'Failed to update password. Please try again.'
       })
     } else {
-      toast("success",('Password Updated!', {
+      toastSuccess('Password Updated!', {
         description: 'Your password has been successfully updated.'
       })
     }
@@ -197,11 +197,11 @@ export function useAuth(): UseAuthReturn {
 
     if (error) {
       setError(error)
-      toast("error",('Magic Link Failed', {
+      toastError('Magic Link Failed', {
         description: error.message || 'Failed to send magic link. Please try again.'
       })
     } else {
-      toast("success",('Magic Link Sent!', {
+      toastSuccess('Magic Link Sent!', {
         description: 'Check your email for a link to sign in.'
       })
     }

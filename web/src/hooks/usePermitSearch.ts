@@ -39,7 +39,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([])
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null)
   const [loadingOptions, setLoadingOptions] = useState(false)
-  const { toast } = useToast()
+  const { toast, error: toastError, success: toastSuccess, info: toastInfo } = useToast()
 
   // Load filter options on mount
   useEffect(() => {
@@ -55,7 +55,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
         }
       } catch (err) {
         console.error('Failed to load filter options:', err)
-        toast.error('Filter Options Error', {
+        toastError('Filter Options Error', {
           description: 'Failed to load filter options. Some filter features may not work properly.'
         })
       } finally {
@@ -79,7 +79,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
         }
       } catch (err) {
         console.error('Failed to load saved searches:', err)
-        toast.error('Saved Searches Error', {
+        toastError('Saved Searches Error', {
           description: 'Failed to load saved searches. Your saved searches may not be available.'
         })
       }
@@ -142,11 +142,11 @@ export function usePermitSearch(): UsePermitSearchReturn {
 
       // Show success message only if there are results
       if (data.total > 0) {
-        toast.success('Search Complete', {
+        toastSuccess('Search Complete', {
           description: `Found ${data.total} permits matching your criteria.`
         })
       } else {
-        toast.info('Search Complete', {
+        toastInfo('Search Complete', {
           description: 'No permits found matching your criteria.'
         })
       }
@@ -155,7 +155,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
       setError(errorMessage)
       setPermits([])
       setTotal(0)
-      toast.error('Search Failed', {
+      toastError('Search Failed', {
         description: errorMessage
       })
     } finally {
@@ -169,7 +169,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
     setTotal(0)
     setPage(1)
     setAggregations(null)
-    toast.info('Filters Reset', {
+    toastInfo('Filters Reset', {
       description: 'All filters have been cleared.'
     })
   }, [toast])
@@ -188,13 +188,13 @@ export function usePermitSearch(): UsePermitSearchReturn {
 
       const newSearch: SavedSearch = await response.json()
       setSavedSearches(prev => [...prev, newSearch])
-      toast.success('Search Saved', {
+      toastSuccess('Search Saved', {
         description: `Your search "${name}" has been saved successfully.`
       })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to save search'
       setError(errorMessage)
-      toast.error('Save Search Failed', {
+      toastError('Save Search Failed', {
         description: errorMessage
       })
     }
@@ -215,13 +215,13 @@ export function usePermitSearch(): UsePermitSearchReturn {
       setTimeout(() => {
         search(1)
       }, 0)
-      toast.success('Search Loaded', {
+      toastSuccess('Search Loaded', {
         description: `Loaded saved search "${savedSearch.name}".`
       })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load saved search'
       setError(errorMessage)
-      toast.error('Load Search Failed', {
+      toastError('Load Search Failed', {
         description: errorMessage
       })
     }

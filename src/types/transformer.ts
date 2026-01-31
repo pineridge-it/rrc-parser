@@ -1,6 +1,6 @@
 import { UUID } from './common';
 
-export interface ValidationError {
+export interface TransformValidationError {
   field: string;
   message: string;
   value: any;
@@ -9,7 +9,7 @@ export interface ValidationError {
 export interface TransformResult {
   success: boolean;
   cleanPermit?: any;
-  validationErrors: ValidationError[];
+  validationErrors: TransformValidationError[];
   warnings: string[];
 }
 
@@ -62,7 +62,7 @@ export interface ConfigureTransformerRequest {
 
 export interface TransformationError {
   permitId: UUID;
-  errors: ValidationError[];
+  errors: TransformValidationError[];
   timestamp: Date;
 }
 

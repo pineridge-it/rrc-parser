@@ -2,8 +2,7 @@
  * Alert Service with Free Tier Limits
  */
 
-import { UUID } from 'crypto';
-import { LimitsEnforcer, FreeTierLimitExceededError } from '../limits';
+import { LimitsEnforcer } from '../limits';
 
 export interface AlertCreateRequest {
   title: string;
@@ -64,7 +63,7 @@ export class AlertService {
   /**
    * Get alert count for workspace in current period
    */
-  async getAlertCount(workspaceId: string): Promise<number> {
+  async getAlertCount(_workspaceId: string): Promise<number> {
     // TODO: Implement database query for current month
     return 0;
   }
@@ -72,7 +71,7 @@ export class AlertService {
   /**
    * List alerts for workspace
    */
-  async listAlerts(workspaceId: string): Promise<Alert[]> {
+  async listAlerts(_workspaceId: string): Promise<Alert[]> {
     // TODO: Implement database query
     return [];
   }

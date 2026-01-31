@@ -1,4 +1,5 @@
 export * from './common';
+export * from './config';
 export * from './operator';
 export * from './operator-admin';
 export * from './watchlist';

@@ -43,7 +43,7 @@ export function useDashboard(): UseDashboardReturn {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { toast } = useToast()
+  const { toast, error: toastError } = useToast()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -162,7 +162,7 @@ export function useDashboard(): UseDashboardReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard data'
       setError(errorMessage)
-      toast.error('Failed to load dashboard', {
+      toastError('Failed to load dashboard', {
         description: errorMessage
       })
     } finally {

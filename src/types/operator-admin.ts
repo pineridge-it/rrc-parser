@@ -1,3 +1,6 @@
+import { UUID } from './common';
+import { Operator } from './operator';
+
 export interface OperatorReviewItem {
   id: UUID;
   suggestedOperator: Operator;

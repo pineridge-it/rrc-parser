@@ -583,7 +583,7 @@ export class DispatcherWorker {
         continue;
       }
 
-      const result = await worker!.processEvent(event, preferences);
+      const result = await worker.processEvent(event, preferences);
       results.set(channel, result);
 
       // Create notification record for tracking

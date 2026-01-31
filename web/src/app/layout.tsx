@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { OnboardingProvider } from "@/components/onboarding/OnboardingContext";
 import { NotificationProvider } from "@/components/notifications/NotificationContext";
+import { SkipLink } from "@/components/ui/skip-link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Skip Link for keyboard navigation */}
+        <SkipLink targetId="main-content" />
+
         <ThemeProvider
           defaultTheme="system"
           enableSystem
@@ -39,7 +43,10 @@ export default function RootLayout({
         >
           <NotificationProvider>
             <OnboardingProvider>
-              {children}
+              {/* Main content wrapper with landmark region */}
+              <div id="main-content" role="main" tabIndex={-1}>
+                {children}
+              </div>
               <Toaster />
             </OnboardingProvider>
           </NotificationProvider>

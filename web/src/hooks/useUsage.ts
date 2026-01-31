@@ -49,7 +49,7 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
   const [warnings, setWarnings] = useState<UsageWarning[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { toast } = useToast();
+  const { toast, error: toastError, success: toastSuccess, warning: toastWarning } = useToast();
 
   const calculateWarnings = useCallback((currentUsage: UsageLimits): UsageWarning[] => {
     const newWarnings: UsageWarning[] = [];
@@ -105,7 +105,7 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
     } catch (err) {
       const errorObj = err instanceof Error ? err : new Error('Unknown error');
       setError(errorObj);
-      toast.error('Usage Data Error', {
+      toastError('Usage Data Error', {
         description: errorObj.message
       });
     } finally {
@@ -151,11 +151,11 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
 
     // Show warning if approaching limits
     if (percentage >= HARD_LIMIT_THRESHOLD) {
-      toast.error('Usage Limit Reached', {
+      toastError('Usage Limit Reached', {
         description: `You've reached your ${resource} limit. Please upgrade your plan to continue.`
       });
     } else if (percentage >= SOFT_LIMIT_THRESHOLD) {
-      toast.warning('Approaching Usage Limit', {
+      toastWarning('Approaching Usage Limit', {
         description: `You're approaching your ${resource} limit (${Math.round(percentage * 100)}%).`
       });
     }

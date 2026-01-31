@@ -1,11 +1,9 @@
 import {
+  DateRange
+} from '../../types/analytics';
+import {
   UUID
 } from '../../types/common';
-
-export interface DateRange {
-  startDate: string;
-  endDate: string;
-}
 
 export interface PermitFilters {
   counties?: string[];

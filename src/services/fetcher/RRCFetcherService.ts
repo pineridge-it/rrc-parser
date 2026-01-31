@@ -1,4 +1,4 @@
-import { UUID } from '../../types/common';
+
 
 export interface FetcherConfig {
   baseUrl: string;
@@ -17,7 +17,7 @@ export interface FetchResult {
   error?: string;
 }
 
-export interface DateRange {
+export interface FetchDateRange {
   startDate: Date;
   endDate: Date;
 }
@@ -78,7 +78,7 @@ export class RRCFetcherService {
   /**
    * Fetch permits for a date range with retry and rate limiting
    */
-  async fetchPermits(dateRange: DateRange): Promise<FetchResult> {
+  async fetchPermits(dateRange: FetchDateRange): Promise<FetchResult> {
     const response = await this.fetchWithAuth('/fetcher/permits', {
       method: 'POST',
       body: JSON.stringify(dateRange)

@@ -76,7 +76,7 @@ export function parseFloatValue(value: string): number | null {
  * @returns Parsed numeric value or null
  */
 export function parseNumeric(value: string, validatorName?: string): number | null {
-  let trimmed = value.trim().replace(/\+/g, '');
+  const trimmed = value.trim().replace(/\+/g, '');
   
   if (!trimmed) {
     return null;

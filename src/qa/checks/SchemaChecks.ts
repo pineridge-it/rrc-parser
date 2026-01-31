@@ -99,7 +99,6 @@ export class SchemaChecks {
     const newFields = Array.from(currentFields).filter(f => !expectedFields.has(f));
     const missingFields = Array.from(expectedFields).filter(f => !currentFields.has(f));
 
-    const hasDrift = newFields.length > 0 || missingFields.length > 0;
     let passed = true;
     let severity: CheckSeverity = 'info';
 

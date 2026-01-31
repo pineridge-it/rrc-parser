@@ -20,8 +20,7 @@ import {
   AlertToggleRequest,
   AlertDeleteRequest,
 } from '../../types/alert-config';
-import { AlertRule, CleanPermit } from '../../types/alert';
-import { AlertRulesEngine } from './index';
+import { AlertRule, CleanPermit, RuleFilters } from '../../types/alert';
 
 type UUID = string;
 
@@ -55,12 +54,10 @@ export interface PermitSource {
 export class AlertConfigService {
   private storage: AlertConfigStorage;
   private permitSource: PermitSource;
-  private rulesEngine: AlertRulesEngine;
 
   constructor(storage: AlertConfigStorage, permitSource: PermitSource) {
     this.storage = storage;
     this.permitSource = permitSource;
-    this.rulesEngine = new AlertRulesEngine();
   }
 
   /**

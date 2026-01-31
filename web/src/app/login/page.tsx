@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -14,7 +15,8 @@ import { Loader2, CheckCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-export default function LoginPage() {
+// Inner component that uses search params
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showMagicLink, setShowMagicLink] = useState(false)
@@ -172,9 +174,6 @@ export default function LoginPage() {
           ) : (
             <motion.form
               key="login-form"
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                    }}
               onSubmit={handleSubmit}
             >
               <div className="space-y-4">
@@ -300,5 +299,21 @@ export default function LoginPage() {
         </AnimatePresence>
       </div>
     </div>
+  )
+}
+
+// Main page component with Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-indigo-600" />
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

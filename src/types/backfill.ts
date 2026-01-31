@@ -66,7 +66,7 @@ export interface BackfillConfigPresets {
   lastYear: BackfillConfig;
 }
 
-export interface ValidationResponse {
+export interface BackfillValidationResponse {
   valid: boolean;
   errors: string[];
   warnings: string[];

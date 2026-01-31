@@ -26,8 +26,7 @@ export {
   FreshnessStatus,
   DataFreshness,
   FreshnessIndicatorProps,
-  ETLRunRecord,
-  DataFreshnessServiceConfig
+  ETLRunRecord
 } from './types';
 
 export {

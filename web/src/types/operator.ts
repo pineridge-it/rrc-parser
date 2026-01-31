@@ -1,4 +1,5 @@
-export type UUID = string;
+import { UUID } from './common';
+export type { UUID };
 
 export interface Operator {
   id: UUID;

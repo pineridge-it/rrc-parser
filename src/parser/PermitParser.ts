@@ -16,8 +16,7 @@ import {
   PermitData,
   RecordData,
   ILogger,
-  ConsoleLogger,
-  StorageKey
+  ConsoleLogger
 } from '../types';
 import { parseDate, parseIntValue, parseFloatValue } from '../utils';
 import { ParseError } from '../utils/ParseError';
@@ -409,7 +408,7 @@ export class PermitParser {
       for (const { recordType, data } of this.pendingChildren) {
         const schema = this.config.getSchema(recordType);
         if (schema?.storageKey) {
-          permit.addChildRecord(schema.storageKey as StorageKey, data);
+          permit.addChildRecord(schema.storageKey, data);
           this.stats.recoveredRecords++;
         }
       }
@@ -431,7 +430,7 @@ export class PermitParser {
 
     const permit = this.permits.get(this.currentPermit);
     if (permit) {
-      permit.addChildRecord(schema.storageKey as StorageKey, parsed);
+      permit.addChildRecord(schema.storageKey, parsed);
     }
   }
 

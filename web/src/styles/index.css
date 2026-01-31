@@ -2,4 +2,5 @@
 /* Import all style modules here */
 
 @import './tokens.css';
+@import './typography.css';
 @import './animations.css';

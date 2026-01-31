@@ -1,7 +1,7 @@
 import { createLogger } from '../../services/logger';
 import { PermitChange, ChangeType, UnprocessedChangesQuery } from './types';
 
-const logger = createLogger({ name: 'ChangeRepository' });
+const logger = createLogger({ service: 'ChangeRepository' });
 
 /**
  * Repository for permit change persistence operations
@@ -55,11 +55,14 @@ export class ChangeRepository {
         createdAt: saved.created_at,
       };
     } catch (error) {
-      logger.error('Failed to save permit change', {
-        error: error instanceof Error ? error.message : String(error),
-        permitId: change.permitId,
-        changeType: change.changeType,
-      });
+      logger.error(
+        'Failed to save permit change',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          permitId: change.permitId,
+          changeType: change.changeType,
+        }
+      );
       throw error;
     }
   }
@@ -120,10 +123,13 @@ export class ChangeRepository {
       return saved;
     } catch (error) {
       await client.query('ROLLBACK');
-      logger.error('Failed to save batch of permit changes', {
-        error: error instanceof Error ? error.message : String(error),
-        count: changes.length,
-      });
+      logger.error(
+        'Failed to save batch of permit changes',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          count: changes.length,
+        }
+      );
       throw error;
     } finally {
       client.release();
@@ -184,10 +190,13 @@ export class ChangeRepository {
         createdAt: new Date(row.created_at as string),
       }));
     } catch (error) {
-      logger.error('Failed to get unprocessed changes', {
-        error: error instanceof Error ? error.message : String(error),
-        query,
-      });
+      logger.error(
+        'Failed to get unprocessed changes',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          query,
+        }
+      );
       throw error;
     }
   }
@@ -218,10 +227,13 @@ export class ChangeRepository {
         alertEventId,
       });
     } catch (error) {
-      logger.error('Failed to mark changes as processed', {
-        error: error instanceof Error ? error.message : String(error),
-        count: changeIds.length,
-      });
+      logger.error(
+        'Failed to mark changes as processed',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          count: changeIds.length,
+        }
+      );
       throw error;
     }
   }
@@ -262,10 +274,13 @@ export class ChangeRepository {
         createdAt: new Date(row.created_at as string),
       }));
     } catch (error) {
-      logger.error('Failed to get changes for permit', {
-        error: error instanceof Error ? error.message : String(error),
-        permitId,
-      });
+      logger.error(
+        'Failed to get changes for permit',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          permitId,
+        }
+      );
       throw error;
     }
   }
@@ -292,7 +307,7 @@ export class ChangeRepository {
 
       const result = await this.db.query(query, [startDate, endDate]);
 
-      const stats: Record<string, number> = {
+      const stats: Record<ChangeType | 'total', number> = {
         new: 0,
         status_change: 0,
         amendment: 0,
@@ -302,19 +317,24 @@ export class ChangeRepository {
       };
 
       for (const row of result.rows) {
-        const type = row.change_type as string;
+        const type = row.change_type as ChangeType;
         const count = parseInt(row.count as string, 10);
-        stats[type] = count;
+        if (type in stats) {
+          stats[type] = count;
+        }
         stats.total += count;
       }
 
-      return stats as Record<ChangeType | 'total', number>;
+      return stats;
     } catch (error) {
-      logger.error('Failed to get change statistics', {
-        error: error instanceof Error ? error.message : String(error),
-        startDate,
-        endDate,
-      });
+      logger.error(
+        'Failed to get change statistics',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          startDate,
+          endDate,
+        }
+      );
       throw error;
     }
   }

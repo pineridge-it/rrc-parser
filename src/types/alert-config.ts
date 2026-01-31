@@ -4,7 +4,6 @@
  * Backend service for managing alert rules - supports future frontend UI
  */
 
-import { AlertRule, RuleFilters } from './alert';
 import { NotificationChannelType } from './notification';
 
 type UUID = string;

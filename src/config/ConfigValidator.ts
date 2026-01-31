@@ -286,7 +286,7 @@ export class ConfigValidator {
 
     // Validate flags
     if (validation.flags) {
-      const f = validation.flags as any;
+      const f = validation.flags;
       if (!f.valid_values) {
         errors.push('validation.flags: missing required field valid_values');
       } else if (!Array.isArray(f.valid_values)) {
@@ -296,7 +296,7 @@ export class ConfigValidator {
 
     // Validate operator_number
     if (validation.operator_number) {
-      const op = validation.operator_number as any;
+      const op = validation.operator_number;
 
       if (op.numeric_only !== undefined && typeof op.numeric_only !== 'boolean') {
         errors.push('validation.operator_number.numeric_only must be a boolean');

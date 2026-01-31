@@ -1,4 +1,4 @@
-import { PermitData, DaRootRecord, DaPermitRecord, DaFieldRecord, DaLeaseRecord, DaSurveyRecord, DaCanResRecord, DaAreasRecord, DaRemarksRecord, DaAreaResRecord, DaAddressRecord, GisSurfaceRecord, GisBottomholeRecord } from '../../types/permit';
+import { PermitData } from '../../types/permit';
 
 /**
  * RRC Record Type Identifiers (2-digit codes)

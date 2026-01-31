@@ -97,8 +97,8 @@ export class EtlPipeline {
     const startTime = new Date();
     const errors: string[] = [];
     let permitsProcessed = 0;
-    let permitsUpserted = 0;
-    let permitsSkipped = 0;
+    const permitsUpserted = 0;
+    const permitsSkipped = 0;
     let qaPassed = true;
     let monitorRunId: string | undefined;
 

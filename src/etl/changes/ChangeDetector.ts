@@ -5,10 +5,9 @@ import {
   PermitSnapshot,
   ChangeDetectionResult,
   ChangeDetectorConfig,
-  UnprocessedChangesQuery,
 } from './types';
 
-const logger = createLogger({ name: 'ChangeDetector' });
+const logger = createLogger({ service: 'ChangeDetector' });
 
 /**
  * Calculates distance between two lat/lon points in meters

@@ -11,9 +11,6 @@ import { Notification } from "@/components/notifications/types";
 import { SkeletonCard, SkeletonTable } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/ui/theme-provider";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, CheckCircle, AlertCircle, AlertTriangle, Info } from "lucide-react";
-import { toast } from "sonner";
-
 export const dynamic = "force-dynamic";
 
 // Loading state component with staggered animation
@@ -173,7 +170,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white shadow-sm" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -191,10 +188,11 @@ export default function DashboardPage() {
                 onNotificationClick={handleNotificationClick}
                 onRemoveNotification={handleRemoveNotification}
               />
-              <span className="text-sm text-gray-600">{user?.email}</span>
+              <span className="text-sm text-gray-600" aria-label={`Logged in as ${user?.email}`}>{user?.email}</span>
               <button
                 onClick={handleSignOut}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                aria-label="Sign out of your account"
               >
                 Sign Out
               </button>
@@ -204,15 +202,15 @@ export default function DashboardPage() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main id="main-content" className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8" tabIndex={-1}>
         <div className="px-4 sm:px-0">
           {/* Page Header */}
-          <div className="mb-6">
+          <header className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
             <p className="mt-1 text-sm text-gray-500">
               Monitor your drilling permits and alerts
             </p>
-          </div>
+          </header>
 
           <AnimatePresence mode="wait">
             {loading ? (
@@ -243,12 +241,15 @@ export default function DashboardPage() {
               >
                 {/* Quick Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="bg-white overflow-hidden shadow rounded-lg"
+                  >
                     <div className="px-4 py-5 sm:p-6">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                        <div className="flex-shrink-0 bg-indigo-100 rounded-md p-3">
                           <svg
-                            className="h-6 w-6 text-white"
+                            className="h-6 w-6 text-indigo-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -261,28 +262,27 @@ export default function DashboardPage() {
                             />
                           </svg>
                         </div>
-                        <div className="ml-5 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-gray-500 truncate">
-                              New Permits (7 days)
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-2xl font-semibold text-gray-900">
-                                {dashboardData?.recentActivity?.newPermits ?? 0}
-                              </div>
-                            </dd>
-                          </dl>
+                        <div className="ml-4">
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            New Permits (7d)
+                          </dt>
+                          <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                            {dashboardData?.recentActivity.newPermits}
+                          </dd>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="bg-white overflow-hidden shadow rounded-lg"
+                  >
                     <div className="px-4 py-5 sm:p-6">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
+                        <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
                           <svg
-                            className="h-6 w-6 text-white"
+                            className="h-6 w-6 text-green-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -291,32 +291,31 @@ export default function DashboardPage() {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
                         </div>
-                        <div className="ml-5 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-gray-500 truncate">
-                              Active AOIs
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-2xl font-semibold text-gray-900">
-                                {dashboardData?.aois.length}
-                              </div>
-                            </dd>
-                          </dl>
+                        <div className="ml-4">
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            Status Changes
+                          </dt>
+                          <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                            {dashboardData?.recentActivity.statusChanges}
+                          </dd>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="bg-white overflow-hidden shadow rounded-lg"
+                  >
                     <div className="px-4 py-5 sm:p-6">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 bg-red-500 rounded-md p-3">
+                        <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
                           <svg
-                            className="h-6 w-6 text-white"
+                            className="h-6 w-6 text-yellow-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -329,137 +328,200 @@ export default function DashboardPage() {
                             />
                           </svg>
                         </div>
-                        <div className="ml-5 w-0 flex-1">
-                          <dl>
-                            <dt className="text-sm font-medium text-gray-500 truncate">
-                              Unread Alerts
-                            </dt>
-                            <dd className="flex items-baseline">
-                              <div className="text-2xl font-semibold text-gray-900">
-                                {dashboardData?.alerts.unreadCount}
-                              </div>
-                            </dd>
-                          </dl>
+                        <div className="ml-4">
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            Unread Alerts
+                          </dt>
+                          <dd className="mt-1 text-3xl font-semibold text-gray-900">
+                            {dashboardData?.alerts.unreadCount}
+                          </dd>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
-                {/* Activity Feed */}
+                {/* Recent Activity */}
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+                  <div className="px-4 py-5 sm:px-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">
                       Recent Activity
                     </h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      Latest updates from your monitored areas
+                    </p>
                   </div>
-                  <div className="divide-y divide-gray-200">
-                    {dashboardData?.alerts.recentAlerts.map((alert) => (
-                      <div
-                        key={alert.id}
-                        className="px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-indigo-600 truncate">
-                            {alert.title}
-                          </p>
-                          <div className="ml-2 flex-shrink-0 flex">
-                            <p className="text-xs text-gray-500">
-                              {alert.timestamp.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
+                  <div className="border-t border-gray-200">
+                    <ul className="divide-y divide-gray-200">
+                      {dashboardData?.alerts.recentAlerts.map((alert) => (
+                        <li key={alert.id}>
+                          <div className="block hover:bg-gray-50">
+                            <div className="px-4 py-4 sm:px-6">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-indigo-600 truncate">
+                                  {alert.title}
+                                </p>
+                                <div className="ml-2 flex-shrink-0 flex">
+                                  <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    New
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="mt-2 sm:flex sm:justify-between">
+                                <div className="sm:flex">
+                                  <p className="flex items-center text-sm text-gray-500">
+                                    <svg
+                                      className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                      />
+                                    </svg>
+                                    {alert.timestamp.toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: true
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                  <svg
+                                    className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                  {alert.timestamp.toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
 
-                {/* AOI Cards */}
+                {/* Areas of Interest */}
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium text-gray-900">
-                      Your Areas of Interest
+                      Areas of Interest
                     </h3>
-                    <button className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
-                      Create AOI
+                    <button className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                      View all
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {dashboardData?.aois.map((aoi) => (
-                      <div
+                      <motion.div
                         key={aoi.id}
-                        className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
+                        whileHover={{ y: -5 }}
+                        className="bg-white overflow-hidden shadow rounded-lg"
                       >
                         <div className="px-4 py-5 sm:p-6">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 bg-blue-500 rounded-md p-2">
-                              <svg
-                                className="h-5 w-5 text-white"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-                                />
-                              </svg>
+                          <h4 className="text-lg font-medium text-gray-900">
+                            {aoi.name}
+                          </h4>
+                          <div className="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium text-gray-500">
+                                Total Permits
+                              </p>
+                              <p className="mt-1 text-2xl font-semibold text-gray-900">
+                                {aoi.permitCount}
+                              </p>
                             </div>
-                            <div className="ml-4">
-                              <h4 className="text-lg font-medium text-gray-900">
-                                {aoi.name}
-                              </h4>
-                              <p className="text-sm text-gray-500">
-                                {aoi.permitCount} permits
+                            <div>
+                              <p className="text-sm font-medium text-gray-500">
+                                New (7d)
+                              </p>
+                              <p className="mt-1 text-2xl font-semibold text-indigo-600">
+                                +{aoi.recentPermitCount}
                               </p>
                             </div>
                           </div>
                           <div className="mt-4">
-                            <div className="flex items-center text-sm text-gray-500">
-                              <span>{aoi.recentPermitCount} new in last 7 days</span>
-                            </div>
+                            <button className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                              View Details
+                            </button>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
 
-                {/* Recent Searches */}
+                {/* Saved Searches */}
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
-                        Recent Searches
-                      </h3>
-                      <button className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
-                        New Search
-                      </button>
-                    </div>
+                  <div className="px-4 py-5 sm:px-6">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      Saved Searches
+                    </h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      Your most recently used search queries
+                    </p>
                   </div>
-                  <div className="divide-y divide-gray-200">
-                    {dashboardData?.savedSearches.map((search) => (
-                      <div
-                        key={search.id}
-                        className="px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {search.name}
-                          </p>
-                          <div className="ml-2 flex-shrink-0 flex">
-                            <p className="text-xs text-gray-500">
-                              {search.lastUsed.toLocaleDateString()}
-                            </p>
+                  <div className="border-t border-gray-200">
+                    <ul className="divide-y divide-gray-200">
+                      {dashboardData?.savedSearches.map((search) => (
+                        <li key={search.id}>
+                          <div className="block hover:bg-gray-50">
+                            <div className="px-4 py-4 sm:px-6">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-indigo-600 truncate">
+                                  {search.name}
+                                </p>
+                                <div className="ml-2 flex-shrink-0 flex">
+                                  <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                    Saved
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="mt-2 sm:flex sm:justify-between">
+                                <div className="sm:flex">
+                                  <p className="flex items-center text-sm text-gray-500">
+                                    <svg
+                                      className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                      />
+                                    </svg>
+                                    Last used{" "}
+                                    {search.lastUsed.toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                  <button className="font-medium text-indigo-600 hover:text-indigo-500">
+                                    Run Search
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </motion.div>

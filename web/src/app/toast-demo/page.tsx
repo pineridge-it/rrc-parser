@@ -310,8 +310,8 @@ export default function ToastDemoPage() {
                 </Button>
                 <Button
                   onClick={() => {
-                    setBannerNotifications([])
-                    toast.info("All banner notifications dismissed")
+                    setBannerNotifications([]);
+                    toast.info("All banner notifications dismissed");
                   }}
                   variant="outline"
                 >
@@ -319,8 +319,8 @@ export default function ToastDemoPage() {
                 </Button>
                 <Button
                   onClick={() => {
-                    notifications.forEach((n) => removeNotification(n.id))
-                    toast.info("All notifications cleared")
+                    notifications.forEach((n) => removeNotification(n.id));
+                    toast.info("All notifications cleared");
                   }}
                   variant="outline"
                   className="border-red-500 text-red-600 hover:bg-red-50"
@@ -332,6 +332,24 @@ export default function ToastDemoPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Code Example Section */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <MessageSquare className="h-5 w-5 mr-2" />
+            Implementation Example
+          </CardTitle>
+          <CardDescription>
+            How to use the notification system in your components
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre className="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto">
+            <code>{codeExample}</code>
+          </pre>
+        </CardContent>
+      </Card>
 
       {/* Banner Notification Container */}
       <div className="fixed top-4 right-4 z-50 space-y-2 w-full max-w-sm">

@@ -1,9 +1,4 @@
-import { 
-  PermitData, 
-  DaPermitRecord, 
-  DaRootRecord, 
-  GisSurfaceRecord, 
-  GisBottomholeRecord,
+import {
   CleanPermit
 } from '../../types/permit';
 import { UUID } from '../../types/common';

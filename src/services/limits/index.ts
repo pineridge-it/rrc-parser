@@ -5,7 +5,7 @@
 
 import { UUID } from 'crypto';
 import { UsageService } from '../usage';
-import { PlanLimits, UsageLimits, PLAN_LIMITS } from '../../types/usage';
+import { PLAN_LIMITS } from '../../types/usage';
 
 export interface LimitCheckResult {
   allowed: boolean;
@@ -235,7 +235,7 @@ export class LimitsEnforcer {
     return plan === 'free';
   }
 
-  private async getWorkspacePlan(workspaceId: UUID): Promise<keyof typeof PLAN_LIMITS> {
+  private async getWorkspacePlan(_workspaceId: UUID): Promise<keyof typeof PLAN_LIMITS> {
     // TODO: Implement database query
     // Placeholder - should query workspaces table
     return 'free';

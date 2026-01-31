@@ -94,7 +94,7 @@ export interface EstimateLoadingTimeRequest {
   type: 'raw' | 'clean';
 }
 
-export interface ValidationResponse {
+export interface LoadValidationResponse {
   valid: boolean;
   errors: LoadError[];
   warnings: string[];

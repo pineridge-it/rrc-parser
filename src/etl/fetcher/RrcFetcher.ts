@@ -1,4 +1,4 @@
-import { RrcPermitParser, RrcParserOptions, RrcParseResult } from '../../parser/rrc';
+import { RrcPermitParser, RrcParserOptions } from '../../parser/rrc';
 import { PermitData } from '../../types/permit';
 
 /**
@@ -101,7 +101,7 @@ export class RrcFetcher {
     onProgress: (processed: number, total: number) => void
   ): Promise<RrcFetchResult> {
     // Estimate total lines (will be refined during parsing)
-    let estimatedTotal = 1000;
+    const estimatedTotal = 1000;
 
     const options: RrcParserOptions = {
       ...this.options,
