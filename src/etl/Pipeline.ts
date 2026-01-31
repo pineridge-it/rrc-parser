@@ -4,6 +4,7 @@ import { ParseResult } from '../parser/PermitParser';
 import { QAGateRunner, QAGateConfig } from '../qa';
 import { PermitData } from '../types/permit';
 import { IngestionMonitor, IngestionMonitorConfig } from '../monitoring';
+import { EtlMetrics } from '../metrics';
 
 export interface EtlPipelineOptions {
   config?: Config;
@@ -14,6 +15,8 @@ export interface EtlPipelineOptions {
   enableQAGates?: boolean;
   enableMonitoring?: boolean;
   monitorConfig?: IngestionMonitorConfig;
+  enableMetrics?: boolean;
+  metrics?: EtlMetrics;
 }
 
 export interface EtlResult {
@@ -50,6 +53,8 @@ export class EtlPipeline {
   private readonly enableQAGates: boolean;
   private readonly monitor: IngestionMonitor | null;
   private readonly enableMonitoring: boolean;
+  private readonly metrics: EtlMetrics | null;
+  private readonly enableMetrics: boolean;
 
   constructor(options: EtlPipelineOptions = {}) {
     this.config = options.config || new Config();
@@ -65,6 +70,8 @@ export class EtlPipeline {
     this.qaRunner = this.enableQAGates ? new QAGateRunner(options.qaConfig) : null;
     this.enableMonitoring = options.enableMonitoring ?? true;
     this.monitor = this.enableMonitoring ? new IngestionMonitor(options.monitorConfig) : null;
+    this.enableMetrics = options.enableMetrics ?? true;
+    this.metrics = this.enableMetrics ? (options.metrics || new EtlMetrics()) : null;
   }
 
   /**
@@ -72,6 +79,13 @@ export class EtlPipeline {
    */
   getMonitor(): IngestionMonitor | null {
     return this.monitor;
+  }
+
+  /**
+   * Get the metrics instance (for testing/inspection)
+   */
+  getMetrics(): EtlMetrics | null {
+    return this.metrics;
   }
 
   /**
@@ -93,17 +107,25 @@ export class EtlPipeline {
       monitorRunId = this.monitor.recordRunStart(inputPath);
     }
 
+    // Record metrics run start
+    if (this.metrics) {
+      this.metrics.recordRunStart();
+    }
+
+    // Start duration timer for metrics
+    const stopDurationTimer = this.metrics?.startDurationTimer();
+
     try {
       console.log(`Starting ETL pipeline for ${inputPath}`);
-      
+
       // Step 1: Fetch (already done - we're reading from file)
       console.log('Step 1: Fetch - Reading permit data from file');
-      
+
       // Step 2: Parse the data
       console.log('Step 2: Parse - Processing permit data');
       const parser = new PermitParser(this.config, this.parserOptions);
       const parseResult: ParseResult = await parser.parseFile(inputPath);
-      
+
       permitsProcessed = Object.keys(parseResult.permits).length;
       console.log(`Parsed ${permitsProcessed} permits`);
 
@@ -155,7 +177,7 @@ export class EtlPipeline {
         });
 
         qaPassed = qaResult.passed;
-        
+
         // Log QA results
         console.log(`QA Gate ${qaResult.passed ? 'PASSED' : 'FAILED'} (${qaResult.stage})`);
         if (qaResult.warnings.length > 0) {
@@ -176,12 +198,12 @@ export class EtlPipeline {
           errors.push(...qaResult.errors, ...qaResult.criticalErrors);
         }
       }
-      
+
     } catch (error) {
       const errorMsg = `ETL pipeline failed: ${error instanceof Error ? error.message : String(error)}`;
       errors.push(errorMsg);
       console.error(errorMsg);
-      
+
       if (error instanceof Error && error.stack) {
         console.error(error.stack);
       }
@@ -200,6 +222,11 @@ export class EtlPipeline {
     const endTime = new Date();
     const durationMs = endTime.getTime() - startTime.getTime();
 
+    // Stop duration timer
+    if (stopDurationTimer) {
+      stopDurationTimer();
+    }
+
     // Build QA results summary
     const qaResults = this.qaRunner?.getResults().map(r => ({
       stage: r.stage,
@@ -208,6 +235,17 @@ export class EtlPipeline {
       warnings: r.warnings,
       criticalErrors: r.criticalErrors
     }));
+
+    // Record run completion in metrics
+    if (this.metrics) {
+      this.metrics.recordRunComplete({
+        durationMs,
+        recordsProcessed: permitsProcessed,
+        recordsFailed: errors.length,
+        recordsSkipped: permitsSkipped,
+        success: errors.length === 0 && qaPassed
+      });
+    }
 
     // Record run completion in monitor
     if (this.monitor && monitorRunId) {

@@ -1,12 +1,15 @@
 /**
  * RRC Data Fetcher Module
- * 
+ *
  * Fetches permit data from the Texas RRC (Railroad Commission) FTP server.
  * Implements retry logic, progress tracking, and idempotent downloads.
  */
 
 import { mkdir } from 'fs/promises';
-import { ETLConfig, ETLError } from '../types';
+import { ETLConfig, ETLError } from '../types/index';
+
+// Export RRC Fetcher for DAF420 file parsing
+export * from './RrcFetcher';
 
 /**
  * Fetch result containing downloaded file paths

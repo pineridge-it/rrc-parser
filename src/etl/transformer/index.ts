@@ -5,7 +5,7 @@
  * Handles data normalization, validation, and enrichment.
  */
 
-import { ParsedPermit, TransformedPermit, ETLError } from '../types';
+import { ParsedPermit, TransformedPermit, ETLError } from '../types/index';
 import { createHash } from 'crypto';
 
 /**
