@@ -117,3 +117,40 @@ export interface HistoricalMetrics {
   durations: number[];
   lagMinutes: number[];
 }
+
+// ============================================================================
+// Data Freshness Types
+// ============================================================================
+
+export type FreshnessStatus = 'fresh' | 'stale' | 'critical' | 'unknown';
+
+export interface DataFreshness {
+  lastUpdated: Date | null;
+  hoursAgo: number | null;
+  permitsNew: number;
+  permitsUpdated: number;
+  permitsProcessed: number;
+  status: FreshnessStatus;
+  message: string;
+}
+
+export interface FreshnessIndicatorProps {
+  freshness: DataFreshness;
+  showDetails?: boolean;
+  className?: string;
+}
+
+export interface ETLRunRecord {
+  id: string;
+  runType: 'incremental' | 'full' | 'backfill';
+  status: 'running' | 'success' | 'failed' | 'cancelled';
+  startedAt: Date;
+  completedAt?: Date;
+  permitsProcessed: number;
+  permitsNew: number;
+  permitsUpdated: number;
+  permitsFailed: number;
+  sourceFiles?: string[];
+  errorMessage?: string;
+  durationMs?: number;
+}

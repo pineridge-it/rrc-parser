@@ -21,5 +21,17 @@ export {
   DashboardMetrics,
   TimeRange,
   MetricsQuery,
-  HistoricalMetrics
+  HistoricalMetrics,
+  // Data Freshness types
+  FreshnessStatus,
+  DataFreshness,
+  FreshnessIndicatorProps,
+  ETLRunRecord,
+  DataFreshnessServiceConfig
 } from './types';
+
+export {
+  DataFreshnessService,
+  dataFreshnessService,
+  DEFAULT_FRESHNESS_CONFIG
+} from './DataFreshnessService';
