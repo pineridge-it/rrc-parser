@@ -1,6 +1,7 @@
 'use client'
 
 import { PermitFilters, FilterOptions } from '@/types/permit'
+import { Input } from '@/components/ui/input'
 
 interface PermitSearchFiltersProps {
   filters: PermitFilters
@@ -98,16 +99,13 @@ export function PermitSearchFilters({
 
       {/* Text Search */}
       <div>
-        <label htmlFor="text-search" className="block text-sm font-medium text-gray-700 mb-2">
-          Search
-        </label>
-        <input
-          type="text"
+        <Input
           id="text-search"
+          label="Search"
           placeholder="Lease, well, API number..."
+          floatingLabel
           value={filters.textSearch || ''}
           onChange={(e) => handleTextSearchChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
 
@@ -172,19 +170,19 @@ export function PermitSearchFilters({
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Filed Date</label>
         <div className="grid grid-cols-2 gap-2">
-          <input
+          <Input
             type="date"
-            placeholder="From"
+            label="From"
+            floatingLabel
             value={filters.filedDateRange?.from || ''}
             onChange={(e) => handleFiledDateChange('from', e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
-          <input
+          <Input
             type="date"
-            placeholder="To"
+            label="To"
+            floatingLabel
             value={filters.filedDateRange?.to || ''}
             onChange={(e) => handleFiledDateChange('to', e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
       </div>

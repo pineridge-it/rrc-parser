@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 
 export interface UsageLimits {
   aois: { current: number; limit: number };
@@ -43,11 +44,12 @@ const HARD_LIMIT_THRESHOLD = 1.0;
 
 export function useUsage(options: UseUsageOptions): UseUsageReturn {
   const { workspaceId, pollInterval = 60000 } = options;
-  
+
   const [usage, setUsage] = useState<UsageLimits | null>(null);
   const [warnings, setWarnings] = useState<UsageWarning[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { toast } = useToast();
 
   const calculateWarnings = useCallback((currentUsage: UsageLimits): UsageWarning[] => {
     const newWarnings: UsageWarning[] = [];
@@ -101,11 +103,15 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
       setUsage(data);
       setWarnings(calculateWarnings(data));
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
+      const errorObj = err instanceof Error ? err : new Error('Unknown error');
+      setError(errorObj);
+      toast.error('Usage Data Error', {
+        description: errorObj.message
+      });
     } finally {
       setLoading(false);
     }
-  }, [workspaceId, calculateWarnings]);
+  }, [workspaceId, calculateWarnings, toast]);
 
   const checkLimit = useCallback(async (
     resource: 'aois' | 'alerts' | 'exports' | 'apiCalls',
@@ -143,12 +149,23 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
     const percentage = limit > 0 ? newTotal / limit : 0;
     const wouldExceed = newTotal > limit;
 
+    // Show warning if approaching limits
+    if (percentage >= HARD_LIMIT_THRESHOLD) {
+      toast.error('Usage Limit Reached', {
+        description: `You've reached your ${resource} limit. Please upgrade your plan to continue.`
+      });
+    } else if (percentage >= SOFT_LIMIT_THRESHOLD) {
+      toast.warning('Approaching Usage Limit', {
+        description: `You're approaching your ${resource} limit (${Math.round(percentage * 100)}%).`
+      });
+    }
+
     return {
       allowed: !wouldExceed,
       percentage,
       wouldExceed,
     };
-  }, [usage]);
+  }, [usage, toast]);
 
   const getSoftLimitWarnings = useCallback(() => {
     return warnings.filter(w => w.threshold === 'soft');

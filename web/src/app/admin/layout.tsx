@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Activity, Database, Settings, Users, BarChart3 } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/theme-provider'
 
 const adminNavItems = [
   { href: '/admin/ingestion', label: 'Ingestion', icon: Database },
@@ -17,14 +18,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white">
+      <aside className="w-64 bg-gray-900 text-white flex flex-col">
         <div className="p-6">
           <Link href="/admin" className="flex items-center space-x-2">
             <Activity className="w-6 h-6" />
             <span className="text-xl font-bold">Admin</span>
           </Link>
         </div>
-        <nav className="mt-6">
+        <nav className="mt-6 flex-1">
           {adminNavItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
@@ -44,6 +45,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )
           })}
         </nav>
+        <div className="p-4 border-t border-gray-800">
+          <ThemeToggle />
+        </div>
       </aside>
 
       {/* Main content */}

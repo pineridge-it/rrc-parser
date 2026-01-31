@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { Permit, PermitFilters, SearchResult, SavedSearch, FilterOptions } from '@/types/permit'
+import { useToast } from '@/components/ui/use-toast'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
@@ -38,6 +39,7 @@ export function usePermitSearch(): UsePermitSearchReturn {
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([])
   const [filterOptions, setFilterOptions] = useState<FilterOptions | null>(null)
   const [loadingOptions, setLoadingOptions] = useState(false)
+  const { toast } = useToast()
 
   // Load filter options on mount
   useEffect(() => {
@@ -48,16 +50,21 @@ export function usePermitSearch(): UsePermitSearchReturn {
         if (response.ok) {
           const data = await response.json()
           setFilterOptions(data)
+        } else {
+          throw new Error('Failed to load filter options')
         }
       } catch (err) {
         console.error('Failed to load filter options:', err)
+        toast.error('Filter Options Error', {
+          description: 'Failed to load filter options. Some filter features may not work properly.'
+        })
       } finally {
         setLoadingOptions(false)
       }
     }
 
     loadFilterOptions()
-  }, [])
+  }, [toast])
 
   // Load saved searches on mount
   useEffect(() => {
@@ -67,14 +74,19 @@ export function usePermitSearch(): UsePermitSearchReturn {
         if (response.ok) {
           const data = await response.json()
           setSavedSearches(data)
+        } else {
+          throw new Error('Failed to load saved searches')
         }
       } catch (err) {
         console.error('Failed to load saved searches:', err)
+        toast.error('Saved Searches Error', {
+          description: 'Failed to load saved searches. Your saved searches may not be available.'
+        })
       }
     }
 
     loadSavedSearches()
-  }, [])
+  }, [toast])
 
   const search = useCallback(async (targetPage: number = 1) => {
     setLoading(true)
@@ -127,14 +139,29 @@ export function usePermitSearch(): UsePermitSearchReturn {
       setTotal(data.total)
       setPage(targetPage)
       setAggregations(data.aggregations)
+
+      // Show success message only if there are results
+      if (data.total > 0) {
+        toast.success('Search Complete', {
+          description: `Found ${data.total} permits matching your criteria.`
+        })
+      } else {
+        toast.info('Search Complete', {
+          description: 'No permits found matching your criteria.'
+        })
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Search failed')
+      const errorMessage = err instanceof Error ? err.message : 'Search failed'
+      setError(errorMessage)
       setPermits([])
       setTotal(0)
+      toast.error('Search Failed', {
+        description: errorMessage
+      })
     } finally {
       setLoading(false)
     }
-  }, [filters, pageSize])
+  }, [filters, pageSize, toast])
 
   const resetFilters = useCallback(() => {
     setFilters(defaultFilters)
@@ -142,7 +169,10 @@ export function usePermitSearch(): UsePermitSearchReturn {
     setTotal(0)
     setPage(1)
     setAggregations(null)
-  }, [])
+    toast.info('Filters Reset', {
+      description: 'All filters have been cleared.'
+    })
+  }, [toast])
 
   const saveSearch = useCallback(async (name: string) => {
     try {
@@ -158,27 +188,44 @@ export function usePermitSearch(): UsePermitSearchReturn {
 
       const newSearch: SavedSearch = await response.json()
       setSavedSearches(prev => [...prev, newSearch])
+      toast.success('Search Saved', {
+        description: `Your search "${name}" has been saved successfully.`
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save search')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save search'
+      setError(errorMessage)
+      toast.error('Save Search Failed', {
+        description: errorMessage
+      })
     }
-  }, [filters])
+  }, [filters, toast])
 
   const loadSavedSearch = useCallback(async (searchId: string) => {
     try {
       const response = await fetch(`${API_BASE_URL}/saved-searches/${searchId}`)
-      
+
       if (!response.ok) {
         throw new Error('Failed to load saved search')
       }
 
       const savedSearch: SavedSearch = await response.json()
+      // Set filters first, then search will use the updated filters
       setFilters(savedSearch.filters)
-      // Trigger search with loaded filters
-      await search(1)
+      // Use setTimeout to ensure filters are updated before searching
+      setTimeout(() => {
+        search(1)
+      }, 0)
+      toast.success('Search Loaded', {
+        description: `Loaded saved search "${savedSearch.name}".`
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load saved search')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load saved search'
+      setError(errorMessage)
+      toast.error('Load Search Failed', {
+        description: errorMessage
+      })
     }
-  }, [search])
+  }, [search, toast])
 
   return {
     permits,

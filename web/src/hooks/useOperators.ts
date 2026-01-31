@@ -12,6 +12,7 @@ import {
   OperatorListResponse,
   UUID
 } from '@/types/operator'
+import { useToast } from '@/components/ui/use-toast'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
@@ -86,6 +87,8 @@ export function useOperators(): UseOperatorsReturn {
   const [loadingTimeline, setLoadingTimeline] = useState(false)
   const [loadingFootprint, setLoadingFootprint] = useState(false)
 
+  const { toast } = useToast()
+
   const listOperators = useCallback(async (options: Partial<OperatorFilterOptions>) => {
     setLoading(true)
     setError(null)
@@ -115,11 +118,15 @@ export function useOperators(): UseOperatorsReturn {
       setTotal(data.total)
       setHasMore(data.hasMore)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Operators List Error', {
+        description: errorMessage
+      })
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [toast])
 
   const searchOperators = useCallback(async (query: string, limit: number = 10) => {
     if (!query.trim()) {
@@ -145,11 +152,15 @@ export function useOperators(): UseOperatorsReturn {
       const data: OperatorSearchResult[] = await response.json()
       setSearchResults(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Operator Search Error', {
+        description: errorMessage
+      })
     } finally {
       setSearching(false)
     }
-  }, [])
+  }, [toast])
 
   const getOperator = useCallback(async (id: UUID) => {
     setLoadingDetails(true)
@@ -164,12 +175,19 @@ export function useOperators(): UseOperatorsReturn {
       
       const data: Operator = await response.json()
       setSelectedOperator(data)
+      toast.success('Operator Loaded', {
+        description: `Successfully loaded operator: ${data.name}`
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Operator Load Error', {
+        description: errorMessage
+      })
     } finally {
       setLoadingDetails(false)
     }
-  }, [])
+  }, [toast])
 
   const getActivitySummary = useCallback(async (operatorId: UUID) => {
     setLoadingActivity(true)
@@ -185,11 +203,15 @@ export function useOperators(): UseOperatorsReturn {
       const data: OperatorActivitySummary = await response.json()
       setActivitySummary(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Activity Summary Error', {
+        description: errorMessage
+      })
     } finally {
       setLoadingActivity(false)
     }
-  }, [])
+  }, [toast])
 
   const getPermitTimeline = useCallback(async (
     operatorId: UUID,
@@ -216,11 +238,15 @@ export function useOperators(): UseOperatorsReturn {
       setPermitTimeline(data.entries)
       setTimelineTotal(data.total)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Permit Timeline Error', {
+        description: errorMessage
+      })
     } finally {
       setLoadingTimeline(false)
     }
-  }, [])
+  }, [toast])
 
   const getGeographicFootprint = useCallback(async (operatorId: UUID) => {
     setLoadingFootprint(true)
@@ -236,11 +262,15 @@ export function useOperators(): UseOperatorsReturn {
       const data: OperatorGeographicFootprint = await response.json()
       setGeographicFootprint(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Geographic Footprint Error', {
+        description: errorMessage
+      })
     } finally {
       setLoadingFootprint(false)
     }
-  }, [])
+  }, [toast])
 
   const compareOperators = useCallback(async (operatorIds: UUID[]) => {
     setLoading(true)
@@ -259,12 +289,19 @@ export function useOperators(): UseOperatorsReturn {
       
       const data: OperatorComparison[] = await response.json()
       setComparisons(data)
+      toast.success('Operators Compared', {
+        description: `Successfully compared ${operatorIds.length} operators`
+      })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      toast.error('Operator Comparison Error', {
+        description: errorMessage
+      })
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [toast])
 
   const clearSearch = useCallback(() => {
     setSearchResults([])

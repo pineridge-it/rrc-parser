@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { User, AuthError } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
+import { useToast } from '@/components/ui/use-toast'
 
 interface UseAuthReturn {
   user: User | null
@@ -20,7 +21,9 @@ export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<AuthError | null>(null)
-  const supabase = createClient()
+  const { toast } = useToast()
+  // Use useMemo to prevent creating a new client on every render
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     // Get initial session
@@ -31,6 +34,14 @@ export function useAuth(): UseAuthReturn {
         setUser(user)
       } catch (err) {
         setError(err as AuthError)
+        // Only show toast for actual errors, not for expected "no session" cases
+        if ((err as AuthError).message?.includes('Auth session missing')) {
+          // This is expected when user is not logged in, don't show error toast
+        } else {
+          toast('error', 'Authentication Error', {
+            description: 'Failed to get user session. Please try refreshing the page.'
+          })
+        }
       } finally {
         setLoading(false)
       }
@@ -54,24 +65,31 @@ export function useAuth(): UseAuthReturn {
   const signIn = useCallback(async (email: string, password: string) => {
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
-    
+
     if (error) {
       setError(error)
+      toast("error",('Sign In Failed', {
+        description: error.message || 'Invalid email or password. Please try again.'
+      })
+    } else {
+      toast("success",('Welcome Back!', {
+        description: 'You have been successfully signed in.'
+      })
     }
-    
+
     setLoading(false)
     return { error }
-  }, [supabase])
+  }, [supabase, toast])
 
   const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     setLoading(true)
     setError(null)
-    
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -82,81 +100,115 @@ export function useAuth(): UseAuthReturn {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
-    
+
     if (error) {
       setError(error)
+      toast("error",('Sign Up Failed', {
+        description: error.message || 'Failed to create account. Please try again.'
+      })
+    } else {
+      toast("success",('Account Created!', {
+        description: 'Please check your email to verify your account.'
+      })
     }
-    
+
     setLoading(false)
     return { data, error }
-  }, [supabase])
+  }, [supabase, toast])
 
   const signOut = useCallback(async () => {
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase.auth.signOut()
-    
+
     if (error) {
       setError(error)
+      toast("error",('Sign Out Failed', {
+        description: error.message || 'Failed to sign out. Please try again.'
+      })
     } else {
       setUser(null)
+      toast("success",('Signed Out', {
+        description: 'You have been successfully signed out.'
+      })
     }
-    
+
     setLoading(false)
     return { error }
-  }, [supabase])
+  }, [supabase, toast])
 
   const resetPassword = useCallback(async (email: string) => {
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     })
-    
+
     if (error) {
       setError(error)
+      toast("error",('Password Reset Failed', {
+        description: error.message || 'Failed to send password reset email. Please try again.'
+      })
+    } else {
+      toast("success",('Password Reset Email Sent!', {
+        description: 'Check your email for a link to reset your password.'
+      })
     }
-    
+
     setLoading(false)
     return { error }
-  }, [supabase])
+  }, [supabase, toast])
 
   const updatePassword = useCallback(async (newPassword: string) => {
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     })
-    
+
     if (error) {
       setError(error)
+      toast("error",('Password Update Failed', {
+        description: error.message || 'Failed to update password. Please try again.'
+      })
+    } else {
+      toast("success",('Password Updated!', {
+        description: 'Your password has been successfully updated.'
+      })
     }
-    
+
     setLoading(false)
     return { error }
-  }, [supabase])
+  }, [supabase, toast])
 
   const sendMagicLink = useCallback(async (email: string) => {
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
-    
+
     if (error) {
       setError(error)
+      toast("error",('Magic Link Failed', {
+        description: error.message || 'Failed to send magic link. Please try again.'
+      })
+    } else {
+      toast("success",('Magic Link Sent!', {
+        description: 'Check your email for a link to sign in.'
+      })
     }
-    
+
     setLoading(false)
     return { error }
-  }, [supabase])
+  }, [supabase, toast])
 
   return {
     user,

@@ -1,8 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { Input } from '@/components/ui/input'
+import { PasswordStrengthIndicator } from '@/components/ui/password-strength'
+import { toast } from 'sonner'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,14 +16,30 @@ export default function UpdatePasswordPage() {
   const [updateComplete, setUpdateComplete] = useState(false)
   const { updatePassword, loading, error } = useAuth()
   const router = useRouter()
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const validatePassword = () => {
     if (password.length < 8) {
       setPasswordError('Password must be at least 8 characters')
+      toast.error('Password Too Short', {
+        description: 'Password must be at least 8 characters',
+      })
       return false
     }
     if (password !== confirmPassword) {
       setPasswordError('Passwords do not match')
+      toast.error('Password Mismatch', {
+        description: 'Passwords do not match',
+      })
       return false
     }
     setPasswordError('')
@@ -29,17 +48,24 @@ export default function UpdatePasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validatePassword()) return
-    
+
     const { error } = await updatePassword(password)
-    
+
     if (!error) {
       setUpdateComplete(true)
+      toast.success('Password Updated!', {
+        description: 'Your password has been successfully updated. Redirecting to login...',
+      })
       // Redirect to login after 3 seconds
-      setTimeout(() => {
+      redirectTimeoutRef.current = setTimeout(() => {
         router.push('/login')
       }, 3000)
+    } else {
+      toast.error('Failed to Update Password', {
+        description: error.message || 'Please try again',
+      })
     }
   }
 
@@ -70,45 +96,43 @@ export default function UpdatePasswordPage() {
           </div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm -space-y-px">
-              <div>
-                <label htmlFor="password" className="sr-only">
-                  New Password
-                </label>
-                <input
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="New Password (min 8 characters)"
+                  label="New Password"
+                  placeholder="Enter your new password"
+                  floatingLabel
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value)
                     setPasswordError('')
                   }}
                 />
+
+                <PasswordStrengthIndicator password={password} />
               </div>
-              <div>
-                <label htmlFor="confirm-password" className="sr-only">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirm-password"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value)
-                    setPasswordError('')
-                  }}
-                />
-              </div>
+
+              <Input
+                id="confirm-password"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                label="Confirm Password"
+                placeholder="Re-enter your new password"
+                floatingLabel
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value)
+                  setPasswordError('')
+                }}
+                error={passwordError}
+              />
             </div>
 
             {(error || passwordError) && (

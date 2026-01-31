@@ -3,21 +3,48 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
 
 export const dynamic = 'force-dynamic'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [resetSent, setResetSent] = useState(false)
   const { resetPassword, loading, error } = useAuth()
 
+  // Simple email validation
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
+    // Validate email
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address')
+      toast.error('Invalid Email', {
+        description: 'Please enter a valid email address',
+      })
+      return
+    } else {
+      setEmailError('')
+    }
+
     const { error } = await resetPassword(email)
-    
+
     if (!error) {
       setResetSent(true)
+      toast.success('Password Reset Email Sent!', {
+        description: 'Check your email for a link to reset your password.',
+      })
+    } else {
+      toast.error('Failed to Send Reset Email', {
+        description: error.message || 'Please try again',
+      })
     }
   }
 
@@ -52,19 +79,22 @@ export default function ForgotPasswordPage() {
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
+              <Input
                 id="email-address"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                label="Email address"
+                placeholder="your.email@example.com"
+                floatingLabel
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  // Clear error when user types
+                  if (emailError) setEmailError('')
+                }}
+                error={emailError}
               />
             </div>
 

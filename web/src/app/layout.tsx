@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "@/styles/index.css";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { OnboardingProvider } from "@/components/onboarding/OnboardingContext";
 import { NotificationProvider } from "@/components/notifications/NotificationContext";
 
@@ -25,15 +28,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NotificationProvider>
-          <OnboardingProvider>
-            {children}
-          </OnboardingProvider>
-        </NotificationProvider>
+        <ThemeProvider
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <NotificationProvider>
+            <OnboardingProvider>
+              {children}
+              <Toaster />
+            </OnboardingProvider>
+          </NotificationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

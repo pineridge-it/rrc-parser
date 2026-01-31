@@ -4,15 +4,16 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { 
-  ExportRequest, 
-  ExportJob, 
-  ExportFormat, 
+import {
+  ExportRequest,
+  ExportJob,
+  ExportFormat,
   ExportStatus,
   EXPORT_FORMATS,
   EXPORT_FIELDS,
-  getExportFormatConfig 
+  getExportFormatConfig
 } from '@/types/export';
+import { useToast } from '@/components/ui/use-toast';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -44,6 +45,7 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const { toast } = useToast();
 
   /**
    * Fetch export jobs for the workspace
@@ -66,11 +68,15 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
       const data = await response.json();
       setJobs(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch exports');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch exports';
+      setError(errorMessage);
+      toast.error('Export Error', {
+        description: errorMessage
+      });
     } finally {
       setLoading(false);
     }
-  }, [workspaceId]);
+  }, [workspaceId, toast]);
 
   /**
    * Create a new export job
@@ -99,14 +105,21 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
       
       const job: ExportJob = await response.json();
       setJobs(prev => [job, ...prev]);
+      toast.success('Export Created', {
+        description: 'Your export job has been created successfully. It will begin processing shortly.'
+      });
       return job;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create export');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create export';
+      setError(errorMessage);
+      toast.error('Export Creation Failed', {
+        description: errorMessage
+      });
       return null;
     } finally {
       setCreating(false);
     }
-  }, [workspaceId]);
+  }, [workspaceId, toast]);
 
   /**
    * Cancel an export job
@@ -125,31 +138,45 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
       }
       
       // Update local state
-      setJobs(prev => prev.map(job => 
-        job.id === jobId 
+      setJobs(prev => prev.map(job =>
+        job.id === jobId
           ? { ...job, status: 'failed' as ExportStatus, errorMessage: 'Cancelled by user' }
           : job
       ));
-      
+
+      toast.success('Export Cancelled', {
+        description: 'Your export job has been cancelled successfully.'
+      });
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to cancel export');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel export';
+      setError(errorMessage);
+      toast.error('Export Cancellation Failed', {
+        description: errorMessage
+      });
       return false;
     }
-  }, []);
+  }, [toast]);
 
   /**
    * Download an export file
    */
   const downloadExport = useCallback((job: ExportJob) => {
     if (!job.downloadUrl || job.status !== 'completed') {
-      setError('Export is not ready for download');
+      const errorMessage = 'Export is not ready for download';
+      setError(errorMessage);
+      toast.error('Download Failed', {
+        description: errorMessage
+      });
       return;
     }
-    
+
     // Open download in new tab/window
     window.open(job.downloadUrl, '_blank');
-  }, []);
+    toast.success('Download Started', {
+      description: 'Your export file download has started.'
+    });
+  }, [toast]);
 
   /**
    * Refresh jobs list
