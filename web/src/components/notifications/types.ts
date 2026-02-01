@@ -16,6 +16,17 @@ export interface Notification {
     label: string
     action: () => void
   }>
+  // Snooze functionality fields
+  isSnoozed?: boolean
+  snoozedUntil?: Date
+  snoozeOptions?: Array<{
+    label: string
+    duration: number // in milliseconds
+  }>
+  // Batching functionality fields
+  batchId?: string
+  isBatched?: boolean
+  batchCount?: number
 }
 
 export interface NotificationCenterProps {
@@ -24,6 +35,9 @@ export interface NotificationCenterProps {
   onMarkAsRead: (id: string) => void
   onMarkAllAsRead: () => void
   onNotificationClick: (notification: Notification) => void
+  onRemoveNotification?: (id: string) => void
+  onArchiveNotifications?: (ids: string[]) => void
+  onSnoozeNotification?: (id: string, duration: number) => void
 }
 
 // Notification context type
@@ -36,4 +50,8 @@ export interface NotificationContextType {
   clearNotifications: () => void
   removeNotification: (id: string) => void
   getUnreadCountByCategory: (category: Notification['category']) => number
+  // Snooze functionality
+  snoozeNotification: (id: string, duration: number) => void
+  // Batch functionality
+  batchSimilarNotifications: () => void
 }
