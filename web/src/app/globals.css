@@ -376,6 +376,223 @@ body {
   top: 0;
 }
 
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.touch-target-comfortable {
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+
+/* Button ripple effect container */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+=======
+  }
+
+  .animate-shimmer {
+    animation: none;
+    background: var(--color-surface-subtle);
+  }
+}
+
+/* ========================================
+   BUTTON MICRO-INTERACTION UTILITIES
+   ======================================== */
+
+/* Button ripple effect container */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+   ======================================== */
+
+/* Button ripple effect container */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-ripple:active::after {
+  animation: ripple 0.4s var(--ease-out);
+}
+
+/* Button press effect */
+.btn-press {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.btn-press:active {
+  transform: scale(0.96);
+}
+
+/* Button lift effect on hover */
+.btn-lift {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.btn-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-lift:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Loading dots for buttons */
+.btn-loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-loading-dots span {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: loadingDots 1.4s infinite ease-in-out both;
+}
+
+.btn-loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.btn-loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.btn-loading-dots span:nth-child(3) {
+  animation-delay: 0s;
+}
+
+/* Focus ring animation */
+.btn-focus-ring {
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.btn-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-surface-default),
+              0 0 0 4px var(--color-brand-primary);
+}
+
+/* Success state animation */
+.btn-success {
+  animation: buttonSuccess 0.3s var(--ease-out);
+}
+
+@keyframes buttonSuccess {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Error shake animation */
+.btn-error-shake {
+  animation: shake 0.4s var(--ease-out);
+}
+
+/* Smooth color transitions for all buttons */
+button, .btn {
+  transition: background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* ========================================
+   ANIMATION UTILITY CLASSES
+   ======================================== */
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-normal) var(--ease-out);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-fast) var(--ease-out);
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-slow) var(--ease-in-out) infinite;
+}
+
+.animate-spin {
+  animation: spin var(--duration-slow) linear infinite;
+}
+
+.animate-bounce {
+  animation: bounce var(--duration-slow) var(--ease-spring) infinite;
+}
+
+.animate-shake {
+  animation: shake 0.4s var(--ease-out);
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-subtle) 25%,
+    var(--color-surface-raised) 50%,
+    var(--color-surface-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer var(--duration-slower) infinite;
+}
+
 /* ========================================
    TOUCH TARGET UTILITIES
    ======================================== */
@@ -405,5 +622,772 @@ body {
   .animate-shimmer {
     animation: none;
     background: var(--color-surface-subtle);
+  }
+
+  .btn-ripple::after,
+  .btn-press:active,
+  .btn-lift:hover,
+  .btn-loading-dots span,
+  .btn-success,
+  .btn-error-shake {
+    animation: none;
+    transform: none;
+  }
+// ... existing code ...
+
+/* ========================================
+   FORM FIELD MICRO-INTERACTIONS
+   ======================================== */
+
+/* Input focus glow effect */
+.input-focus-glow:focus {
+  animation: inputFocusGlow 0.4s ease-out;
+}
+
+/* Floating label styles */
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.2s var(--ease-out);
+  pointer-events: none;
+  color: var(--color-text-placeholder);
+  transform-origin: left top;
+}
+
+.floating-label.floating {
+  transform: translateY(-28px) scale(0.85);
+  color: var(--color-brand-primary);
+}
+
+.floating-label.floating.filled {
+  color: var(--color-text-secondary);
+}
+
+.floating-label.error {
+  color: var(--color-error);
+}
+
+/* Validation icon animations */
+.validation-icon {
+  animation: validationIconPop 0.3s var(--ease-spring);
+}
+
+.validation-icon-error {
+  color: var(--color-error);
+}
+
+.validation-icon-success {
+  color: var(--color-success);
+}
+
+/* Form error shake */
+.form-error-shake {
+  animation: formErrorShake 0.5s var(--ease-in-out);
+}
+
+/* Success checkmark bounce */
+.success-check-bounce {
+  animation: successCheckBounce 0.4s var(--ease-spring);
+}
+
+/* Select dropdown animations */
+.select-dropdown-open {
+  animation: selectDropdownOpen 0.2s var(--ease-out);
+}
+
+.select-dropdown-close {
+  animation: selectDropdownClose 0.15s var(--ease-in);
+}
+
+.select-option {
+  transition: transform 0.15s var(--ease-out), background-color 0.15s var(--ease-out);
+}
+
+.select-option:hover {
+  transform: translateX(4px);
+}
+
+/* Checkbox animations */
+.checkbox-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-default);
+  border-radius: 4px;
+  transition: all 0.2s var(--ease-out);
+}
+
+.checkbox-input:checked + .checkbox-visual {
+  background-color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+
+.checkbox-input:checked + .checkbox-visual .checkbox-check {
+  animation: checkboxCheck 0.3s var(--ease-spring);
+}
+
+.checkbox-input:not(:checked) + .checkbox-visual .checkbox-check {
+  animation: checkboxUncheck 0.2s var(--ease-in);
+}
+
+/* Radio button animations */
+.radio-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-visual {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-default);
+  border-radius: 50%;
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.radio-visual::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-brand-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.2s var(--ease-spring);
+}
+
+.radio-input:checked + .radio-visual::after {
+  transform: translate(-50%, -50%) scale(1);
+  animation: radioSelect 0.3s var(--ease-spring);
+}
+
+/* Switch/toggle animations */
+.switch-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.switch-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: var(--color-surface-subtle);
+  border-radius: 12px;
+  transition: background-color 0.3s var(--ease-out);
+}
+
+.switch-input:checked + .switch-track {
+  background-color: var(--color-brand-primary);
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s var(--ease-spring);
+}
+
+.switch-input:checked + .switch-track .switch-thumb {
+  transform: translateX(20px);
+}
+
+/* Character counter */
+.char-counter {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  transition: color 0.2s var(--ease-out);
+}
+
+.char-counter.warning {
+  color: var(--color-warning);
+  animation: charCounterPulse 0.3s var(--ease-out);
+}
+
+.char-counter.error {
+  color: var(--color-error);
+  animation: charCounterPulse 0.3s var(--ease-out) 2;
+}
+
+/* Helper text animations */
+.helper-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+  animation: helperTextSlide 0.2s var(--ease-out);
+}
+
+.helper-text.error {
+  color: var(--color-error);
+  animation: errorMessageShake 0.4s var(--ease-out);
+}
+
+.helper-text.success {
+  color: var(--color-success);
+}
+
+/* Clear button animation */
+.clear-button {
+  opacity: 0;
+  transform: scale(0.8) rotate(-90deg);
+  transition: all 0.2s var(--ease-out);
+}
+
+.input-wrapper:hover .clear-button,
+.clear-button.visible {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  animation: clearButtonFade 0.2s var(--ease-out);
+}
+
+/* Input transitions */
+input, textarea, select {
+  transition: border-color 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out),
+              background-color 0.2s var(--ease-out);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.1);
+}
+
+input.error, textarea.error, select.error {
+  border-color: var(--color-error);
+}
+
+input.error:focus, textarea.error:focus, select.error:focus {
+  box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.1);
+}
+
+input.success, textarea.success, select.success {
+  border-color: var(--color-success);
+}
+
+input.success:focus, textarea.success:focus, select.success:focus {
+  box-shadow: 0 0 0 3px rgba(var(--color-success-rgb), 0.1);
+}
+
+/* ========================================
+   TOUCH TARGET SIZES
+   ======================================== */
+
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.touch-target-comfortable {
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-shimmer {
+    animation: none;
+    background: var(--color-surface-subtle);
+  }
+/* ========================================
+   MOBILE-FIRST RESPONSIVE DESIGN
+   ======================================== */
+
+/* ========================================
+   MOBILE BREAKPOINTS
+   Mobile: < 640px (default)
+   Tablet: 640px - 1024px (sm, md)
+   Desktop: > 1024px (lg, xl)
+   ======================================== */
+
+/* ========================================
+   TOUCH TARGET UTILITIES
+   Minimum 44px touch targets for accessibility
+   ======================================== */
+
+/* Base touch target - 44px minimum */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Comfortable touch target - 48px recommended */
+.touch-target-lg {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* Large touch target for primary actions */
+.touch-target-xl {
+  min-width: 56px;
+  min-height: 56px;
+}
+
+/* Touch target spacing to prevent accidental taps */
+.touch-target-spaced > * + * {
+  margin-left: 8px;
+}
+
+/* ========================================
+   MOBILE NAVIGATION UTILITIES
+   ======================================== */
+
+/* Mobile bottom navigation bar */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-surface-default);
+  border-top: 1px solid var(--color-border-default);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile navigation items */
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 8px 12px;
+  color: var(--color-text-secondary);
+  transition: color 0.2s var(--ease-out);
+}
+
+.mobile-nav-item.active {
+  color: var(--color-brand-primary);
+}
+
+.mobile-nav-item:active {
+  transform: scale(0.95);
+}
+
+/* Hide mobile nav on larger screens */
+@media (min-width: 1024px) {
+  .mobile-nav {
+    display: none;
+  }
+}
+
+/* ========================================
+   MOBILE TABLE UTILITIES
+   Card-based view for mobile
+   ======================================== */
+
+/* Mobile table - converts to cards */
+.mobile-table {
+  display: block;
+}
+
+.mobile-table thead {
+  display: none;
+}
+
+.mobile-table tbody,
+.mobile-table tr {
+  display: block;
+}
+
+.mobile-table tr {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-table td {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border: none;
+}
+
+.mobile-table td::before {
+  content: attr(data-label);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-right: 16px;
+}
+
+/* Desktop table view */
+@media (min-width: 768px) {
+  .mobile-table {
+    display: table;
+  }
+  
+  .mobile-table thead {
+    display: table-header-group;
+  }
+  
+  .mobile-table tbody {
+    display: table-row-group;
+  }
+  
+  .mobile-table tr {
+    display: table-row;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .mobile-table td {
+    display: table-cell;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+  
+  .mobile-table td::before {
+    content: none;
+  }
+}
+
+/* ========================================
+   MOBILE FORM UTILITIES
+   ======================================== */
+
+/* Mobile-optimized form inputs */
+.mobile-input {
+  min-height: 48px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  padding: 12px 16px;
+}
+
+/* Larger touch targets for checkboxes and radios on mobile */
+.mobile-checkbox,
+.mobile-radio {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mobile form spacing */
+.mobile-form-group {
+  margin-bottom: 20px;
+}
+
+/* Mobile button sizing */
+.mobile-btn {
+  min-height: 48px;
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+.mobile-btn-lg {
+  min-height: 56px;
+  padding: 16px 32px;
+  font-size: 18px;
+}
+
+/* ========================================
+   SWIPE GESTURE UTILITIES
+   ======================================== */
+
+/* Swipeable container */
+.swipeable {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Swipe action reveal */
+.swipe-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  transform: translateX(100%);
+  transition: transform 0.3s var(--ease-out);
+}
+
+.swipeable.swiped-left .swipe-actions {
+  transform: translateX(0);
+}
+
+/* ========================================
+   PULL TO REFRESH
+   ======================================== */
+
+.pull-to-refresh {
+  position: relative;
+  overflow: hidden;
+}
+
+.pull-to-refresh-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  transform: translateY(-100%);
+  transition: transform 0.2s var(--ease-out);
+}
+
+.pull-to-refresh.pulling .pull-to-refresh-indicator,
+.pull-to-refresh.refreshing .pull-to-refresh-indicator {
+  transform: translateY(0);
+}
+
+/* ========================================
+   BOTTOM SHEET
+   ======================================== */
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-surface-default);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s var(--ease-out);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.bottom-sheet.open {
+  transform: translateY(0);
+}
+
+.bottom-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}
+
+.bottom-sheet-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Bottom sheet handle */
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--color-border-strong);
+  border-radius: 2px;
+  margin: 12px auto;
+}
+
+/* ========================================
+   MOBILE SCROLL UTILITIES
+   ======================================== */
+
+/* Horizontal scroll container for mobile */
+.mobile-scroll-x {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-scroll-x > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   MOBILE TYPOGRAPHY
+   ======================================== */
+
+/* Mobile-optimized text sizes */
+.mobile-text-sm {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mobile-text-base {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.mobile-text-lg {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+/* ========================================
+   MOBILE LAYOUT UTILITIES
+   ======================================== */
+
+/* Full-width on mobile, constrained on desktop */
+.mobile-full {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media (min-width: 768px) {
+  .mobile-full {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Mobile-safe padding (accounts for safe areas) */
+.safe-area-x {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.safe-area-y {
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+/* ========================================
+   TOUCH FEEDBACK
+   ======================================== */
+
+/* Visual feedback for touch interactions */
+.touch-feedback {
+  transition: transform 0.1s var(--ease-out), background-color 0.1s var(--ease-out);
+}
+
+.touch-feedback:active {
+  transform: scale(0.98);
+  background-color: var(--color-surface-subtle);
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) {
+  .touch-feedback:hover {
+    transform: none;
+    background-color: transparent;
+  }
+  
+  .touch-feedback:active {
+    transform: scale(0.98);
+    background-color: var(--color-surface-subtle);
+  }
+}
+
+/* ========================================
+   MOBILE ACCESSIBILITY
+   ======================================== */
+
+/* Focus visible styles for touch devices */
+@media (hover: none) {
+  *:focus {
+    outline: none;
+  }
+  
+  *:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Disable text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Enable momentum scrolling on iOS */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ========================================
+   MOBILE GRID UTILITIES
+   ======================================== */
+
+/* Responsive grid that stacks on mobile */
+.mobile-stack {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .mobile-stack {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-stack {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========================================
+   VIEWPORT META SUPPORT
+   ======================================== */
+
+/* Ensure proper viewport scaling */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+  
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+  
+  .max-h-screen {
+    max-height: 100dvh;
   }
 }
