@@ -16,10 +16,14 @@ interface FreeTierBannerProps {
 
 export function FreeTierBanner({ onUpgrade, onDismiss, className = '' }: FreeTierBannerProps): React.ReactElement {
   return (
-    <div className={`relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 ${className}`}>
+    <div
+      className={`relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 ${className}`}
+      role="banner"
+      aria-label="Free tier information"
+    >
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-5 h-5 flex-shrink-0" />
+          <Sparkles className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
           <p className="text-sm font-medium">
             You are on the Free plan. Upgrade to unlock more AOIs, alerts, and API access.
           </p>
@@ -28,7 +32,8 @@ export function FreeTierBanner({ onUpgrade, onDismiss, className = '' }: FreeTie
           {onUpgrade && (
             <button
               onClick={onUpgrade}
-              className="text-sm font-medium bg-white text-blue-600 px-4 py-1.5 rounded-full hover:bg-blue-50 transition-colors"
+              className="text-sm font-medium bg-white text-blue-600 px-4 py-1.5 rounded-full hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+              aria-label="Upgrade to premium plan"
             >
               Upgrade Now
             </button>
@@ -36,10 +41,10 @@ export function FreeTierBanner({ onUpgrade, onDismiss, className = '' }: FreeTie
           {onDismiss && (
             <button
               onClick={onDismiss}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors"
-              aria-label="Dismiss"
+              className="p-1 hover:bg-white/20 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+              aria-label="Dismiss free tier banner"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -82,7 +87,8 @@ export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTier
         {onUpgrade && (
           <button
             onClick={onUpgrade}
-            className="text-sm font-medium text-blue-600 hover:text-blue-700"
+            className="text-sm font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus:underline"
+            aria-label="Upgrade to unlock more features"
           >
             Upgrade
           </button>
@@ -98,7 +104,14 @@ export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTier
               {usage.aois.current} / {usage.aois.limit}
             </span>
           </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-2 bg-gray-200 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={usage.aois.percentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Areas of Interest usage"
+          >
             <div
               className={`h-full ${getBarColor(usage.aois.percentage)} transition-all duration-300`}
               style={{ width: `${Math.min(usage.aois.percentage, 100)}%` }}
@@ -114,7 +127,14 @@ export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTier
               {usage.alerts.current} / {usage.alerts.limit}
             </span>
           </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-2 bg-gray-200 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={usage.alerts.percentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Alerts usage"
+          >
             <div
               className={`h-full ${getBarColor(usage.alerts.percentage)} transition-all duration-300`}
               style={{ width: `${Math.min(usage.alerts.percentage, 100)}%` }}
@@ -130,7 +150,14 @@ export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTier
               {usage.exports.current} / {usage.exports.limit}
             </span>
           </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-2 bg-gray-200 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={usage.exports.percentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Exports usage"
+          >
             <div
               className={`h-full ${getBarColor(usage.exports.percentage)} transition-all duration-300`}
               style={{ width: `${Math.min(usage.exports.percentage, 100)}%` }}
@@ -161,7 +188,8 @@ export function FreeTierUsageCard({ usage, onUpgrade, className = '' }: FreeTier
       {onUpgrade && (
         <button
           onClick={onUpgrade}
-          className="w-full mt-6 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+          className="w-full mt-6 bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          aria-label="Upgrade to unlock more features"
         >
           Upgrade to Unlock More
         </button>

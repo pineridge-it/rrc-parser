@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Check, Minus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Checkbox option type for group
@@ -91,20 +92,39 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             data-state={checked ? "checked" : "unchecked"}
             {...props}
           />
-          <label
+          <motion.label
             htmlFor={checkboxId}
+            whileTap={{ scale: 0.95 }}
             className={cn(
               checkboxVariants({ size }),
               "flex items-center justify-center cursor-pointer transition-colors",
               disabled && "cursor-not-allowed opacity-50"
             )}
           >
-            {indeterminate ? (
-              <Minus className="h-3 w-3" />
-            ) : checked ? (
-              <Check className="h-3 w-3" />
-            ) : null}
-          </label>
+            <AnimatePresence mode="wait">
+              {indeterminate ? (
+                <motion.div
+                  key="indeterminate"
+                  initial={{ scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0, rotate: 45 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <Minus className="h-3 w-3" />
+                </motion.div>
+              ) : checked ? (
+                <motion.div
+                  key="checked"
+                  initial={{ scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0, rotate: 45 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                >
+                  <Check className="h-3 w-3" />
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </motion.label>
         </div>
 
         {(label || description || error) && (
@@ -126,9 +146,18 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 {description}
               </p>
             )}
-            {error && (
-              <p className="text-sm text-[var(--color-error)]">{error}</p>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="text-sm text-[var(--color-error)]"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>

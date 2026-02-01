@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Smartphone,
   X,
+  Clock,
 } from "lucide-react"
 
 const codeExample = `import { useToast } from "@/components/ui/use-toast";
@@ -57,7 +58,7 @@ function MyComponent() {
  * Demonstrates all notification system variants including toast, banner, and in-app notifications.
  */
 export default function ToastDemoPage() {
-  const { addNotification, notifications, markAsRead, markAllAsRead, removeNotification } =
+  const { addNotification, notifications, markAsRead, markAllAsRead, removeNotification, snoozeNotification, batchSimilarNotifications } =
     useNotifications()
   const [bannerNotifications, setBannerNotifications] = useState<BannerNotification[]>([])
 
@@ -157,6 +158,21 @@ export default function ToastDemoPage() {
       default:
         toast.info(messages[type], options)
     }
+  }
+
+  // Demo function to show how to snooze a notification
+  const demoSnoozeNotification = () => {
+    // Add a sample notification first
+    addNotification({
+      title: "Meeting Reminder",
+      body: "You have a meeting in 30 minutes with the design team.",
+      type: "info",
+      category: "system",
+      priority: "medium",
+    });
+
+    // Show toast to indicate demo
+    toast.info("Notification added (snooze demo - check notification center)");
   }
 
   return (
@@ -302,6 +318,45 @@ export default function ToastDemoPage() {
               </Button>
             </div>
 
+            {/* Snooze Demo */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                <Clock className="h-5 w-5 mr-2" />
+                Snooze Functionality
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Notifications can be snoozed for later viewing. Try snoozing a notification to see how it works.
+              </p>
+              <Button onClick={demoSnoozeNotification} variant="outline">
+                <Clock className="h-4 w-4 mr-2" />
+                Demo Snooze Notification
+              </Button>
+            </div>
+
+            {/* Batch Demo */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Batch Similar Notifications</h3>
+              <p className="text-gray-600 mb-4">
+                Similar notifications can be automatically grouped together to reduce clutter.
+              </p>
+              <Button
+                onClick={() => {
+                  // Add several similar notifications
+                  for (let i = 0; i < 5; i++) {
+                    addSampleNotification("info");
+                  }
+                  // Then batch them
+                  setTimeout(() => {
+                    batchSimilarNotifications();
+                    toast.info("Similar notifications have been batched");
+                  }, 100);
+                }}
+                variant="outline"
+              >
+                Demo Batch Notifications
+              </Button>
+            </div>
+
             <div className="mt-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Notifications</h3>
               <div className="flex flex-wrap gap-3">
@@ -433,6 +488,30 @@ export default function ToastDemoPage() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Batch Demo */}
+      <div className="mt-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Batch Similar Notifications</h3>
+        <p className="text-gray-600 mb-4">
+          Similar notifications can be automatically grouped together to reduce clutter.
+        </p>
+        <Button
+          onClick={() => {
+            // Add several similar notifications
+            for (let i = 0; i < 5; i++) {
+              addSampleNotification("info");
+            }
+            // Then batch them
+            setTimeout(() => {
+              batchSimilarNotifications();
+              toast.info("Similar notifications have been batched");
+            }, 100);
+          }}
+          variant="outline"
+        >
+          Demo Batch Notifications
+        </Button>
       </div>
     </div>
   );

@@ -26,6 +26,18 @@ const Icons = {
   user: (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   ),
+  users: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  ),
+  database: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+  ),
+  barChart: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>
+  ),
+  activity: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+  ),
   menu: (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
   ),
@@ -34,6 +46,9 @@ const Icons = {
   ),
   chevronRight: (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 18 6-6-6-6"/></svg>
+  ),
+  chevronDown: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m6 9 6 6 6-6"/></svg>
   ),
   logout: (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
@@ -51,6 +66,10 @@ export interface NavItem {
   badge?: number | string;
   badgeVariant?: "default" | "success" | "warning" | "error";
   children?: NavItem[];
+  /** Whether this section is expanded by default */
+  defaultExpanded?: boolean;
+  /** Description for tooltips */
+  description?: string;
 }
 
 // Default navigation items
@@ -94,6 +113,170 @@ export function useSidebar() {
   }
   return context;
 }
+
+// NavItem component for rendering navigation items with nested support
+interface NavItemComponentProps {
+  item: NavItem;
+  pathname: string | null;
+  collapsed: boolean;
+  getIcon: (iconName: keyof typeof Icons) => React.ReactNode;
+  depth?: number;
+}
+
+function NavItemComponent({ item, pathname, collapsed, getIcon, depth = 0 }: NavItemComponentProps) {
+  const [isExpanded, setIsExpanded] = React.useState(item.defaultExpanded || false);
+  const hasChildren = item.children && item.children.length > 0;
+  const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
+  const isChildActive = hasChildren && item.children?.some(child =>
+    pathname === child.href || pathname?.startsWith(child.href + "/")
+  );
+
+  // Auto-expand if a child is active
+  React.useEffect(() => {
+    if (isChildActive && !collapsed) {
+      setIsExpanded(true);
+    }
+  }, [isChildActive, collapsed]);
+
+  const Icon = getIcon(item.icon);
+
+  // If sidebar is collapsed and item has children, just render the parent as a link
+  if (collapsed && hasChildren) {
+    return (
+      <li>
+        <Link
+          href={item.href}
+          className={cn(
+            "flex items-center justify-center px-2 py-2.5 rounded-lg text-sm font-medium transition-colors relative group",
+            isActive || isChildActive
+              ? "bg-[var(--color-brand-primary)] text-white"
+              : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text-primary)]"
+          )}
+        >
+          <span className={cn("flex-shrink-0", (isActive || isChildActive) && "text-white")}>
+            {Icon}
+          </span>
+          {(item.badge !== undefined || isChildActive) && (
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[var(--color-error)]" />
+          )}
+          {/* Tooltip for collapsed state */}
+          <div className="absolute left-full ml-2 px-2 py-1 bg-[var(--color-text-primary)] text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+            {item.label}
+            {item.badge !== undefined && (
+              <span className="ml-1">({item.badge})</span>
+            )}
+          </div>
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      {hasChildren && !collapsed ? (
+        <div>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive || isChildActive
+                ? "bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text-primary)]"
+            )}
+          >
+            <span className={cn("flex-shrink-0", (isActive || isChildActive) && "text-[var(--color-brand-primary)]")}>
+              {Icon}
+            </span>
+            <span className="truncate flex-1 text-left">{item.label}</span>
+            {item.badge !== undefined && (
+              <span
+                className={cn(
+                  "text-xs px-2 py-0.5 rounded-full",
+                  item.badgeVariant === "error"
+                    ? "bg-[var(--color-error)] text-white"
+                    : item.badgeVariant === "warning"
+                    ? "bg-[var(--color-warning)] text-white"
+                    : item.badgeVariant === "success"
+                    ? "bg-[var(--color-success)] text-white"
+                    : "bg-[var(--color-brand-primary)] text-white"
+                )}
+              >
+                {item.badge}
+              </span>
+            )}
+            <Icons.chevronDown
+              className={cn(
+                "w-4 h-4 transition-transform duration-200",
+                isExpanded && "rotate-180"
+              )}
+            />
+          </button>
+          {isExpanded && (
+            <ul className="mt-1 ml-4 pl-3 border-l border-[var(--color-border-default)] space-y-1">
+              {item.children?.map((child) => (
+                <NavItemComponent
+                  key={child.href}
+                  item={child}
+                  pathname={pathname}
+                  collapsed={collapsed}
+                  getIcon={getIcon}
+                  depth={depth + 1}
+                />
+              ))}
+            </ul>
+          )}
+        </div>
+      ) : (
+        <Link
+          href={item.href}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative group",
+            depth > 0 && "text-xs",
+            isActive
+              ? "bg-[var(--color-brand-primary)] text-white"
+              : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text-primary)]",
+            collapsed && "justify-center px-2"
+          )}
+        >
+          <span className={cn("flex-shrink-0", isActive && "text-white")}>
+            {Icon}
+          </span>
+          {!collapsed && <span className="truncate">{item.label}</span>}
+          {!collapsed && item.badge !== undefined && (
+            <span
+              className={cn(
+                "ml-auto text-xs px-2 py-0.5 rounded-full",
+                item.badgeVariant === "error"
+                  ? "bg-[var(--color-error)] text-white"
+                  : item.badgeVariant === "warning"
+                  ? "bg-[var(--color-warning)] text-white"
+                  : item.badgeVariant === "success"
+                  ? "bg-[var(--color-success)] text-white"
+                  : "bg-[var(--color-brand-primary)] text-white"
+              )}
+            >
+              {item.badge}
+            </span>
+          )}
+          {collapsed && item.badge !== undefined && (
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[var(--color-error)]" />
+          )}
+          {/* Tooltip for collapsed state */}
+          {collapsed && (
+            <div className="absolute left-full ml-2 px-2 py-1 bg-[var(--color-text-primary)] text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+              {item.label}
+              {item.badge !== undefined && (
+                <span className="ml-1">({item.badge})</span>
+              )}
+            </div>
+          )}
+        </Link>
+      )}
+    </li>
+  );
+}
+
+// Main sidebar component
 
 // Sidebar provider component
 export function SidebarProvider({
@@ -203,58 +386,15 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             <ul className="space-y-1">
-              {items.map((item) => {
-                const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
-                const Icon = getIcon(item.icon);
-
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative group",
-                        isActive
-                          ? "bg-[var(--color-brand-primary)] text-white"
-                          : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text-primary)]",
-                        collapsed && "justify-center px-2"
-                      )}
-                    >
-                      <span className={cn("flex-shrink-0", isActive && "text-white")}>
-                        {Icon}
-                      </span>
-                      {!collapsed && <span className="truncate">{item.label}</span>}
-                      {!collapsed && item.badge !== undefined && (
-                        <span
-                          className={cn(
-                            "ml-auto text-xs px-2 py-0.5 rounded-full",
-                            item.badgeVariant === "error"
-                              ? "bg-[var(--color-error)] text-white"
-                              : item.badgeVariant === "warning"
-                              ? "bg-[var(--color-warning)] text-white"
-                              : item.badgeVariant === "success"
-                              ? "bg-[var(--color-success)] text-white"
-                              : "bg-[var(--color-brand-primary)] text-white"
-                          )}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                      {collapsed && item.badge !== undefined && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[var(--color-error)]" />
-                      )}
-                      {/* Tooltip for collapsed state */}
-                      {collapsed && (
-                        <div className="absolute left-full ml-2 px-2 py-1 bg-[var(--color-text-primary)] text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                          {item.label}
-                          {item.badge !== undefined && (
-                            <span className="ml-1">({item.badge})</span>
-                          )}
-                        </div>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
+              {items.map((item) => (
+                <NavItemComponent
+                  key={item.href}
+                  item={item}
+                  pathname={pathname}
+                  collapsed={collapsed}
+                  getIcon={getIcon}
+                />
+              ))}
             </ul>
           </nav>
 

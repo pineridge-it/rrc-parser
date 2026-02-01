@@ -28,6 +28,11 @@ export interface DashboardData {
     name: string
     lastUsed: Date
   }[]
+  chartData: {
+    permitsOverTime: { date: string; count: number }[]
+    permitStatus: { label: string; value: number; color: string }[]
+    activityTrends: { period: string; permits: number; alerts: number }[]
+  }
 }
 
 interface UseDashboardReturn {
@@ -155,7 +160,33 @@ export function useDashboard(): UseDashboardReturn {
           recentAlerts: alerts
         },
         aois: mockAois,
-        savedSearches: processedSavedSearches
+        savedSearches: processedSavedSearches,
+        chartData: {
+          permitsOverTime: [
+            { date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 20) + 5 },
+            { date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 20) + 8 },
+            { date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 25) + 10 },
+            { date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 30) + 12 },
+            { date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 25) + 8 },
+            { date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 20) + 6 },
+            { date: new Date().toISOString(), count: newPermitsCount },
+          ],
+          permitStatus: [
+            { label: "Active", value: Math.floor(newPermitsCount * 0.6), color: "rgb(16, 185, 129)" },
+            { label: "Pending", value: Math.floor(newPermitsCount * 0.25), color: "rgb(245, 158, 11)" },
+            { label: "Expired", value: Math.floor(newPermitsCount * 0.1), color: "rgb(239, 68, 68)" },
+            { label: "Cancelled", value: Math.floor(newPermitsCount * 0.05), color: "rgb(156, 163, 175)" },
+          ],
+          activityTrends: [
+            { period: "Mon", permits: Math.floor(Math.random() * 15) + 5, alerts: Math.floor(Math.random() * 8) + 2 },
+            { period: "Tue", permits: Math.floor(Math.random() * 20) + 8, alerts: Math.floor(Math.random() * 10) + 3 },
+            { period: "Wed", permits: Math.floor(Math.random() * 18) + 6, alerts: Math.floor(Math.random() * 8) + 2 },
+            { period: "Thu", permits: Math.floor(Math.random() * 25) + 10, alerts: Math.floor(Math.random() * 12) + 4 },
+            { period: "Fri", permits: Math.floor(Math.random() * 22) + 8, alerts: Math.floor(Math.random() * 10) + 3 },
+            { period: "Sat", permits: Math.floor(Math.random() * 10) + 2, alerts: Math.floor(Math.random() * 5) + 1 },
+            { period: "Sun", permits: Math.floor(Math.random() * 8) + 2, alerts: Math.floor(Math.random() * 4) + 1 },
+          ],
+        }
       }
 
       setData(dashboardData)

@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { OnboardingProvider } from "@/components/onboarding/OnboardingContext";
 import { NotificationProvider } from "@/components/notifications/NotificationContext";
+import { NavigationProvider } from "@/components/navigation";
 import { SkipLink } from "@/components/ui/skip-link";
 
 const geistSans = Geist({
@@ -41,15 +42,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          <NotificationProvider>
-            <OnboardingProvider>
-              {/* Main content wrapper with landmark region */}
-              <div id="main-content" role="main" tabIndex={-1}>
-                {children}
-              </div>
-              <Toaster />
-            </OnboardingProvider>
-          </NotificationProvider>
+          <NavigationProvider>
+            <NotificationProvider>
+              <OnboardingProvider>
+                {/* Main content wrapper with landmark region */}
+                <div id="main-content" role="main" tabIndex={-1}>
+                  {children}
+                </div>
+                <Toaster />
+              </OnboardingProvider>
+            </NotificationProvider>
+          </NavigationProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -2,130 +2,90 @@
 /* Single source of truth for all design values */
 /* WCAG 2.1 AA Compliant - All color combinations verified for contrast ratios */
 
-
-  /* Brand Colors */
-=======
 :root {
   /* ========================================
      FONT FAMILY TOKENS - TYPOGRAPHY STACK
      ======================================== */
-  /*
-   * Primary font: Inter - Modern, highly legible sans-serif
-   * Fallback stack: system fonts for fast initial render
-   * Character: Clean, professional, excellent for data-heavy interfaces
-   */
   --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-
-  /*
-   * Display font: Same as sans for consistency
-   * Used for large headings and hero text
-   */
   --font-family-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-  /*
-   * Monospace font: JetBrains Mono or system fallback
-   * Used for code, data values, and technical content
-   */
   --font-family-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-
-  /*
-   * Alternative serif for special content (optional)
-   */
   --font-family-serif: Georgia, 'Times New Roman', Times, serif;
 
   /* ========================================
      COLOR TOKENS - SEMANTIC PALETTE
      ======================================== */
-
   /* Brand Colors */
-     ======================================== */
+  --color-brand-primary: #4f46e5;
+  --color-brand-primary-hover: #4338ca;
+  --color-brand-primary-active: #3730a3;
+  --color-brand-accent: #2563eb;
+  --color-brand-accent-hover: #1d4ed8;
 
-  /* Brand Colors */
-  --color-brand-primary: #4f46e5;      /* Indigo 600 - Primary actions, CTAs */
-  --color-brand-primary-hover: #4338ca; /* Indigo 700 - Hover state */
-  --color-brand-primary-active: #3730a3; /* Indigo 800 - Active state */
-  --color-brand-accent: #2563eb;       /* Blue 600 - Secondary actions, links */
-  --color-brand-accent-hover: #1d4ed8;  /* Blue 700 - Accent hover */
+  /* Status Colors */
+  --color-success: #059669;
+  --color-success-subtle: #d1fae5;
+  --color-success-hover: #047857;
+  --color-warning: #d97706;
+  --color-warning-subtle: #fef3c7;
+  --color-warning-hover: #b45309;
+  --color-error: #dc2626;
+  --color-error-subtle: #fee2e2;
+  --color-error-hover: #b91c1c;
+  --color-info: #0891b2;
+  --color-info-subtle: #cffafe;
+  --color-info-hover: #0e7490;
 
-  /* Status Colors - Semantic */
-  --color-success: #059669;            /* Emerald 600 - Success states */
-  --color-success-subtle: #d1fae5;     /* Emerald 100 - Success backgrounds */
-  --color-success-hover: #047857;      /* Emerald 700 - Success hover */
+  /* Surface Colors */
+  --color-surface-default: #ffffff;
+  --color-surface-subtle: #f8fafc;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-inset: #f1f5f9;
+  --color-surface-scrim: rgba(0, 0, 0, 0.5);
 
-  --color-warning: #d97706;            /* Amber 600 - Warning states */
-  --color-warning-subtle: #fef3c7;     /* Amber 100 - Warning backgrounds */
-  --color-warning-hover: #b45309;      /* Amber 700 - Warning hover */
+  /* Border Colors */
+  --color-border-default: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-border-subtle: #f1f5f9;
+  --color-border-focus: var(--color-brand-primary);
 
-  --color-error: #dc2626;              /* Red 600 - Error states */
-  --color-error-subtle: #fee2e2;       /* Red 100 - Error backgrounds */
-  --color-error-hover: #b91c1c;        /* Red 700 - Error hover */
-
-  --color-info: #0891b2;               /* Cyan 600 - Info states */
-  --color-info-subtle: #cffafe;        /* Cyan 100 - Info backgrounds */
-  --color-info-hover: #0e7490;         /* Cyan 700 - Info hover */
-
-  /* ========================================
-     SURFACE COLORS - BACKGROUND HIERARCHY
-     ======================================== */
-  --color-surface-default: #ffffff;           /* Primary background */
-  --color-surface-subtle: #f8fafc;            /* Subtle backgrounds, alternating rows */
-  --color-surface-raised: #ffffff;            /* Cards, elevated surfaces */
-  --color-surface-overlay: #ffffff;           /* Modals, popovers, dropdowns */
-  --color-surface-inset: #f1f5f9;             /* Input backgrounds, wells */
-  --color-surface-scrim: rgba(0, 0, 0, 0.5);  /* Modal backdrops */
-
-  /* ========================================
-     BORDER COLORS - DIVIDERS & OUTLINES
-     ======================================== */
-  --color-border-default: #e2e8f0;     /* Standard dividers */
-  --color-border-strong: #cbd5e1;      /* Emphasized borders */
-  --color-border-subtle: #f1f5f9;      /* Very light dividers */
-  --color-border-focus: var(--color-brand-primary); /* Focus states */
-
-  /* ========================================
-     TEXT COLORS - TYPOGRAPHY HIERARCHY
-     ======================================== */
-  /* All text colors meet WCAG AA (4.5:1) on appropriate backgrounds */
-  --color-text-primary: #0f172a;       /* Headlines, important text - Slate 900 */
-  --color-text-secondary: #334155;     /* Body text - Slate 700 */
-  --color-text-tertiary: #64748b;      /* Hints, descriptions - Slate 500 */
-  --color-text-placeholder: #94a3b8;   /* Placeholder text - Slate 400 */
-  --color-text-disabled: #94a3b8;      /* Disabled text - Slate 400 */
-  --color-text-inverse: #f8fafc;       /* Text on dark backgrounds - Slate 50 */
+  /* Text Colors */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-tertiary: #64748b;
+  --color-text-placeholder: #94a3b8;
+  --color-text-disabled: #94a3b8;
+  --color-text-inverse: #f8fafc;
   --color-text-link: var(--color-brand-accent);
   --color-text-link-hover: var(--color-brand-accent-hover);
 
-  /* ========================================
-     INTERACTIVE COLORS - BUTTONS & CONTROLS
-     ======================================== */
+  /* Interactive Colors */
   --color-interactive-default: var(--color-brand-primary);
   --color-interactive-hover: var(--color-brand-primary-hover);
   --color-interactive-active: var(--color-brand-primary-active);
-  --color-interactive-disabled: #cbd5e1;      /* Slate 300 */
+  --color-interactive-disabled: #cbd5e1;
   --color-interactive-ghost: transparent;
-  --color-interactive-ghost-hover: #f1f5f9;   /* Slate 100 */
+  --color-interactive-ghost-hover: #f1f5f9;
 
   /* ========================================
-     TYPOGRAPHY SCALE - MAJOR THIRD RATIO (1.25)
+     TYPOGRAPHY SCALE
      ======================================== */
-  --font-size-xs: 0.75rem;      /* 12px - Captions, badges */
-  --font-size-sm: 0.875rem;     /* 14px - Small text, labels */
-  --font-size-base: 1rem;       /* 16px - Body text (base) */
-  --font-size-lg: 1.125rem;     /* 18px - Large body */
-  --font-size-xl: 1.25rem;      /* 20px - Small headings */
-  --font-size-2xl: 1.5rem;      /* 24px - H4 */
-  --font-size-3xl: 1.875rem;    /* 30px - H3 */
-  --font-size-4xl: 2.25rem;     /* 36px - H2 */
-  --font-size-5xl: 3rem;        /* 48px - H1 */
-  --font-size-6xl: 3.75rem;     /* 60px - Display */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
 
-  /* Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* Line Heights */
   --line-height-none: 1;
   --line-height-tight: 1.25;
   --line-height-snug: 1.375;
@@ -133,7 +93,6 @@
   --line-height-relaxed: 1.625;
   --line-height-loose: 2;
 
-  /* Letter Spacing */
   --letter-spacing-tight: -0.025em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.025em;
@@ -142,50 +101,88 @@
   /* ========================================
      SPACING SYSTEM - 4PX BASE UNIT
      ======================================== */
+  /* Base scale - Numeric increments */
   --space-0: 0;
   --space-px: 1px;
-  --space-0\.5: 0.125rem;  /* 2px */
-  --space-1: 0.25rem;     /* 4px */
-  --space-1\.5: 0.375rem;  /* 6px */
-  --space-2: 0.5rem;      /* 8px */
-  --space-2\.5: 0.625rem;  /* 10px */
-  --space-3: 0.75rem;     /* 12px */
-  --space-3\.5: 0.875rem;  /* 14px */
-  --space-4: 1rem;        /* 16px */
-  --space-5: 1.25rem;     /* 20px */
-  --space-6: 1.5rem;      /* 24px */
-  --space-7: 1.75rem;     /* 28px */
-  --space-8: 2rem;        /* 32px */
-  --space-9: 2.25rem;     /* 36px */
-  --space-10: 2.5rem;     /* 40px */
-  --space-11: 2.75rem;    /* 44px */
-  --space-12: 3rem;       /* 48px */
-  --space-14: 3.5rem;     /* 56px */
-  --space-16: 4rem;       /* 64px */
-  --space-20: 5rem;       /* 80px */
-  --space-24: 6rem;       /* 96px */
-  --space-28: 7rem;       /* 112px */
-  --space-32: 8rem;       /* 128px */
-  --space-36: 9rem;       /* 144px */
-  --space-40: 10rem;      /* 160px */
+  --space-0\.5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-1\.5: 0.375rem;
+  --space-2: 0.5rem;
+  --space-2\.5: 0.625rem;
+  --space-3: 0.75rem;
+  --space-3\.5: 0.875rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-11: 2.75rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-28: 7rem;
+  --space-32: 8rem;
+  --space-36: 9rem;
+  --space-40: 10rem;
+
+  /* ========================================
+     SEMANTIC SPACING - COMPONENT SPECIFIC
+     ======================================== */
+  /* Component padding */
+  --component-padding-xs: var(--space-1);
+  --component-padding-sm: var(--space-2);
+  --component-padding-md: var(--space-3);
+  --component-padding-lg: var(--space-4);
+  --component-padding-xl: var(--space-6);
+
+  /* Component gaps */
+  --component-gap-xs: var(--space-1);
+  --component-gap-sm: var(--space-2);
+  --component-gap-md: var(--space-3);
+  --component-gap-lg: var(--space-4);
+  --component-gap-xl: var(--space-6);
+
+  /* Layout spacing */
+  --layout-gap-xs: var(--space-4);
+  --layout-gap-sm: var(--space-6);
+  --layout-gap-md: var(--space-8);
+  --layout-gap-lg: var(--space-12);
+  --layout-gap-xl: var(--space-16);
+
+  /* Section spacing */
+  --section-padding-xs: var(--space-6);
+  --section-padding-sm: var(--space-8);
+  --section-padding-md: var(--space-12);
+  --section-padding-lg: var(--space-16);
+  --section-padding-xl: var(--space-20);
+
+  /* Content spacing */
+  --content-gap-xs: var(--space-2);
+  --content-gap-sm: var(--space-3);
+  --content-gap-md: var(--space-4);
+  --content-gap-lg: var(--space-6);
+  --content-gap-xl: var(--space-8);
 
   /* ========================================
      BORDER RADIUS SCALE
      ======================================== */
   --radius-none: 0;
-  --radius-sm: 0.125rem;   /* 2px - Tags, badges */
-  --radius-base: 0.25rem;  /* 4px - Small elements */
-  --radius-md: 0.375rem;   /* 6px - Inputs, buttons */
-  --radius-lg: 0.5rem;     /* 8px - Cards, containers */
-  --radius-xl: 0.75rem;    /* 12px - Large cards */
-  --radius-2xl: 1rem;      /* 16px - Modals, dialogs */
-  --radius-3xl: 1.5rem;    /* 24px - Feature cards */
-  --radius-full: 9999px;   /* Pills, circles */
+  --radius-sm: 0.125rem;
+  --radius-base: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
 
   /* ========================================
-     SHADOWS & ELEVATION SYSTEM
+     SHADOWS & ELEVATION
      ======================================== */
-  /* Elevation levels for different UI layers */
   --shadow-none: none;
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
@@ -196,13 +193,12 @@
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 
-  /* Elevation semantic names */
-  --elevation-1: var(--shadow-xs);   /* Buttons at rest */
-  --elevation-2: var(--shadow-sm);   /* Cards, dropdowns */
-  --elevation-3: var(--shadow-base); /* Raised cards */
-  --elevation-4: var(--shadow-md);   /* Popovers, menus */
-  --elevation-5: var(--shadow-lg);   /* Modals, dialogs */
-  --elevation-6: var(--shadow-xl);   /* Full-screen overlays */
+  --elevation-1: var(--shadow-xs);
+  --elevation-2: var(--shadow-sm);
+  --elevation-3: var(--shadow-base);
+  --elevation-4: var(--shadow-md);
+  --elevation-5: var(--shadow-lg);
+  --elevation-6: var(--shadow-xl);
 
   /* ========================================
      FOCUS & ACCESSIBILITY
@@ -215,7 +211,7 @@
   --focus-ring-success: 0 0 0 var(--focus-ring-width) rgba(5, 150, 105, 0.5);
 
   /* ========================================
-     ANIMATION DURATIONS
+     ANIMATION
      ======================================== */
   --duration-instant: 0ms;
   --duration-fast: 100ms;
@@ -224,9 +220,6 @@
   --duration-slower: 500ms;
   --duration-slowest: 1000ms;
 
-  /* ========================================
-     EASING CURVES
-     ======================================== */
   --ease-linear: linear;
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
@@ -283,116 +276,17 @@
   --size-80: 20rem;
   --size-96: 24rem;
 
-  /* Touch target sizes */
-  --touch-target-min: 2.75rem;  /* 44px - WCAG minimum */
-  --touch-target-comfortable: 3rem;  /* 48px - Comfortable */
-
-  /* ========================================
-     OPACITY TOKENS
-     ======================================== */
-  --opacity-0: 0;
-  --opacity-5: 0.05;
-  --opacity-10: 0.1;
-  --opacity-20: 0.2;
-  --opacity-25: 0.25;
-  --opacity-30: 0.3;
-  --opacity-40: 0.4;
-  --opacity-50: 0.5;
-  --opacity-60: 0.6;
-  --opacity-70: 0.7;
-  --opacity-75: 0.75;
-  --opacity-80: 0.8;
-  --opacity-90: 0.9;
-  --opacity-95: 0.95;
-  --opacity-100: 1;
-
-  /* Disabled state opacity */
-  --opacity-disabled: 0.5;
-
-  /* ========================================
-     BREAKPOINT TOKENS (for JS reference)
-     ======================================== */
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-  --breakpoint-2xl: 1536px;
-}
-
-/* ========================================
-   DARK THEME OVERRIDES
-   ======================================== */
-[data-theme="dark"],
-.dark {
-  /* Brand Colors - Lighter for dark mode visibility */
-  --color-brand-primary: #818cf8;           /* Indigo 400 */
-  --color-brand-primary-hover: #a5b4fc;     /* Indigo 300 */
-  --color-brand-primary-active: #c7d2fe;    /* Indigo 200 */
-  --color-brand-accent: #60a5fa;            /* Blue 400 */
-  --color-brand-accent-hover: #93c5fd;      /* Blue 300 */
-
-  /* Status Colors - Lighter variants */
-  --color-success: #34d399;                 /* Emerald 400 */
-  --color-success-subtle: #064e3b;          /* Emerald 900 */
-  --color-success-hover: #6ee7b7;           /* Emerald 300 */
-
-  --color-warning: #fbbf24;                 /* Amber 400 */
-  --color-warning-subtle: #78350f;          /* Amber 900 */
-  --color-warning-hover: #fcd34d;           /* Amber 300 */
-
-  --color-error: #f87171;                   /* Red 400 */
-  --color-error-subtle: #7f1d1d;            /* Red 900 */
-  --color-error-hover: #fca5a5;             /* Red 300 */
-
-  --color-info: #22d3ee;                    /* Cyan 400 */
-  --color-info-subtle: #164e63;             /* Cyan 900 */
-  --color-info-hover: #67e8f9;              /* Cyan 300 */
-
-  /* Surface Colors - Dark theme hierarchy */
-  --color-surface-default: #0f172a;         /* Slate 900 - Main background */
-  --color-surface-subtle: #1e293b;          /* Slate 800 - Subtle areas */
-  --color-surface-raised: #1e293b;          /* Slate 800 - Cards */
-  --color-surface-overlay: #334155;         /* Slate 700 - Overlays */
-  --color-surface-inset: #0f172a;           /* Slate 900 - Inputs */
-  --color-surface-scrim: rgba(0, 0, 0, 0.7);
-
-  /* Border Colors */
-  --color-border-default: #334155;          /* Slate 700 */
-  --color-border-strong: #475569;           /* Slate 600 */
-  --color-border-subtle: #1e293b;           /* Slate 800 */
-  --color-border-focus: var(--color-brand-primary);
-
-  /* Text Colors - Ensuring WCAG AA on dark backgrounds */
-  --color-text-primary: #f8fafc;            /* Slate 50 - Headlines */
-  --color-text-secondary: #e2e8f0;          /* Slate 200 - Body */
-  --color-text-tertiary: #94a3b8;           /* Slate 400 - Hints */
-  --color-text-placeholder: #64748b;        /* Slate 500 - Placeholders */
-  --color-text-disabled: #64748b;           /* Slate 500 - Disabled */
-  --color-text-inverse: #0f172a;            /* Slate 900 - On light */
-  --color-text-link: var(--color-brand-accent);
-  --color-text-link-hover: var(--color-brand-accent-hover);
-
-  /* Interactive Colors */
-  --color-interactive-default: var(--color-brand-primary);
-  --color-interactive-hover: var(--color-brand-primary-hover);
-  --color-interactive-active: var(--color-brand-primary-active);
-  --color-interactive-disabled: #475569;    /* Slate 600 */
-  --color-interactive-ghost: transparent;
-  --color-interactive-ghost-hover: #334155; /* Slate 700 */
-
-  /* Shadows - Enhanced for dark mode visibility */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 6px 8px -1px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
-
-  /* Focus Ring - Adjusted for dark mode */
-  --focus-ring-color: rgba(129, 140, 248, 0.5);
-  --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
-  --focus-ring-error: 0 0 0 var(--focus-ring-width) rgba(248, 113, 113, 0.5);
-  --focus-ring-success: 0 0 0 var(--focus-ring-width) rgba(52, 211, 153, 0.5);
+  /* Container widths */
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+  --container-full: 100%;
 }

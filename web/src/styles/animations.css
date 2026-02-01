@@ -90,6 +90,79 @@
   }
 }
 
+/* ========================================
+   BUTTON MICRO-INTERACTIONS
+   ======================================== */
+
+/* Ripple effect for button presses */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Button press scale animation */
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Button lift animation for hover */
+@keyframes buttonLift {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  100% {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Loading dots animation */
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Success checkmark draw animation */
+@keyframes checkmarkDraw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Focus ring pulse */
+@keyframes focusPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px var(--color-brand-primary);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-brand-primary);
+  }
+}
+
 /* Reduced motion variants for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -97,54 +170,453 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
+
   @keyframes shimmer {
     0%, 100% {
       background-position: 0 0;
     }
   }
-  
+
   @keyframes fadeIn {
     0%, 100% {
       opacity: 1;
     }
   }
-  
+
   @keyframes slideUp {
     0%, 100% {
       transform: translateY(0);
       opacity: 1;
     }
   }
-  
+
   @keyframes scaleIn {
     0%, 100% {
       transform: scale(1);
       opacity: 1;
     }
   }
-  
+
   @keyframes pulse {
     0%, 100% {
       opacity: 1;
     }
   }
-  
+
   @keyframes spin {
     0%, 100% {
       transform: rotate(0deg);
     }
   }
-  
+
   @keyframes bounce {
     0%, 100% {
       transform: translateY(0);
     }
   }
-  
+
   @keyframes shake {
     0%, 100% {
       transform: translateX(0);
+    }
+  }
+
+  @keyframes ripple {
+    0%, 100% {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes buttonPress {
+    0%, 100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes buttonLift {
+    0%, 100% {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  @keyframes loadingDots {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes checkmarkDraw {
+    0%, 100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes focusPulse {
+    0%, 100% {
+      box-shadow: 0 0 0 2px var(--color-brand-primary);
+    }
+  }
+
+  /* ========================================
+     FORM FIELD MICRO-INTERACTIONS
+     ======================================== */
+
+  /* Input focus glow animation */
+  @keyframes inputFocusGlow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(var(--color-brand-primary-rgb), 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(var(--color-brand-primary-rgb), 0.1);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(var(--color-brand-primary-rgb), 0);
+    }
+  }
+
+  /* Floating label animation */
+  @keyframes labelFloatUp {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-24px) scale(0.85);
+      opacity: 1;
+    }
+  }
+
+  @keyframes labelFloatDown {
+    0% {
+      transform: translateY(-24px) scale(0.85);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) scale(1);
+      opacity: 0.6;
+    }
+  }
+
+  /* Validation icon pop animation */
+  @keyframes validationIconPop {
+    0% {
+      transform: scale(0) rotate(-45deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2) rotate(5deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  /* Error shake animation (enhanced) */
+  @keyframes formErrorShake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-6px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(6px);
+    }
+  }
+
+  /* Success checkmark bounce */
+  @keyframes successCheckBounce {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Select dropdown open animation */
+  @keyframes selectDropdownOpen {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.95);
+      transform-origin: top;
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      transform-origin: top;
+    }
+  }
+
+  /* Select dropdown close animation */
+  @keyframes selectDropdownClose {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      transform-origin: top;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.95);
+      transform-origin: top;
+    }
+  }
+
+  /* Select option hover slide */
+  @keyframes selectOptionSlide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(4px);
+    }
+  }
+
+  /* Checkbox check animation */
+  @keyframes checkboxCheck {
+    0% {
+      transform: scale(0) rotate(-45deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2) rotate(5deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  /* Checkbox uncheck animation */
+  @keyframes checkboxUncheck {
+    0% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0) rotate(45deg);
+      opacity: 0;
+    }
+  }
+
+  /* Radio button select animation */
+  @keyframes radioSelect {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.3);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Switch toggle animation */
+  @keyframes switchToggleOn {
+    0% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(60%) scale(1.1);
+    }
+    100% {
+      transform: translateX(100%) scale(1);
+    }
+  }
+
+  @keyframes switchToggleOff {
+    0% {
+      transform: translateX(100%);
+    }
+    50% {
+      transform: translateX(40%) scale(1.1);
+    }
+    100% {
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  /* Character counter pulse */
+  @keyframes charCounterPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  /* Helper text slide in */
+  @keyframes helperTextSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Error message shake and fade in */
+  @keyframes errorMessageShake {
+    0% {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    25% {
+      transform: translateX(5px);
+    }
+    50% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Clear button fade in/out */
+  @keyframes clearButtonFade {
+    0% {
+      opacity: 0;
+      transform: scale(0.8) rotate(-90deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  /* Reduced motion variants for form animations */
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes inputFocusGlow {
+      0%, 100% {
+        box-shadow: none;
+      }
+    }
+
+    @keyframes labelFloatUp {
+      0%, 100% {
+        transform: translateY(-24px) scale(0.85);
+        opacity: 1;
+      }
+    }
+
+    @keyframes labelFloatDown {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+      }
+    }
+
+    @keyframes validationIconPop {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes formErrorShake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes successCheckBounce {
+      0%, 100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes selectDropdownOpen {
+      0%, 100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes selectDropdownClose {
+      0%, 100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes checkboxCheck {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes checkboxUncheck {
+      0%, 100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    @keyframes radioSelect {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes switchToggleOn {
+      0%, 100% {
+        transform: translateX(100%);
+      }
+    }
+
+    @keyframes switchToggleOff {
+      0%, 100% {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes charCounterPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes helperTextSlide {
+      0%, 100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes errorMessageShake {
+      0%, 100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes clearButtonFade {
+      0%, 100% {
+        opacity: 1;
+        transform: none;
+      }
     }
   }
 }

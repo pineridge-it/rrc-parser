@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Upload, X, File, FileText, Image, Music, Video, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Upload, X, File, FileText, Image, Music, Video, AlertCircle, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
@@ -264,7 +264,7 @@ const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
               )}
             >
               {currentVariant === "success" ? (
-                <CheckCircle2 className="w-6 h-6 text-[var(--color-success)]" />
+                <CheckCircle className="w-6 h-6 text-[var(--color-success)]" />
               ) : currentVariant === "error" ? (
                 <AlertCircle className="w-6 h-6 text-[var(--color-error)]" />
               ) : (
@@ -330,7 +330,7 @@ const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
                     </div>
                   )}
                   {file.status === "success" && (
-                    <CheckCircle2 className="w-5 h-5 text-[var(--color-success)]" />
+                    <CheckCircle className="w-5 h-5 text-[var(--color-success)]" />
                   )}
                   {file.status === "error" && (
                     <AlertCircle className="w-5 h-5 text-[var(--color-error)]" />

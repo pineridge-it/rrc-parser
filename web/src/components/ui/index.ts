@@ -26,3 +26,7 @@ export * from "./keyboard-shortcuts-provider";
 export * from "./lazy-load";
 export * from "./virtual-scroll";
 export * from "./skip-link";
+export * from "./dialog";
+export * from "./tooltip";
+export * from "./popover";
+export * from "./component-showcase";

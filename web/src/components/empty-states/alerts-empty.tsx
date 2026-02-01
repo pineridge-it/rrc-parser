@@ -20,7 +20,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Bell, BellOff, Settings, CheckCircle2 } from "lucide-react";
+import { Bell, BellOff, Settings, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -96,7 +96,7 @@ export function AlertsEmpty({
               }}
             >
               <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle2 className="w-12 h-12 text-green-600" />
+                <CheckCircle className="w-12 h-12 text-green-600" />
               </div>
             </motion.div>
             
@@ -114,7 +114,7 @@ export function AlertsEmpty({
                 delay: 0.5,
               }}
             >
-              <CheckCircle2 className="w-5 h-5 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-green-400" />
             </motion.div>
           </>
         ) : (
