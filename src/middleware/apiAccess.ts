@@ -5,6 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { LimitsEnforcer, ApiAccessDeniedError } from '../services/limits';
+import { asUUID } from '../types/common';
 
 /**
  * Middleware to check API access permissions
@@ -24,7 +25,7 @@ export function apiAccessControl(limitsEnforcer: LimitsEnforcer) {
       }
 
       const result = await limitsEnforcer.checkLimit(
-        workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+        asUUID(workspaceId),
         'apiAccess'
       );
 
@@ -75,7 +76,7 @@ export function requireResourceLimit(
       }
 
       await limitsEnforcer.enforceLimit(
-        workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+        asUUID(workspaceId),
         resource
       );
 

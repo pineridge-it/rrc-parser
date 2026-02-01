@@ -3,7 +3,7 @@
  * Prevents abuse by enforcing limits from day one
  */
 
-import { UUID } from 'crypto';
+import { UUID } from '../../types/common';
 import { UsageService } from '../usage';
 import { PLAN_LIMITS } from '../../types/usage';
 

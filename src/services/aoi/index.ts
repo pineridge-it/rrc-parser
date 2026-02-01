@@ -3,6 +3,7 @@
  */
 
 import { LimitsEnforcer } from '../limits';
+import { asUUID } from '../../types/common';
 
 export interface AOICreateRequest {
   name: string;
@@ -34,7 +35,7 @@ export class AOIService {
   async createAOI(request: AOICreateRequest): Promise<AOI> {
     // Check AOI limit before creating
     await this.limitsEnforcer.enforceLimit(
-      request.workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+      asUUID(request.workspaceId),
       'aois'
     );
 

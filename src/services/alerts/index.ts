@@ -3,6 +3,7 @@
  */
 
 import { LimitsEnforcer } from '../limits';
+import { asUUID } from '../../types/common';
 
 export interface AlertCreateRequest {
   title: string;
@@ -34,7 +35,7 @@ export class AlertService {
   async sendAlert(request: AlertCreateRequest): Promise<Alert> {
     // Check alert limit before sending
     await this.limitsEnforcer.enforceLimit(
-      request.workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+      asUUID(request.workspaceId),
       'alerts'
     );
 
@@ -53,7 +54,7 @@ export class AlertService {
 
     // Increment usage after successful send
     await this.limitsEnforcer.incrementUsage(
-      request.workspaceId as `${string}-${string}-${string}-${string}-${string}`,
+      asUUID(request.workspaceId),
       'alerts'
     );
 

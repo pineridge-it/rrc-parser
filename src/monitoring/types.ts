@@ -152,5 +152,6 @@ export interface ETLRunRecord {
   permitsFailed: number;
   sourceFiles?: string[];
   errorMessage?: string;
+  errorStack?: string;
   durationMs?: number;
 }

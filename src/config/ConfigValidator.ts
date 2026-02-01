@@ -3,7 +3,7 @@
  * Location: src/config/ConfigValidator.ts
  */
 
-import { RawConfigData } from '../types';
+import { RawConfigData, RawSchemaData, RawFieldData, IValidationRules } from '../types';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -50,7 +50,7 @@ export class ConfigValidator {
    * Validate settings section
    */
   private static validateSettings(
-    settings: any,
+    settings: Partial<{ minRecordLength?: number; encoding?: string; strictMode?: boolean }>,
     errors: string[],
     warnings: string[]
   ): void {
@@ -83,7 +83,7 @@ export class ConfigValidator {
    * Validate schemas section
    */
   private static validateSchemas(
-    schemas: any,
+    schemas: Record<string, RawSchemaData>,
     errors: string[],
     warnings: string[]
   ): void {
@@ -96,22 +96,22 @@ export class ConfigValidator {
       }
 
       // Validate schema has name
-      if (!(schema as any).name) {
+      if (!schema.name) {
         errors.push(`${prefix}: missing required field 'name'`);
       }
 
       // Validate expected_min_length if present
-      if ((schema as any).expected_min_length !== undefined) {
-        const len = (schema as any).expected_min_length;
+      if (schema.expected_min_length !== undefined) {
+        const len = schema.expected_min_length;
         if (typeof len !== 'number' || len < 0) {
           errors.push(`${prefix}.expected_min_length must be a non-negative number`);
         }
       }
 
       // Validate fields
-      if ((schema as any).fields) {
+      if (schema.fields) {
         ConfigValidator.validateFields(
-          (schema as any).fields,
+          schema.fields,
           `${prefix}.fields`,
           errors,
           warnings
@@ -126,7 +126,7 @@ export class ConfigValidator {
    * Validate fields array
    */
   private static validateFields(
-    fields: any[],
+    fields: unknown,
     prefix: string,
     errors: string[],
     warnings: string[]
@@ -139,7 +139,7 @@ export class ConfigValidator {
     const fieldNames = new Set<string>();
 
     for (let i = 0; i < fields.length; i++) {
-      const field = fields[i];
+      const field = fields[i] as RawFieldData;
       const fieldPrefix = `${prefix}[${i}]`;
 
       // Check required properties
@@ -200,13 +200,15 @@ export class ConfigValidator {
     }
 
     // Check for overlapping fields
-    const sortedFields = [...fields]
-      .filter(f => f.start !== undefined && f.end !== undefined)
+    const sortedFields = (fields as RawFieldData[])
+      .filter((f): f is RawFieldData & { start: number; end: number } =>
+        f.start !== undefined && f.end !== undefined
+      )
       .sort((a, b) => a.start - b.start);
 
     for (let i = 0; i < sortedFields.length - 1; i++) {
-      const current = sortedFields[i];
-      const next = sortedFields[i + 1];
+      const current = sortedFields[i]!;
+      const next = sortedFields[i + 1]!;
 
       if (current.end > next.start) {
         errors.push(
@@ -222,7 +224,7 @@ export class ConfigValidator {
    * Validate lookup tables
    */
   private static validateLookupTables(
-    lookupTables: any,
+    lookupTables: Record<string, Record<string, unknown>>,
     errors: string[],
     warnings: string[]
   ): void {
@@ -252,14 +254,14 @@ export class ConfigValidator {
    * Validate validation rules
    */
   private static validateValidationRules(
-    validation: any,
+    validation: Partial<IValidationRules>,
     errors: string[],
     warnings: string[]
   ): void {
     // Validate ranges
     if (validation.ranges) {
       for (const [name, range] of Object.entries(validation.ranges)) {
-        const r = range as any;
+        const r = range;
         const prefix = `validation.ranges.${name}`;
 
         if (r.min === undefined) {

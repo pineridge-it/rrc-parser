@@ -4,6 +4,14 @@
 export type UUID = string & { __brand: 'UUID' };
 
 /**
+ * Converts a string to a UUID branded type
+ * Use this when you have a string that you know is a valid UUID
+ */
+export function asUUID(value: string): UUID {
+  return value as UUID;
+}
+
+/**
  * Common types used across the application
  */
 
