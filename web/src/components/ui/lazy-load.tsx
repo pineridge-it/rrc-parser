@@ -1,248 +1,167 @@
 "use client";
 
-import * as React from "react";
-import { motion, useInView } from "framer-motion";
+import React, { Suspense } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-// ============================================
-// Types
-// ============================================
 
 interface LazyLoadProps {
   children: React.ReactNode;
-  className?: string;
-  placeholder?: React.ReactNode;
-  threshold?: number;
-  rootMargin?: string;
-  triggerOnce?: boolean;
-  delay?: number;
-  fallback?: React.ReactNode;
-}
-
-interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  src: string;
-  alt: string;
-  className?: string;
-  placeholderSrc?: string;
-  threshold?: number;
-  rootMargin?: string;
-}
-
-interface LazyComponentProps {
-  component: React.ComponentType<any>;
-  props?: Record<string, any>;
   fallback?: React.ReactNode;
   className?: string;
 }
 
-// ============================================
-// Lazy Load Component
-// ============================================
-
-export function LazyLoad({
-  children,
-  className,
-  placeholder,
-  threshold = 0.1,
-  rootMargin = "50px",
-  triggerOnce = true,
-  delay = 0,
-  fallback,
-}: LazyLoadProps) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, {
-    once: triggerOnce,
-    amount: threshold,
-    margin: rootMargin as `${number}px`,
-  });
-  const [hasLoaded, setHasLoaded] = React.useState(false);
-
-  React.useEffect(() => {
-    if (isInView && !hasLoaded) {
-      const timer = setTimeout(() => {
-        setHasLoaded(true);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView, delay, hasLoaded]);
-
+/**
+ * Wrapper component for lazy loading with Suspense
+ * Provides a consistent loading state while components are being loaded
+ */
+export function LazyLoad({ children, fallback, className }: LazyLoadProps) {
   return (
-    <div ref={ref} className={cn("relative", className)}>
-      {hasLoaded ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
-      ) : (
-        placeholder || (
-          <div className="animate-pulse bg-[var(--color-surface-subtle)] rounded min-h-[100px]" />
+    <Suspense
+      fallback={
+        fallback || (
+          <div className={cn("animate-pulse bg-muted rounded-lg", className)}>
+            <div className="h-full w-full bg-muted/50" />
+          </div>
         )
-      )}
-    </div>
+      }
+    >
+      {children}
+    </Suspense>
   );
 }
 
-// ============================================
-// Lazy Image Component
-// ============================================
-
-export function LazyImage({
-  src,
-  alt,
-  className,
-  placeholderSrc,
-  threshold = 0.1,
-  rootMargin = "50px",
-  ...props
-}: LazyImageProps) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, {
-    once: true,
-    amount: threshold,
-    margin: rootMargin as `${number}px`,
-  });
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [imageSrc, setImageSrc] = React.useState(placeholderSrc);
-
-  React.useEffect(() => {
-    if (isInView) {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        setImageSrc(src);
-        setIsLoaded(true);
-      };
-    }
-  }, [isInView, src]);
-
-  return (
-    <div ref={ref} className={cn("relative overflow-hidden", className)}>
-      <img
-        src={imageSrc || src}
-        alt={alt}
-        className={cn(
-          "transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-0"
-        )}
-        onLoad={() => setIsLoaded(true)}
-        {...props}
-      />
-      {!isLoaded && (
-        <div className="absolute inset-0 animate-pulse bg-[var(--color-surface-subtle)]" />
-      )}
-    </div>
-  );
-}
-
-// ============================================
-// Lazy Component with Dynamic Import
-// ============================================
-
-export function LazyComponent({
-  component: Component,
-  props = {},
-  fallback,
-  className,
-}: LazyComponentProps) {
-  const [isMounted, setIsMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return (
-      <div className={className}>
-        {fallback || (
-          <div className="animate-pulse bg-[var(--color-surface-subtle)] rounded min-h-[100px]" />
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className={className}>
-      <Component {...props} />
-    </div>
-  );
-}
-
-// ============================================
-// Intersection Observer Hook
-// ============================================
-
-interface UseIntersectionObserverOptions {
-  threshold?: number;
-  rootMargin?: string;
-  triggerOnce?: boolean;
-}
-
-export function useIntersectionObserver(
-  options: UseIntersectionObserverOptions = {}
-) {
-  const { threshold = 0.1, rootMargin = "0px", triggerOnce = false } = options;
-  const [isIntersecting, setIsIntersecting] = React.useState(false);
-  const [hasIntersected, setHasIntersected] = React.useState(false);
-  const ref = React.useRef<HTMLElement>(null);
-
-  React.useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          setHasIntersected(true);
-          if (triggerOnce) {
-            observer.unobserve(element);
-          }
-        }
-      },
-      { threshold, rootMargin }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [threshold, rootMargin, triggerOnce]);
-
-  return { ref, isIntersecting, hasIntersected };
-}
-
-// ============================================
-// Below Fold Lazy Load
-// ============================================
-
-interface BelowFoldProps {
-  children: React.ReactNode;
+// Loading spinner component for lazy loading states
+interface LoadingSpinnerProps {
+  size?: "sm" | "md" | "lg";
   className?: string;
-  placeholder?: React.ReactNode;
-  priority?: "high" | "normal" | "low";
 }
 
-export function BelowFold({
-  children,
-  className,
-  placeholder,
-  priority = "normal",
-}: BelowFoldProps) {
-  const rootMarginMap = {
-    high: "200px",
-    normal: "100px",
-    low: "50px",
+export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) {
+  const sizeClasses = {
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-12 w-12",
   };
 
   return (
-    <LazyLoad
-      className={className}
-      placeholder={placeholder}
-      rootMargin={rootMarginMap[priority]}
-      triggerOnce
-    >
-      {children}
-    </LazyLoad>
+    <div className={cn("flex items-center justify-center", className)}>
+      <motion.div
+        className={cn(
+          "border-4 border-primary/30 border-t-primary rounded-full",
+          sizeClasses[size]
+        )}
+        animate={{ rotate: 360 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+    </div>
   );
+}
+
+// Skeleton loader for lazy loading
+interface LazySkeletonProps {
+  className?: string;
+  lines?: number;
+}
+
+export function LazySkeleton({ className, lines = 3 }: LazySkeletonProps) {
+  return (
+    <div className={cn("space-y-3", className)}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="h-4 bg-muted rounded animate-pulse"
+          style={{ width: `${Math.random() * 40 + 60}%` }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: i * 0.1 }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Error boundary for lazy loading failures
+interface LazyErrorProps {
+  error?: Error;
+  reset?: () => void;
+  className?: string;
+}
+
+export function LazyError({ error, reset, className }: LazyErrorProps) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center p-6 text-center",
+        className
+      )}
+    >
+      <div className="text-destructive mb-2">
+        <svg
+          className="h-12 w-12 mx-auto"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+      </div>
+      <h3 className="text-lg font-semibold mb-1">Failed to load</h3>
+      <p className="text-muted-foreground text-sm mb-4">
+        {error?.message || "There was an error loading this component."}
+      </p>
+      {reset && (
+        <button
+          onClick={reset}
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+        >
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Higher-order component for lazy loading pages/components
+export function withLazyLoad<P extends object>(
+  Component: React.ComponentType<P>,
+  options: {
+    fallback?: React.ReactNode;
+    errorComponent?: React.ComponentType<{ error?: Error; reset?: () => void }>;
+  } = {}
+) {
+  const { fallback, errorComponent: ErrorComponent = LazyError } = options;
+
+  return function LazyLoadedComponent(props: P) {
+    const [hasError, setHasError] = React.useState(false);
+    const [error, setError] = React.useState<Error | undefined>();
+
+    const handleError = (err: Error) => {
+      setHasError(true);
+      setError(err);
+    };
+
+    const reset = () => {
+      setHasError(false);
+      setError(undefined);
+    };
+
+    if (hasError) {
+      return <ErrorComponent error={error} reset={reset} />;
+    }
+
+    return (
+      <LazyLoad fallback={fallback}>
+        <Component {...props} />
+      </LazyLoad>
+    );
+  };
 }
