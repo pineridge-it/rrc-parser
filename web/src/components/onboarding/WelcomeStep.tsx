@@ -39,6 +39,14 @@ const featureVariants = {
   },
 } as const;
 
+// Static color map for Tailwind classes
+// Tailwind JIT compiler needs full class names at build time
+const colorStyles: Record<string, { bg: string; text: string }> = {
+  indigo: { bg: "bg-indigo-100", text: "text-indigo-600" },
+  green: { bg: "bg-green-100", text: "text-green-600" },
+  blue: { bg: "bg-blue-100", text: "text-blue-600" },
+};
+
 export default function WelcomeStep() {
   const { completeStep } = useOnboarding();
 
@@ -51,19 +59,19 @@ export default function WelcomeStep() {
       icon: MapPin,
       title: "Monitor Areas of Interest",
       description: "Track drilling activity in specific regions",
-      color: "indigo",
+      color: "indigo" as const,
     },
     {
       icon: Bell,
       title: "Real-time Alerts",
       description: "Get notified when new permits are filed",
-      color: "green",
+      color: "green" as const,
     },
     {
       icon: BarChart3,
       title: "Data Insights",
       description: "Analyze permit trends and activity",
-      color: "blue",
+      color: "blue" as const,
     },
   ];
 
@@ -115,31 +123,34 @@ export default function WelcomeStep() {
             animate="visible"
             className="space-y-4"
           >
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                variants={featureVariants}
-                whileHover={{ scale: 1.02, x: 5 }}
-                className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
-              >
+            {features.map((feature, index) => {
+              const styles = colorStyles[feature.color];
+              return (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 + index * 0.1, type: "spring" }}
-                  className={`flex-shrink-0 bg-${feature.color}-100 rounded-full p-3`}
+                  key={feature.title}
+                  variants={featureVariants}
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-default"
                 >
-                  <feature.icon
-                    className={`h-6 w-6 text-${feature.color}-600`}
-                  />
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1, type: "spring" }}
+                    className={`flex-shrink-0 ${styles.bg} rounded-full p-3`}
+                  >
+                    <feature.icon
+                      className={`h-6 w-6 ${styles.text}`}
+                    />
+                  </motion.div>
+                  <div className="ml-4 text-left">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-500">{feature.description}</p>
+                  </div>
                 </motion.div>
-                <div className="ml-4 text-left">
-                  <h3 className="text-lg font-medium text-gray-900">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-500">{feature.description}</p>
-                </div>
-              </motion.div>
-            ))}
+              );
+            })}
           </motion.div>
         </motion.div>
 

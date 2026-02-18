@@ -12,6 +12,7 @@ import {
   SkipForward,
   Check,
   Loader2,
+  Info,
 } from "lucide-react";
 
 const containerVariants = {
@@ -44,6 +45,12 @@ const popularAreas = [
   "Haynesville Shale",
 ];
 
+/**
+ * DEMO MODE: This component is in demo mode.
+ * AOI creation is simulated for onboarding demonstration purposes.
+ * No actual areas are persisted to the database.
+ * TODO: Integrate with real AOI creation API when map functionality is ready.
+ */
 export default function CreateAoiStep() {
   const { completeStep, skipStep, setFirstAoiId } = useOnboarding();
   const [aoiName, setAoiName] = useState("");
@@ -55,11 +62,13 @@ export default function CreateAoiStep() {
     if (!aoiName.trim()) return;
 
     setIsCreating(true);
-    // Simulate creation delay for better UX
+    // DEMO MODE: Simulated creation delay for UX demonstration
+    // In production, this will call the real AOI creation API
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    const fakeAoiId = "aoi-" + Date.now();
-    setFirstAoiId(fakeAoiId);
+    // DEMO MODE: Generate a temporary demo ID (not persisted)
+    const demoAoiId = "aoi-demo-" + Date.now();
+    setFirstAoiId(demoAoiId);
     setIsCreating(false);
     completeStep("create_aoi");
   };
@@ -84,6 +93,26 @@ export default function CreateAoiStep() {
         initial="hidden"
         animate="visible"
       >
+        {/* Demo Mode Banner */}
+        <motion.div
+          variants={itemVariants}
+          className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+        >
+          <div className="flex items-start">
+            <Info className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-amber-800">
+                Demo Mode
+              </h3>
+              <p className="text-sm text-amber-700 mt-1">
+                This is a demonstration of the AOI creation flow.
+                Areas created here are not persisted to the database.
+                Full map integration coming soon.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center mb-8">
           <motion.div
