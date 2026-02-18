@@ -137,7 +137,8 @@ function getQuietHoursEnd(preferences: NotificationPreferences): Date {
 }
 
 /**
- * Simple rate limiter
+ * Rate limiter with O(log n) sliding window using binary search
+ * Prevents unbounded array growth under high load
  */
 class RateLimiter {
   private requests: number[] = [];
@@ -151,8 +152,11 @@ class RateLimiter {
     const now = Date.now();
     const windowStart = now - this.config.windowMs;
 
-    // Remove old requests outside the window
-    this.requests = this.requests.filter(ts => ts > windowStart);
+    // Binary search for cutoff index - O(log n) instead of O(n) filter
+    const cutoffIndex = this.findCutoffIndex(windowStart);
+
+    // Slice to remove old requests - keeps array bounded
+    this.requests = this.requests.slice(cutoffIndex);
 
     if (this.requests.length >= this.config.maxRequests) {
       const oldestRequest = this.requests[0];
@@ -165,6 +169,26 @@ class RateLimiter {
 
     this.requests.push(now);
     return { allowed: true };
+  }
+
+  /**
+   * Binary search to find first index where timestamp > cutoff
+   * Time complexity: O(log n)
+   */
+  private findCutoffIndex(cutoff: number): number {
+    let left = 0;
+    let right = this.requests.length;
+
+    while (left < right) {
+      const mid = Math.floor((left + right) / 2);
+      if (this.requests[mid] <= cutoff) {
+        left = mid + 1;
+      } else {
+        right = mid;
+      }
+    }
+
+    return left;
   }
 
   reset(): void {
