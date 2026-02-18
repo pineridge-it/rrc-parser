@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { 
+  notificationPreferencesSchema, 
+  validateBody,
+  workspaceIdSchema,
+  type ValidationError 
+} from "@/lib/validators";
 
 interface QuietHours {
   enabled: boolean;
@@ -82,6 +88,20 @@ async function getAuthUser() {
 }
 
 /**
+ * Validate workspace ID format
+ */
+function validateWorkspaceId(workspaceId: string): { valid: true } | { valid: false; errors: ValidationError[] } {
+  const result = workspaceIdSchema.safeParse(workspaceId);
+  if (result.success) {
+    return { valid: true };
+  }
+  return { 
+    valid: false, 
+    errors: result.error.errors.map(e => ({ field: 'workspaceId', message: e.message }))
+  };
+}
+
+/**
  * Convert database row to API response format
  */
 function rowToPreferences(row: NotificationPreferencesRow): NotificationPreferences {
@@ -130,6 +150,15 @@ export async function GET(request: NextRequest) {
     if (!workspaceId) {
       return NextResponse.json(
         { error: "Workspace ID required" },
+        { status: 400 }
+      );
+    }
+    
+    // Validate workspace ID format
+    const workspaceValidation = validateWorkspaceId(workspaceId);
+    if (!workspaceValidation.valid) {
+      return NextResponse.json(
+        { error: "Validation failed", details: workspaceValidation.errors },
         { status: 400 }
       );
     }
@@ -187,9 +216,19 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const body = await request.json();
-    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
+    // Parse and validate request body
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
     
+    // Validate workspace ID
+    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
     if (!workspaceId) {
       return NextResponse.json(
         { error: "Workspace ID required" },
@@ -197,24 +236,49 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    const workspaceValidation = validateWorkspaceId(workspaceId);
+    if (!workspaceValidation.valid) {
+      return NextResponse.json(
+        { error: "Validation failed", details: workspaceValidation.errors },
+        { status: 400 }
+      );
+    }
+    
+    // Validate preferences body using Zod schema
+    const validation = validateBody(body, notificationPreferencesSchema);
+    if (!validation.success) {
+      // Log validation failures for security monitoring
+      console.warn("Validation failed for notification preferences:", {
+        userId: user.id,
+        workspaceId,
+        errors: validation.errors,
+      });
+      
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 }
+      );
+    }
+    
+    const validatedBody = validation.data;
     const supabase = await createClient();
     const now = new Date().toISOString();
     
-    // Prepare the database row
+    // Prepare the database row using validated data
     const row = {
       user_id: user.id,
       workspace_id: workspaceId,
-      quiet_hours_enabled: body.quietHours?.enabled ?? defaultPreferences.quietHours.enabled,
-      quiet_hours_start_time: body.quietHours?.startTime ?? defaultPreferences.quietHours.startTime,
-      quiet_hours_end_time: body.quietHours?.endTime ?? defaultPreferences.quietHours.endTime,
-      quiet_hours_timezone: body.quietHours?.timezone ?? defaultPreferences.quietHours.timezone,
-      digest_frequency: body.digest?.frequency ?? defaultPreferences.digest.frequency,
-      digest_daily_time: body.digest?.dailyTime ?? defaultPreferences.digest.dailyTime,
-      digest_weekly_day: body.digest?.weeklyDay ?? defaultPreferences.digest.weeklyDay,
-      digest_weekly_time: body.digest?.weeklyTime ?? defaultPreferences.digest.weeklyTime,
-      digest_timezone: body.digest?.timezone ?? defaultPreferences.digest.timezone,
-      email_enabled: body.emailEnabled ?? defaultPreferences.emailEnabled,
-      push_enabled: body.pushEnabled ?? defaultPreferences.pushEnabled,
+      quiet_hours_enabled: validatedBody.quietHours?.enabled ?? defaultPreferences.quietHours.enabled,
+      quiet_hours_start_time: validatedBody.quietHours?.startTime ?? defaultPreferences.quietHours.startTime,
+      quiet_hours_end_time: validatedBody.quietHours?.endTime ?? defaultPreferences.quietHours.endTime,
+      quiet_hours_timezone: validatedBody.quietHours?.timezone ?? defaultPreferences.quietHours.timezone,
+      digest_frequency: validatedBody.digest?.frequency ?? defaultPreferences.digest.frequency,
+      digest_daily_time: validatedBody.digest?.dailyTime ?? defaultPreferences.digest.dailyTime,
+      digest_weekly_day: validatedBody.digest?.weeklyDay ?? defaultPreferences.digest.weeklyDay,
+      digest_weekly_time: validatedBody.digest?.weeklyTime ?? defaultPreferences.digest.weeklyTime,
+      digest_timezone: validatedBody.digest?.timezone ?? defaultPreferences.digest.timezone,
+      email_enabled: validatedBody.emailEnabled ?? defaultPreferences.emailEnabled,
+      push_enabled: validatedBody.pushEnabled ?? defaultPreferences.pushEnabled,
       updated_at: now,
     };
     
@@ -223,7 +287,6 @@ export async function POST(request: NextRequest) {
       .from("notification_preferences")
       .upsert(row, {
         onConflict: "user_id,workspace_id",
-        ignoreDuplicates: false,
       })
       .select()
       .single();
@@ -261,9 +324,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
     
-    const body = await request.json();
-    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
+    // Parse and validate request body
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
     
+    // Validate workspace ID
+    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
     if (!workspaceId) {
       return NextResponse.json(
         { error: "Workspace ID required" },
@@ -271,30 +344,80 @@ export async function PATCH(request: NextRequest) {
       );
     }
     
-    const supabase = await createClient();
+    const workspaceValidation = validateWorkspaceId(workspaceId);
+    if (!workspaceValidation.valid) {
+      return NextResponse.json(
+        { error: "Validation failed", details: workspaceValidation.errors },
+        { status: 400 }
+      );
+    }
     
-    // Build update object dynamically based on provided fields
+    // For PATCH, we use partial validation - only validate fields that are present
+    // Create a partial schema by making all fields optional
+    const partialPreferencesSchema = notificationPreferencesSchema.partial();
+    const validation = validateBody(body, partialPreferencesSchema);
+    
+    if (!validation.success) {
+      console.warn("Validation failed for PATCH notification preferences:", {
+        userId: user.id,
+        workspaceId,
+        errors: validation.errors,
+      });
+      
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 }
+      );
+    }
+    
+    const validatedBody = validation.data;
+    const supabase = await createClient();
+    const now = new Date().toISOString();
+    
+    // Build update object dynamically based on validated fields
     const updateData: Record<string, unknown> = {
-      updated_at: new Date().toISOString(),
+      updated_at: now,
     };
     
-    if (body.quietHours) {
-      if (body.quietHours.enabled !== undefined) updateData.quiet_hours_enabled = body.quietHours.enabled;
-      if (body.quietHours.startTime !== undefined) updateData.quiet_hours_start_time = body.quietHours.startTime;
-      if (body.quietHours.endTime !== undefined) updateData.quiet_hours_end_time = body.quietHours.endTime;
-      if (body.quietHours.timezone !== undefined) updateData.quiet_hours_timezone = body.quietHours.timezone;
+    if (validatedBody.quietHours) {
+      if (validatedBody.quietHours.enabled !== undefined) {
+        updateData.quiet_hours_enabled = validatedBody.quietHours.enabled;
+      }
+      if (validatedBody.quietHours.startTime !== undefined) {
+        updateData.quiet_hours_start_time = validatedBody.quietHours.startTime;
+      }
+      if (validatedBody.quietHours.endTime !== undefined) {
+        updateData.quiet_hours_end_time = validatedBody.quietHours.endTime;
+      }
+      if (validatedBody.quietHours.timezone !== undefined) {
+        updateData.quiet_hours_timezone = validatedBody.quietHours.timezone;
+      }
     }
     
-    if (body.digest) {
-      if (body.digest.frequency !== undefined) updateData.digest_frequency = body.digest.frequency;
-      if (body.digest.dailyTime !== undefined) updateData.digest_daily_time = body.digest.dailyTime;
-      if (body.digest.weeklyDay !== undefined) updateData.digest_weekly_day = body.digest.weeklyDay;
-      if (body.digest.weeklyTime !== undefined) updateData.digest_weekly_time = body.digest.weeklyTime;
-      if (body.digest.timezone !== undefined) updateData.digest_timezone = body.digest.timezone;
+    if (validatedBody.digest) {
+      if (validatedBody.digest.frequency !== undefined) {
+        updateData.digest_frequency = validatedBody.digest.frequency;
+      }
+      if (validatedBody.digest.dailyTime !== undefined) {
+        updateData.digest_daily_time = validatedBody.digest.dailyTime;
+      }
+      if (validatedBody.digest.weeklyDay !== undefined) {
+        updateData.digest_weekly_day = validatedBody.digest.weeklyDay;
+      }
+      if (validatedBody.digest.weeklyTime !== undefined) {
+        updateData.digest_weekly_time = validatedBody.digest.weeklyTime;
+      }
+      if (validatedBody.digest.timezone !== undefined) {
+        updateData.digest_timezone = validatedBody.digest.timezone;
+      }
     }
     
-    if (body.emailEnabled !== undefined) updateData.email_enabled = body.emailEnabled;
-    if (body.pushEnabled !== undefined) updateData.push_enabled = body.pushEnabled;
+    if (validatedBody.emailEnabled !== undefined) {
+      updateData.email_enabled = validatedBody.emailEnabled;
+    }
+    if (validatedBody.pushEnabled !== undefined) {
+      updateData.push_enabled = validatedBody.pushEnabled;
+    }
     
     // Update the preferences
     const { data, error } = await supabase
@@ -306,12 +429,6 @@ export async function PATCH(request: NextRequest) {
       .single();
     
     if (error) {
-      if (error.code === "PGRST116") {
-        return NextResponse.json(
-          { error: "Notification preferences not found" },
-          { status: 404 }
-        );
-      }
       console.error("Error updating notification preferences:", error);
       return NextResponse.json(
         { error: "Failed to update notification preferences" },
