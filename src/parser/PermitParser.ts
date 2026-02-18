@@ -7,6 +7,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import * as zlib from 'zlib';
+import { promisify } from 'util';
 import { Config } from '../config';
 import { Permit, ParseStats } from '../models';
 import { Validator } from '../validators';
@@ -21,6 +23,9 @@ import {
 import { parseDate, parseIntValue, parseFloatValue } from '../utils';
 import { ParseError } from '../utils/ParseError';
 import { PerformanceMonitor } from '../utils/PerformanceMonitor';
+
+const gzip = promisify(zlib.gzip);
+const gunzip = promisify(zlib.gunzip);
 
 export interface ParserOptions {
   strictMode?: boolean;
@@ -59,7 +64,10 @@ export interface ParseResult {
 }
 
 /**
- * Streaming permit storage for memory-efficient processing
+ * Streaming permit storage for memory-efficient processing with batched compression.
+ *
+ * FIX for ETL-001: Prevents file descriptor exhaustion by batching permits into
+ * compressed files instead of creating one file per permit.
  */
 class StreamingPermitStorage {
   private permits: Map<string, Permit> = new Map();
@@ -69,9 +77,16 @@ class StreamingPermitStorage {
   private bufferSize: number;
   private flushedPermits: Set<string> = new Set();
 
+  // Batched storage properties
+  private batch: Map<string, PermitData> = new Map();
+  private batchSize: number = 1000;
+  private batchNumber: number = 0;
+  private pendingFlush: Promise<void> | null = null;
+
   constructor(tempDir: string, bufferSize: number) {
     this.tempDir = tempDir;
     this.bufferSize = bufferSize;
+    this.batchSize = Math.max(1000, Math.floor(bufferSize * 2)); // Batch size based on buffer
 
     // Ensure temp directory exists
     if (!fs.existsSync(tempDir)) {
@@ -99,7 +114,7 @@ class StreamingPermitStorage {
    * Check if a permit exists in memory
    */
   has(permitNum: string): boolean {
-    return this.permits.has(permitNum);
+    return this.permits.has(permitNum) || this.batch.has(permitNum) || this.flushedPermits.has(permitNum);
   }
 
   /**
@@ -120,11 +135,11 @@ class StreamingPermitStorage {
    * Get all permit numbers (including flushed)
    */
   getAllPermitNumbers(): string[] {
-    return Array.from(new Set([...this.permits.keys(), ...this.flushedPermits]));
+    return Array.from(new Set([...this.permits.keys(), ...this.batch.keys(), ...this.flushedPermits]));
   }
 
   /**
-   * Flush oldest permits to disk to free memory
+   * Flush oldest permits to disk to free memory using batched async I/O
    */
   private flushOldestPermits(): void {
     const permitsToFlush = Math.floor(this.bufferSize * 0.5); // Flush 50% of buffer
@@ -134,36 +149,136 @@ class StreamingPermitStorage {
       const entry = entries[i];
       if (entry) {
         const [permitNum, permit] = entry;
-        this.flushPermitToDisk(permitNum, permit);
+        // Add to batch instead of immediate flush
+        this.batch.set(permitNum, permit.toObject());
         this.permits.delete(permitNum);
+        this.flushedCount++;
+
+        // Flush batch if it reaches batch size
+        if (this.batch.size >= this.batchSize) {
+          this.flushBatchAsync().catch(err => {
+            console.error('Failed to flush batch:', err);
+          });
+        }
       }
     }
   }
 
   /**
-   * Flush a single permit to disk
+   * Flush the current batch to disk asynchronously with compression
    */
-  private flushPermitToDisk(permitNum: string, permit: Permit): void {
-    const filePath = path.join(this.tempDir, `permit_${permitNum}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(permit.toObject()), 'utf-8');
-    this.flushedPermits.add(permitNum);
-    this.flushedCount++;
+  private async flushBatchAsync(): Promise<void> {
+    // If a flush is already in progress, wait for it
+    if (this.pendingFlush) {
+      await this.pendingFlush;
+    }
+
+    if (this.batch.size === 0) {
+      return;
+    }
+
+    // Create new pending flush promise
+    this.pendingFlush = this.doFlushBatch();
+    await this.pendingFlush;
+    this.pendingFlush = null;
   }
 
   /**
-   * Load a permit from disk
+   * Perform the actual batch flush with compression
    */
-  loadFromDisk(permitNum: string): PermitData | null {
-    const filePath = path.join(this.tempDir, `permit_${permitNum}.json`);
-    if (fs.existsSync(filePath)) {
-      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-      return data;
+  private async doFlushBatch(): Promise<void> {
+    if (this.batch.size === 0) {
+      return;
     }
+
+    const batchToFlush = new Map(this.batch);
+    this.batch.clear();
+
+    const batchFile = path.join(this.tempDir, `batch_${this.batchNumber}.json.gz`);
+    const data = JSON.stringify(Object.fromEntries(batchToFlush));
+    const compressed = await gzip(data);
+
+    await fs.promises.writeFile(batchFile, compressed);
+
+    // Track flushed permits
+    batchToFlush.forEach((_, permitNum) => {
+      this.flushedPermits.add(permitNum);
+    });
+
+    this.batchNumber++;
+  }
+
+  /**
+   * Load a permit from disk (searches through batch files)
+   */
+  async loadFromDisk(permitNum: string): Promise<PermitData | null> {
+    // First check if it's in the current batch
+    if (this.batch.has(permitNum)) {
+      return this.batch.get(permitNum) || null;
+    }
+
+    // Search through batch files
+    try {
+      const files = await fs.promises.readdir(this.tempDir);
+      const batchFiles = files.filter(f => f.endsWith('.json.gz')).sort();
+
+      for (const file of batchFiles) {
+        const filePath = path.join(this.tempDir, file);
+        const compressed = await fs.promises.readFile(filePath);
+        const decompressed = await gunzip(compressed);
+        const permits = JSON.parse(decompressed.toString());
+
+        if (permits[permitNum]) {
+          return permits[permitNum] as PermitData;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading permit from disk:', error);
+    }
+
     return null;
   }
 
   /**
    * Get all permits (loads from disk if necessary)
+   * NOTE: This is kept for backward compatibility but loads all batches into memory
+   */
+  async getAllPermitsAsync(): Promise<Record<string, PermitData>> {
+    const result: Record<string, PermitData> = {};
+
+    // First, add all in-memory permits
+    this.permits.forEach((permit, num) => {
+      result[num] = permit.toObject();
+    });
+
+    // Add current batch
+    this.batch.forEach((data, num) => {
+      result[num] = data;
+    });
+
+    // Then, load flushed batches from disk
+    try {
+      const files = await fs.promises.readdir(this.tempDir);
+      const batchFiles = files.filter(f => f.endsWith('.json.gz')).sort();
+
+      for (const file of batchFiles) {
+        const filePath = path.join(this.tempDir, file);
+        const compressed = await fs.promises.readFile(filePath);
+        const decompressed = await gunzip(compressed);
+        const permits = JSON.parse(decompressed.toString());
+
+        Object.assign(result, permits);
+      }
+    } catch (error) {
+      console.error('Error loading batches from disk:', error);
+    }
+
+    return result;
+  }
+
+  /**
+   * Synchronous version for backward compatibility
+   * @deprecated Use getAllPermitsAsync instead for better performance
    */
   getAllPermits(): Record<string, PermitData> {
     const result: Record<string, PermitData> = {};
@@ -173,16 +288,12 @@ class StreamingPermitStorage {
       result[num] = permit.toObject();
     });
 
-    // Then, load flushed permits from disk
-    this.flushedPermits.forEach(permitNum => {
-      if (!result[permitNum]) {
-        const data = this.loadFromDisk(permitNum);
-        if (data) {
-          result[permitNum] = data;
-        }
-      }
+    // Add current batch
+    this.batch.forEach((data, num) => {
+      result[num] = data;
     });
 
+    // Note: This won't include flushed batches - use getAllPermitsAsync for complete data
     return result;
   }
 
@@ -190,8 +301,9 @@ class StreamingPermitStorage {
    * Update peak memory tracking
    */
   private updatePeakMemory(): void {
-    if (this.permits.size > this.peakMemoryPermits) {
-      this.peakMemoryPermits = this.permits.size;
+    const currentSize = this.permits.size + this.batch.size;
+    if (currentSize > this.peakMemoryPermits) {
+      this.peakMemoryPermits = currentSize;
     }
   }
 
@@ -210,15 +322,51 @@ class StreamingPermitStorage {
   }
 
   /**
+   * Get batch file count (for monitoring)
+   */
+  async getBatchFileCount(): Promise<number> {
+    try {
+      const files = await fs.promises.readdir(this.tempDir);
+      return files.filter(f => f.endsWith('.json.gz')).length;
+    } catch {
+      return 0;
+    }
+  }
+
+  /**
    * Clear all permits and temp files
    */
-  clear(): void {
+  async clearAsync(): Promise<void> {
+    // Wait for any pending flush
+    if (this.pendingFlush) {
+      await this.pendingFlush;
+    }
+
     this.permits.clear();
+    this.batch.clear();
     this.flushedPermits.clear();
     this.flushedCount = 0;
     this.peakMemoryPermits = 0;
+    this.batchNumber = 0;
 
     // Clean up temp directory
+    if (fs.existsSync(this.tempDir)) {
+      await fs.promises.rm(this.tempDir, { recursive: true, force: true });
+    }
+  }
+
+  /**
+   * Synchronous clear for backward compatibility
+   */
+  clear(): void {
+    this.permits.clear();
+    this.batch.clear();
+    this.flushedPermits.clear();
+    this.flushedCount = 0;
+    this.peakMemoryPermits = 0;
+    this.batchNumber = 0;
+
+    // Clean up temp directory (sync version)
     if (fs.existsSync(this.tempDir)) {
       fs.rmSync(this.tempDir, { recursive: true, force: true });
     }
@@ -247,6 +395,20 @@ class StreamingPermitStorage {
 
       this.permits.set(permitNum, permit);
       this.updatePeakMemory();
+    }
+  }
+
+  /**
+   * Finalize and flush any remaining permits in batch
+   */
+  async finalize(): Promise<void> {
+    // Flush any remaining permits in batch
+    if (this.batch.size > 0) {
+      await this.flushBatchAsync();
+    }
+    // Wait for any pending flush
+    if (this.pendingFlush) {
+      await this.pendingFlush;
     }
   }
 }
