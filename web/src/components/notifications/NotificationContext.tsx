@@ -90,7 +90,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const addNotification = (notification: Omit<Notification, 'id' | 'isRead' | 'createdAt'>) => {
     const newNotification: Notification = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 11),
       ...notification,
       isRead: false,
       createdAt: new Date()
@@ -122,61 +122,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id))
-
-  const batchSimilarNotifications = () => {
-    setNotifications(prev => {
-      const grouped: { [key: string]: Notification[] } = {}
-
-      prev.forEach(notification => {
-        const key = `${notification.category}-${notification.title}`
-        if (!grouped[key]) {
-          grouped[key] = []
-        }
-        grouped[key].push(notification)
-      })
-
-      const batched: Notification[] = []
-      Object.values(grouped).forEach(group => {
-        if (group.length > 1) {
-          const first = group[0]
-          batched.push({
-            ...first,
-            isBatched: true,
-            batchCount: group.length
-          })
-        } else {
-          batched.push(...group)
-        }
-      })
-
-      return batched.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    })
-  }
   }
 
-  const getUnreadCountByCategory = (category: Notification['category']) => {
-    return notifications.filter(n => !n.isRead && !n.isSnoozed && n.category === category).length
-  }
-
-  // Snooze a notification for a specific duration
-  const snoozeNotification = (id: string, duration: number) => {
-    const snoozeUntil = new Date(Date.now() + duration)
-    setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === id
-          ? {
-              ...notification,
-              isSnoozed: true,
-              snoozedUntil: snoozeUntil,
-              isRead: true, // Mark as read when snoozing
-              readAt: notification.readAt || new Date()
-            }
-          : notification
-      )
-    )
-  }
-
-  // Batch similar notifications together
   const batchSimilarNotifications = useCallback(() => {
     setNotifications(prev => {
       // Group notifications by category and type
@@ -204,7 +151,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       Object.entries(groups).forEach(([key, group]) => {
         if (group.length > 1) {
           // Create a batch notification for groups with more than one notification
-          const batchId = Math.random().toString(36).substr(2, 9)
+          const batchId = Math.random().toString(36).substring(2, 11)
           const firstNotification = group[0]
 
           // Create batch notification
@@ -251,6 +198,28 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       return updatedNotifications
     })
   }, [])
+
+  const getUnreadCountByCategory = (category: Notification['category']) => {
+    return notifications.filter(n => !n.isRead && !n.isSnoozed && n.category === category).length
+  }
+
+  // Snooze a notification for a specific duration
+  const snoozeNotification = (id: string, duration: number) => {
+    const snoozeUntil = new Date(Date.now() + duration)
+    setNotifications(prev =>
+      prev.map(notification =>
+        notification.id === id
+          ? {
+              ...notification,
+              isSnoozed: true,
+              snoozedUntil: snoozeUntil,
+              isRead: true, // Mark as read when snoozing
+              readAt: notification.readAt || new Date()
+            }
+          : notification
+      )
+    )
+  }
 
   return (
     <NotificationContext.Provider

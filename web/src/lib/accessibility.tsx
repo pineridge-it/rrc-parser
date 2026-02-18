@@ -142,7 +142,7 @@ export function useKeyboardNavigation(): boolean {
 
 // Generate unique IDs for accessibility
 export function useUniqueId(prefix: string = "id"): string {
-  const [id] = React.useState(() => `${prefix}-${Math.random().toString(36).substr(2, 9)}`);
+  const [id] = React.useState(() => `${prefix}-${Math.random().toString(36).substring(2, 11)}`);
   return id;
 }
 

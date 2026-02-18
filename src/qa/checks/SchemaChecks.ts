@@ -84,8 +84,8 @@ export class SchemaChecks {
       // Stratified sampling: beginning, middle, end
       const third = Math.floor(records.length / 3);
       const samples = [
-        ...records.slice(0, sampleSize / 3),
-        ...records.slice(third, third + sampleSize / 3),
+        ...records.slice(0, Math.floor(sampleSize / 3)),
+        ...records.slice(third, third + Math.floor(sampleSize / 3)),
         ...records.slice(-Math.ceil(sampleSize / 3))
       ];
 

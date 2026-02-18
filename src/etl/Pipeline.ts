@@ -97,8 +97,8 @@ export class EtlPipeline {
     const startTime = new Date();
     const errors: string[] = [];
     let permitsProcessed = 0;
-    const permitsUpserted = 0;
-    const permitsSkipped = 0;
+    let permitsUpserted = 0;
+    let permitsSkipped = 0;
     let qaPassed = true;
     let monitorRunId: string | undefined;
 
@@ -167,10 +167,11 @@ export class EtlPipeline {
             wellName: 'string',
             county: 'string',
             district: 'string',
-            field: 'string',
+            fields: 'object',
             wellType: 'string',
             status: 'string',
             approvalDate: 'string',
+            expirationDate: 'string',
             latitude: 'number',
             longitude: 'number'
           }

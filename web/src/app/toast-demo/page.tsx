@@ -107,7 +107,7 @@ export default function ToastDemoPage() {
     }
 
     const newNotification: BannerNotification = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 11),
       type,
       title: titles[type],
       message: messages[type],

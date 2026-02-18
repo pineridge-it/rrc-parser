@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Mock data store - replace with actual database
-const preferencesStore = new Map<string, NotificationPreferences>();
+import { createClient } from "@/lib/supabase/server";
 
 interface QuietHours {
   enabled: boolean;
@@ -29,9 +27,7 @@ interface NotificationPreferences {
   updatedAt: string;
 }
 
-const defaultPreferences: NotificationPreferences = {
-  userId: "",
-  workspaceId: "",
+const defaultPreferences: Omit<NotificationPreferences, 'userId' | 'workspaceId'> = {
   quietHours: {
     enabled: false,
     startTime: "22:00",
@@ -52,26 +48,52 @@ const defaultPreferences: NotificationPreferences = {
 };
 
 /**
+ * Helper to get authenticated user
+ */
+async function getAuthUser() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    return null;
+  }
+  
+  return user;
+}
+
+/**
  * GET /api/notifications/preferences
  * Get notification preferences for the current user
  */
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Get actual user ID from session
-    const userId = request.headers.get("x-user-id") || "mock-user-id";
-    const workspaceId = request.headers.get("x-workspace-id") || "mock-workspace-id";
+    const user = await getAuthUser();
     
-    const key = `${userId}:${workspaceId}`;
-    let preferences = preferencesStore.get(key);
-    
-    if (!preferences) {
-      // Return default preferences
-      preferences = {
-        ...defaultPreferences,
-        userId,
-        workspaceId,
-      };
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
     }
+    
+    // Get workspace from query param or use user's default workspace
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get("workspaceId") || user.user_metadata?.default_workspace_id;
+    
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID required" },
+        { status: 400 }
+      );
+    }
+    
+    // TODO: Fetch from database
+    // For now, return default preferences
+    const preferences: NotificationPreferences = {
+      ...defaultPreferences,
+      userId: user.id,
+      workspaceId,
+    };
     
     return NextResponse.json(preferences);
   } catch (error) {
@@ -89,19 +111,30 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Get actual user ID from session
-    const userId = request.headers.get("x-user-id") || "mock-user-id";
-    const workspaceId = request.headers.get("x-workspace-id") || "mock-workspace-id";
+    const user = await getAuthUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     
     const body = await request.json();
-    const key = `${userId}:${workspaceId}`;
+    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
     
-    const existing = preferencesStore.get(key);
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID required" },
+        { status: 400 }
+      );
+    }
+    
     const now = new Date().toISOString();
     
+    // TODO: Save to database
     const preferences: NotificationPreferences = {
-      ...(existing || defaultPreferences),
-      userId,
+      userId: user.id,
       workspaceId,
       quietHours: {
         ...defaultPreferences.quietHours,
@@ -111,13 +144,11 @@ export async function POST(request: NextRequest) {
         ...defaultPreferences.digest,
         ...body.digest,
       },
-      emailEnabled: body.emailEnabled ?? existing?.emailEnabled ?? true,
-      pushEnabled: body.pushEnabled ?? existing?.pushEnabled ?? true,
-      createdAt: existing?.createdAt || now,
+      emailEnabled: body.emailEnabled ?? true,
+      pushEnabled: body.pushEnabled ?? true,
+      createdAt: now,
       updatedAt: now,
     };
-    
-    preferencesStore.set(key, preferences);
     
     return NextResponse.json(preferences);
   } catch (error) {
@@ -135,35 +166,45 @@ export async function POST(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    // TODO: Get actual user ID from session
-    const userId = request.headers.get("x-user-id") || "mock-user-id";
-    const workspaceId = request.headers.get("x-workspace-id") || "mock-workspace-id";
+    const user = await getAuthUser();
     
-    const body = await request.json();
-    const key = `${userId}:${workspaceId}`;
-    
-    const existing = preferencesStore.get(key);
-    if (!existing) {
+    if (!user) {
       return NextResponse.json(
-        { error: "Notification preferences not found" },
-        { status: 404 }
+        { error: "Unauthorized" },
+        { status: 401 }
       );
     }
     
-    const preferences: NotificationPreferences = {
-      ...existing,
-      ...(body.quietHours && {
-        quietHours: { ...existing.quietHours, ...body.quietHours },
-      }),
-      ...(body.digest && {
-        digest: { ...existing.digest, ...body.digest },
-      }),
-      ...(body.emailEnabled !== undefined && { emailEnabled: body.emailEnabled }),
-      ...(body.pushEnabled !== undefined && { pushEnabled: body.pushEnabled }),
-      updatedAt: new Date().toISOString(),
-    };
+    const body = await request.json();
+    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
     
-    preferencesStore.set(key, preferences);
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID required" },
+        { status: 400 }
+      );
+    }
+    
+    // TODO: Fetch existing from database and merge
+    const now = new Date().toISOString();
+    
+    const preferences: NotificationPreferences = {
+      ...defaultPreferences,
+      userId: user.id,
+      workspaceId,
+      quietHours: body.quietHours ? {
+        ...defaultPreferences.quietHours,
+        ...body.quietHours,
+      } : defaultPreferences.quietHours,
+      digest: body.digest ? {
+        ...defaultPreferences.digest,
+        ...body.digest,
+      } : defaultPreferences.digest,
+      emailEnabled: body.emailEnabled ?? defaultPreferences.emailEnabled,
+      pushEnabled: body.pushEnabled ?? defaultPreferences.pushEnabled,
+      createdAt: now,
+      updatedAt: now,
+    };
     
     return NextResponse.json(preferences);
   } catch (error) {
