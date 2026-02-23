@@ -1,5 +1,7 @@
 import { PermitData } from '../../types/permit';
 import { ILogger } from '../../types/common';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createHash } from 'crypto';
 
 export interface LoadResult {
   inserted: number;
@@ -9,20 +11,48 @@ export interface LoadResult {
   errorDetails: string[];
 }
 
+export interface PermitLoaderConfig {
+  batchSize?: number;
+  enableVersionHistory?: boolean;
+  enableChangeFeed?: boolean;
+}
+
+interface PermitRecord {
+  id: string;
+  source_permit_no: string;
+  operator_id?: string;
+  created_at: string;
+}
+
+interface PermitVersionRecord {
+  id: string;
+  permit_id: string;
+  version_hash: string;
+  source_seen_at: string;
+  effective_at?: string;
+  status?: string;
+  permit_type?: string;
+  county?: string;
+  filed_date?: string;
+  attributes: Record<string, unknown>;
+}
+
 export class PermitLoader {
   private logger: ILogger;
+  private supabase: SupabaseClient;
+  private config: PermitLoaderConfig;
 
-  constructor(logger: ILogger) {
+  constructor(supabase: SupabaseClient, logger: ILogger, config: PermitLoaderConfig = {}) {
+    this.supabase = supabase;
     this.logger = logger;
+    this.config = {
+      batchSize: config.batchSize ?? 100,
+      enableVersionHistory: config.enableVersionHistory ?? true,
+      enableChangeFeed: config.enableChangeFeed ?? true,
+    };
   }
 
-  /**
-   * Load permits into the database with idempotent behavior
-   * @param permits - Array of parsed permits to load
-   * @param batchSize - Number of permits to process in each batch
-   * @returns LoadResult with statistics
-   */
-  async loadPermits(permits: PermitData[], batchSize: number = 100): Promise<LoadResult> {
+  async loadPermits(permits: PermitData[], batchSize: number = this.config.batchSize ?? 100): Promise<LoadResult> {
     const result: LoadResult = {
       inserted: 0,
       updated: 0,
@@ -31,11 +61,10 @@ export class PermitLoader {
       errorDetails: []
     };
 
-    // Process permits in batches
     for (let i = 0; i < permits.length; i += batchSize) {
       const batch = permits.slice(i, i + batchSize);
       this.logger.info(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(permits.length/batchSize)}`);
-      
+
       try {
         const batchResult = await this.loadBatch(batch);
         result.inserted += batchResult.inserted;
@@ -54,11 +83,6 @@ export class PermitLoader {
     return result;
   }
 
-  /**
-   * Load a batch of permits with UPSERT logic
-   * @param batch - Array of permits to load
-   * @returns LoadResult for the batch
-   */
   private async loadBatch(batch: PermitData[]): Promise<LoadResult> {
     const result: LoadResult = {
       inserted: 0,
@@ -68,36 +92,38 @@ export class PermitLoader {
       errorDetails: []
     };
 
-    // TODO: Implement actual database loading logic
-    // For now, simulate the process
     for (const permit of batch) {
       try {
-        // Check if permit already exists with same hash
-        const exists = await this.permitExists(permit);
-        
-        if (exists) {
-          // Check if data has changed
-          const changed = await this.hasPermitChanged(permit);
-          
+        const permitNumber = this.getPermitNumber(permit);
+        if (!permitNumber) {
+          result.errors++;
+          result.errorDetails.push('Permit missing permit_number');
+          continue;
+        }
+
+        const versionHash = this.computeVersionHash(permit);
+        const existingPermit = await this.findExistingPermit(permitNumber);
+
+        if (existingPermit) {
+          const changed = await this.hasPermitVersionChanged(existingPermit.id, versionHash);
+
           if (changed) {
-            // Update existing permit
-            await this.updatePermit(permit);
+            await this.updatePermit(existingPermit.id, permit, versionHash);
             result.updated++;
-            this.logger.debug(`Updated permit ${permit.dapermit?.permit_number}`);
+            this.logger.debug(`Updated permit ${permitNumber}`);
           } else {
-            // Skip unchanged permit
             result.skipped++;
-            this.logger.debug(`Skipped unchanged permit ${permit.dapermit?.permit_number}`);
+            this.logger.debug(`Skipped unchanged permit ${permitNumber}`);
           }
         } else {
-          // Insert new permit
-          await this.insertPermit(permit);
+          await this.insertPermit(permit, versionHash);
           result.inserted++;
-          this.logger.debug(`Inserted permit ${permit.dapermit?.permit_number}`);
+          this.logger.debug(`Inserted permit ${permitNumber}`);
         }
       } catch (error) {
         result.errors++;
-        const errorMsg = `Error loading permit ${permit.dapermit?.permit_number}: ${error instanceof Error ? error.message : String(error)}`;
+        const permitNum = this.getPermitNumber(permit);
+        const errorMsg = `Error loading permit ${permitNum}: ${error instanceof Error ? error.message : String(error)}`;
         result.errorDetails.push(errorMsg);
         this.logger.error(errorMsg);
       }
@@ -106,49 +132,191 @@ export class PermitLoader {
     return result;
   }
 
-  /**
-   * Check if a permit already exists in the database
-   * @param permit - Permit to check
-   * @returns Promise resolving to boolean indicating existence
-   */
-  private async permitExists(_permit: PermitData): Promise<boolean> {
-    // TODO: Implement actual database check
-    // This is a placeholder implementation
-    return Math.random() > 0.7; // Simulate 30% chance of permit existing
+  private getPermitNumber(permit: PermitData): string | null {
+    return permit.dapermit?.permit_number || permit.daroot?.permit_number || null;
   }
 
-  /**
-   * Check if a permit's data has changed compared to the stored version
-   * @param permit - Permit to check
-   * @returns Promise resolving to boolean indicating if data changed
-   */
-  private async hasPermitChanged(_permit: PermitData): Promise<boolean> {
-    // TODO: Implement actual data comparison
-    // This is a placeholder implementation
-    return Math.random() > 0.5; // Simulate 50% chance of data having changed
+  private computeVersionHash(permit: PermitData): string {
+    const normalized = {
+      permit_number: this.getPermitNumber(permit),
+      operator_name: permit.daroot?.operator_name,
+      lease_name: permit.daroot?.lease_name,
+      county_code: permit.daroot?.county_code,
+      district: permit.daroot?.district,
+      well_type: permit.dapermit?.well_type,
+      application_type: permit.dapermit?.application_type,
+      status: permit.daroot?.status_flag,
+      issued_date: permit.dapermit?.issued_date,
+      total_depth: permit.dapermit?.total_depth,
+      lat: permit.gis_surface?.latitude,
+      lon: permit.gis_surface?.longitude,
+    };
+    return createHash('sha256').update(JSON.stringify(normalized)).digest('hex');
   }
 
-  /**
-   * Insert a new permit into the database
-   * @param permit - Permit to insert
-   */
-  private async insertPermit(permit: PermitData): Promise<void> {
-    // TODO: Implement actual database insertion
-    // This is a placeholder implementation
-    this.logger.debug(`Inserting permit ${permit.dapermit?.permit_number}`);
-    // Simulate database operation delay
-    await new Promise(resolve => setTimeout(resolve, 10));
+  private async findExistingPermit(permitNumber: string): Promise<PermitRecord | null> {
+    const { data, error } = await this.supabase
+      .from('permits')
+      .select('id, source_permit_no, operator_id, created_at')
+      .eq('source_permit_no', permitNumber)
+      .maybeSingle();
+
+    if (error) {
+      this.logger.error(`Error finding permit ${permitNumber}: ${error.message}`);
+      return null;
+    }
+    return data;
   }
 
-  /**
-   * Update an existing permit in the database
-   * @param permit - Permit to update
-   */
-  private async updatePermit(permit: PermitData): Promise<void> {
-    // TODO: Implement actual database update
-    // This is a placeholder implementation
-    this.logger.debug(`Updating permit ${permit.dapermit?.permit_number}`);
-    // Simulate database operation delay
-    await new Promise(resolve => setTimeout(resolve, 15));
+  async permitExists(permit: PermitData): Promise<boolean> {
+    const permitNumber = this.getPermitNumber(permit);
+    if (!permitNumber) return false;
+    const existing = await this.findExistingPermit(permitNumber);
+    return existing !== null;
+  }
+
+  private async hasPermitVersionChanged(permitId: string, versionHash: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('permit_versions')
+      .select('id')
+      .eq('permit_id', permitId)
+      .eq('version_hash', versionHash)
+      .maybeSingle();
+
+    if (error) {
+      this.logger.error(`Error checking permit version: ${error.message}`);
+      return true;
+    }
+    return data === null;
+  }
+
+  async hasPermitChanged(permit: PermitData): Promise<boolean> {
+    const permitNumber = this.getPermitNumber(permit);
+    if (!permitNumber) return false;
+
+    const existingPermit = await this.findExistingPermit(permitNumber);
+    if (!existingPermit) return false;
+
+    const versionHash = this.computeVersionHash(permit);
+    return this.hasPermitVersionChanged(existingPermit.id, versionHash);
+  }
+
+  private buildPermitAttributes(permit: PermitData): Record<string, unknown> {
+    return {
+      operator_number: permit.daroot?.operator_number,
+      well_number: permit.dapermit?.well_number,
+      total_depth: permit.dapermit?.total_depth,
+      horizontal_flag: permit.dapermit?.horizontal_flag,
+      directional_flag: permit.dapermit?.directional_flag,
+      sidetrack_flag: permit.dapermit?.sidetrack_flag,
+      surface_section: permit.dapermit?.surface_section,
+      surface_block: permit.dapermit?.surface_block,
+      surface_survey: permit.dapermit?.surface_survey,
+      surface_abstract: permit.dapermit?.surface_abstract,
+      fields: permit.dafield?.map(f => f.field_name).filter(Boolean),
+      leases: permit.dalease?.map(l => l.lease_name).filter(Boolean),
+      remarks: permit.daremarks?.map(r => r.remark).filter(Boolean),
+      restrictions: permit.dacanres?.map(r => r.restriction).filter(Boolean),
+    };
+  }
+
+  async insertPermit(permit: PermitData, versionHash?: string): Promise<string> {
+    const permitNumber = this.getPermitNumber(permit);
+    if (!permitNumber) {
+      throw new Error('Cannot insert permit without permit_number');
+    }
+
+    const hash = versionHash || this.computeVersionHash(permit);
+    const now = new Date().toISOString();
+
+    const { data: permitData, error: permitError } = await this.supabase
+      .from('permits')
+      .insert({
+        source: 'rrc',
+        source_permit_no: permitNumber,
+        created_at: now,
+      })
+      .select('id')
+      .single();
+
+    if (permitError || !permitData) {
+      throw new Error(`Failed to insert permit: ${permitError?.message || 'Unknown error'}`);
+    }
+
+    const permitId = permitData.id;
+
+    if (this.config.enableVersionHistory) {
+      const { error: versionError } = await this.supabase
+        .from('permit_versions')
+        .insert({
+          permit_id: permitId,
+          version_hash: hash,
+          source_seen_at: now,
+          effective_at: permit.dapermit?.issued_date || now,
+          status: permit.daroot?.status_flag,
+          permit_type: permit.dapermit?.application_type,
+          county: permit.daroot?.county_code,
+          filed_date: permit.dapermit?.received_date,
+          attributes: this.buildPermitAttributes(permit),
+        });
+
+      if (versionError) {
+        this.logger.error(`Failed to insert permit version: ${versionError.message}`);
+      }
+    }
+
+    if (this.config.enableChangeFeed) {
+      await this.createPermitChange(permitId, permitId, 'new', now);
+    }
+
+    this.logger.debug(`Inserted permit ${permitNumber} with id ${permitId}`);
+    return permitId;
+  }
+
+  async updatePermit(permitId: string, permit: PermitData, versionHash?: string): Promise<void> {
+    const hash = versionHash || this.computeVersionHash(permit);
+    const now = new Date().toISOString();
+
+    if (this.config.enableVersionHistory) {
+      const { error: versionError } = await this.supabase
+        .from('permit_versions')
+        .insert({
+          permit_id: permitId,
+          version_hash: hash,
+          source_seen_at: now,
+          effective_at: permit.dapermit?.issued_date || now,
+          status: permit.daroot?.status_flag,
+          permit_type: permit.dapermit?.application_type,
+          county: permit.daroot?.county_code,
+          filed_date: permit.dapermit?.received_date,
+          attributes: this.buildPermitAttributes(permit),
+        });
+
+      if (versionError) {
+        throw new Error(`Failed to insert new permit version: ${versionError.message}`);
+      }
+    }
+
+    if (this.config.enableChangeFeed) {
+      const permitNumber = this.getPermitNumber(permit);
+      await this.createPermitChange(permitId, permitId, 'amended', now);
+      this.logger.debug(`Updated permit ${permitNumber} (id: ${permitId})`);
+    }
+  }
+
+  private async createPermitChange(permitId: string, versionId: string, changeType: string, sourceSeenAt: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('permit_changes')
+      .insert({
+        permit_id: permitId,
+        permit_version_id: versionId,
+        change_type: changeType,
+        source_seen_at: sourceSeenAt,
+        created_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      this.logger.error(`Failed to create permit change record: ${error.message}`);
+    }
   }
 }

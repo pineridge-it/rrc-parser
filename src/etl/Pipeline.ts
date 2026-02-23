@@ -5,6 +5,10 @@ import { QAGateRunner, QAGateConfig } from '../qa';
 import { PermitData } from '../types/permit';
 import { IngestionMonitor, IngestionMonitorConfig } from '../monitoring';
 import { EtlMetrics } from '../metrics';
+import { PermitLoader, PermitLoaderConfig } from './loader/PermitLoader';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createDatabaseClient } from '../lib/database';
+import { createLogger } from '../services/logger';
 
 export interface EtlPipelineOptions {
   config?: Config;
@@ -17,6 +21,9 @@ export interface EtlPipelineOptions {
   monitorConfig?: IngestionMonitorConfig;
   enableMetrics?: boolean;
   metrics?: EtlMetrics;
+  enableLoader?: boolean;
+  loaderConfig?: PermitLoaderConfig;
+  supabase?: SupabaseClient;
 }
 
 export interface EtlResult {
@@ -55,6 +62,9 @@ export class EtlPipeline {
   private readonly enableMonitoring: boolean;
   private readonly metrics: EtlMetrics | null;
   private readonly enableMetrics: boolean;
+  private readonly loader: PermitLoader | null;
+  private readonly enableLoader: boolean;
+  private readonly supabase: SupabaseClient | null;
 
   constructor(options: EtlPipelineOptions = {}) {
     this.config = options.config || new Config();
@@ -72,6 +82,16 @@ export class EtlPipeline {
     this.monitor = this.enableMonitoring ? new IngestionMonitor(options.monitorConfig) : null;
     this.enableMetrics = options.enableMetrics ?? true;
     this.metrics = this.enableMetrics ? (options.metrics || new EtlMetrics()) : null;
+    this.enableLoader = options.enableLoader ?? true;
+    this.supabase = options.supabase ?? null;
+
+    if (this.enableLoader) {
+      const supabaseClient = this.supabase || createDatabaseClient();
+      const logger = createLogger({ service: 'etl-loader' });
+      this.loader = new PermitLoader(supabaseClient, logger, options.loaderConfig);
+    } else {
+      this.loader = null;
+    }
   }
 
   /**
@@ -198,6 +218,32 @@ export class EtlPipeline {
         if (!qaResult.passed) {
           errors.push(...qaResult.errors, ...qaResult.criticalErrors);
         }
+      }
+
+      // Step 4: Load permits to database
+      if (this.loader && qaPassed) {
+        console.log('Step 4: Load - Upserting permits to database');
+        try {
+          const permits = Object.values(parseResult.permits);
+          const loadResult = await this.loader.loadPermits(permits);
+
+          permitsUpserted = loadResult.inserted + loadResult.updated;
+          permitsSkipped = loadResult.skipped;
+
+          if (loadResult.errors > 0) {
+            errors.push(...loadResult.errorDetails);
+          }
+
+          console.log(`Load complete - Inserted: ${loadResult.inserted}, Updated: ${loadResult.updated}, Skipped: ${loadResult.skipped}, Errors: ${loadResult.errors}`);
+        } catch (loadError) {
+          const errorMsg = `Database load failed: ${loadError instanceof Error ? loadError.message : String(loadError)}`;
+          errors.push(errorMsg);
+          console.error(errorMsg);
+        }
+      } else if (!qaPassed) {
+        console.log('Step 4: Load - SKIPPED (QA gates failed)');
+      } else {
+        console.log('Step 4: Load - SKIPPED (loader disabled)');
       }
 
     } catch (error) {
