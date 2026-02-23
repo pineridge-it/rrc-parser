@@ -162,20 +162,35 @@ export function useExport({ workspaceId }: UseExportOptions): UseExportReturn {
    * Download an export file
    */
   const downloadExport = useCallback((job: ExportJob) => {
-    if (!job.downloadUrl || job.status !== 'completed') {
-      const errorMessage = 'Export is not ready for download';
+    try {
+      if (!job.downloadUrl || job.status !== 'completed') {
+        const errorMessage = 'Export is not ready for download';
+        setError(errorMessage);
+        toastError('Download Failed', {
+          description: errorMessage
+        });
+        return;
+      }
+
+      const downloadWindow = window.open(job.downloadUrl, '_blank');
+
+      if (!downloadWindow || downloadWindow.closed || typeof downloadWindow.closed === 'undefined') {
+        toastError('Download Blocked', {
+          description: 'The download may have been blocked by your browser. Please check your popup blocker settings and try again.'
+        });
+        return;
+      }
+
+      toastSuccess('Download Started', {
+        description: 'Your export file download has started.'
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to download export';
       setError(errorMessage);
       toastError('Download Failed', {
-        description: errorMessage
+        description: 'An error occurred while attempting to download the file. Please try again or contact support.'
       });
-      return;
     }
-
-    // Open download in new tab/window
-    window.open(job.downloadUrl, '_blank');
-    toastSuccess('Download Started', {
-      description: 'Your export file download has started.'
-    });
   }, [toast]);
 
   /**

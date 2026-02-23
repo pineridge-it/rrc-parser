@@ -118,7 +118,31 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
     amount: number = 1
   ): Promise<{ allowed: boolean; percentage: number; wouldExceed: boolean }> => {
     if (!usage) {
-      return { allowed: false, percentage: 0, wouldExceed: true };
+      try {
+        await fetchUsage();
+
+        if (!usage) {
+          toastError('Usage Data Unavailable', {
+            description: 'Unable to verify usage limits. This operation may still succeed, but please check your usage dashboard.'
+          });
+
+          return {
+            allowed: true,
+            percentage: 0,
+            wouldExceed: false
+          };
+        }
+      } catch (err) {
+        toastError('Usage Check Failed', {
+          description: 'Could not verify usage limits. Proceeding with caution.'
+        });
+
+        return {
+          allowed: true,
+          percentage: 0,
+          wouldExceed: false
+        };
+      }
     }
 
     let current: number;
@@ -149,7 +173,6 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
     const percentage = limit > 0 ? newTotal / limit : 0;
     const wouldExceed = newTotal > limit;
 
-    // Show warning if approaching limits
     if (percentage >= HARD_LIMIT_THRESHOLD) {
       toastError('Usage Limit Reached', {
         description: `You've reached your ${resource} limit. Please upgrade your plan to continue.`
@@ -165,7 +188,7 @@ export function useUsage(options: UseUsageOptions): UseUsageReturn {
       percentage,
       wouldExceed,
     };
-  }, [usage, toast]);
+  }, [usage, fetchUsage, toast]);
 
   const getSoftLimitWarnings = useCallback(() => {
     return warnings.filter(w => w.threshold === 'soft');
