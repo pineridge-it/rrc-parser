@@ -19,6 +19,8 @@ import { CSVExporter } from '../exporter';
 import { ProgressReporter, Logger } from './ProgressReporter';
 import { ConfigurationError } from '../utils/ParseError';
 import { RecordSchema } from '../config';
+import { PreferenceStore } from './PreferenceStore';
+import { FilePicker } from './FilePicker';
 
 // Constants
 const EXIT_SUCCESS = 0;
@@ -34,6 +36,7 @@ interface CLIArgs {
   help?: boolean;
   performance?: boolean;
   validationReport?: string;
+  interactive?: boolean;
 }
 
 interface PerformanceMetrics {
@@ -55,6 +58,8 @@ function parseArgs(): CLIArgs {
     
     if (arg === '-h' || arg === '--help') {
       args.help = true;
+    } else if (arg === '--interactive' || arg === '--init') {
+      args.interactive = true;
     } else if (arg === '-i' || arg === '--input') {
       args.input = argv[++i];
     } else if (arg === '-o' || arg === '--output') {
@@ -95,6 +100,7 @@ Optional:
   -v, --verbose                Verbose logging
   -p, --performance            Show performance metrics
   --validation-report <file>   Export validation issues to CSV
+  --interactive, --init        Launch interactive file picker wizard
   -h, --help                   Show this help message
 
 Examples:
@@ -225,13 +231,43 @@ function validateArgs(args: CLIArgs, logger: Logger): boolean {
 async function main(): Promise<number> {
   const logger = new Logger();
   const args = parseArgs();
-  
+
   // Show help
   if (args.help) {
     printUsage();
     return EXIT_SUCCESS;
   }
-  
+
+  const prefsStore = new PreferenceStore();
+
+  if (args.interactive) {
+    const picker = new FilePicker(prefsStore);
+    try {
+      const selectedInput = await picker.pickFile();
+      const suggestedOutput = selectedInput.replace(/\.dat$/, '.csv');
+      const selectedOutput = await picker.pickOutput(suggestedOutput);
+      const isStrict = await picker.askConfirmation('Enable strict mode? (recommended for first run)', prefsStore.getLastUsed('preferences')?.strictMode || false);
+      const isVerbose = await picker.askConfirmation('Show verbose output?', prefsStore.getLastUsed('preferences')?.verbose || false);
+
+      args.input = selectedInput;
+      args.output = selectedOutput;
+      args.strict = isStrict;
+      args.verbose = isVerbose;
+
+      prefsStore.addRecentFile(selectedInput);
+      prefsStore.setLastOutput(selectedOutput);
+      prefsStore.save({
+        preferences: {
+          strictMode: isStrict,
+          verbose: isVerbose
+        }
+      });
+    } catch (e) {
+      console.log('\nInteractive mode cancelled.');
+      return EXIT_SUCCESS;
+    }
+  }
+
   // Validate required arguments
   if (!validateArgs(args, logger)) {
     printUsage();
@@ -241,7 +277,7 @@ async function main(): Promise<number> {
   // TypeScript now knows args.input and args.output are defined
   const inputPath = args.input!;
   const outputPath = args.output!;
-  
+
   try {
     // Load configuration
     logger.info('Loading configuration...');
