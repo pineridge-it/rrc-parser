@@ -17,9 +17,25 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing sessions.
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorName = error instanceof Error ? error.name : 'UnknownError';
+
+            if (process.env.NODE_ENV === 'development') {
+              console.warn(
+                '[Supabase] Cookie set failed (expected in Server Components):',
+                { error: errorName, message: errorMessage, cookieCount: cookiesToSet.length }
+              );
+            } else {
+              console.warn(
+                '[Supabase] supabase_cookie_set_failed',
+                JSON.stringify({
+                  error: errorMessage,
+                  errorType: errorName,
+                  cookieCount: cookiesToSet.length,
+                })
+              );
+            }
           }
         },
       },
