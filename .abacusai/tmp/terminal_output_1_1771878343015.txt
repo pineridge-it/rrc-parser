@@ -1,0 +1,378 @@
+Usage: am_register <agent_name> <model> <project_path>
+[
+  {
+    "id": 13,
+    "name": "GoldenEagle",
+    "program": "gemini-cli",
+    "model": "gemini",
+    "task_description": "Introduce myself and start work.",
+    "inception_ts": "2026-02-23T04:32:17.431745+00:00",
+    "last_active_ts": "2026-02-23T04:32:17.431745+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 14,
+    "name": "BronzeGlen",
+    "program": "abacusai",
+    "model": "gemini",
+    "task_description": "",
+    "inception_ts": "2026-02-23T03:33:32.346074+00:00",
+    "last_active_ts": "2026-02-23T04:15:23.183442+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 15,
+    "name": "ScarletLynx",
+    "program": "sonnet",
+    "model": "sonnet",
+    "task_description": "",
+    "inception_ts": "2026-02-23T03:34:07.357599+00:00",
+    "last_active_ts": "2026-02-23T04:20:30.731579+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 16,
+    "name": "IndigoSparrow",
+    "program": "abacusai",
+    "model": "abacusai",
+    "task_description": "",
+    "inception_ts": "2026-02-23T03:35:00.368116+00:00",
+    "last_active_ts": "2026-02-23T03:35:00.368132+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 17,
+    "name": "HazyBridge",
+    "program": "qwen",
+    "model": "qwen",
+    "task_description": "",
+    "inception_ts": "2026-02-23T03:35:25.772426+00:00",
+    "last_active_ts": "2026-02-23T03:35:25.772443+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 18,
+    "name": "CrimsonForge",
+    "program": "abacusai",
+    "model": "qwen",
+    "task_description": "",
+    "inception_ts": "2026-02-23T04:29:22.243442+00:00",
+    "last_active_ts": "2026-02-23T20:20:24.216478+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 19,
+    "name": "WhiteMill",
+    "program": "abacusai",
+    "model": "claude-sonnet-4.5",
+    "task_description": "",
+    "inception_ts": "2026-02-23T04:29:27.837338+00:00",
+    "last_active_ts": "2026-02-23T04:36:41.184394+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  },
+  {
+    "id": 20,
+    "name": "TopazGate",
+    "program": "abacusai",
+    "model": "abacusai",
+    "task_description": "",
+    "inception_ts": "2026-02-23T04:33:42.789996+00:00",
+    "last_active_ts": "2026-02-23T19:47:01.213017+00:00",
+    "project_id": 2,
+    "attachments_policy": "auto"
+  }
+]
+[{"id":52,"project_id":2,"sender_id":20,"thread_id":null,"topic":null,"subject":"[ubuntu-yp8] Starting work on Usage Tracking DB Integration","importance":"normal","ack_required":false,"created_ts":"2026-02-23T19:47:00.513107+00:00","attachments":[],"from":"TopazGate","kind":"to"},{"id":46,"project_id":2,"sender_id":20,"thread_id":null,"topic":null,"subject":"Re: Introduction","importance":"normal","ack_required":false,"created_ts":"2026-02-23T19:44:38.993137+00:00","attachments":[],"from":"TopazGate","kind":"to"},{"id":42,"project_id":2,"sender_id":19,"thread_id":null,"topic":null,"subject":"[br-gvs.5] Starting Public REST API Implementation","importance":"normal","ack_required":false,"created_ts":"2026-02-23T04:36:41.179532+00:00","attachments":[],"from":"WhiteMill","kind":"to"},{"id":35,"project_id":2,"sender_id":20,"thread_id":null,"topic":null,"subject":"Introduction: TopazGate joining the team","importance":"normal","ack_required":false,"created_ts":"2026-02-23T04:34:21.774304+00:00","attachments":[],"from":"TopazGate","kind":"to"},{"id":29,"project_id":2,"sender_id":19,"thread_id":null,"topic":null,"subject":"Re: Introduction","importance":"normal","ack_required":false,"created_ts":"2026-02-23T04:33:51.562552+00:00","attachments":[],"from":"WhiteMill","kind":"to"},{"id":23,"project_id":2,"sender_id":19,"thread_id":null,"topic":null,"subject":"Introduction: WhiteMill","importance":"normal","ack_required":false,"created_ts":"2026-02-23T04:30:20.491376+00:00","attachments":[],"from":"WhiteMill","kind":"to"}]
+[
+  {
+    "created_at": "2026-01-29T04:01:07.833053650Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nThis epic establishes the foundational data infrastructure that everything else depends on. Without reliable, trustworthy data ingestion, the entire product fails.\n\n## Why This Comes First\n- **Trust is the product**: Users pay for reliable alerts. If data is stale, missing, or wrong, they lose money and trust.\n- **SLO Foundation**: Our 95% freshness SLO (permits ingested within 2 hours) requires robust ETL from day one.\n- **Debugging capability**: Raw data preservation enables root cause analysis when issues arise.\n\n## Key Deliverables\n1. Database schema with raw/clean separation\n2. Idempotent ETL pipeline for RRC permit data\n3. Automated QA gates (row counts, null checks, schema drift detection)\n4. Backfill tooling for historical data\n5. Ingestion monitoring and alerting\n\n## Success Criteria\n- ETL runs reliably on schedule without manual intervention\n- QA gates catch data anomalies before they reach users\n- Backfills can be run safely without duplicating data\n- Ingestion lag alerts fire within 15 minutes of issues\n\n## Dependencies\n- None (this is the foundation)\n\n## Risks\n- RRC website structure changes (mitigate: schema drift detection, raw preservation)\n- Rate limiting or blocking (mitigate: respectful scraping, caching, fallback sources)\n\n## Technical Notes\n- Use Supabase Postgres with PostGIS extension\n- Maintain permits_raw and permits_clean tables\n- Track source_seen_at and effective_at for versioning\n- Partition by time (year/quarter) for performance at scale",
+    "id": "ubuntu-ejd",
+    "issue_type": "epic",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "EPIC: Phase 1 - Trust Foundations (ETL + Schema + QA)",
+    "updated_at": "2026-01-29T14:14:29.238379744Z"
+  },
+  {
+    "created_at": "2026-01-29T04:01:29.607593184Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nThis epic builds the core alerting infrastructure that delivers on our MVP promise: 'If a permit is filed that matches your AOI + filters, you'll reliably know—fast—without manual checking.'\n\n## Why This Matters\n- **The core value proposition**: Alerts ARE the product for most users\n- **Trust through reliability**: Lost or duplicate alerts destroy user confidence\n- **Differentiation**: Enterprise tools are expensive; we win on reliability + affordability\n\n## Key Deliverables\n1. Alert Rules engine (AOI + filters + operator watchlists)\n2. Durable Alert Events (not direct sends - survives failures)\n3. Outbox pattern with worker-based delivery\n4. Multi-channel delivery (SMS, email, in-app)\n5. Deduplication logic (per user/rule/permit event)\n6. Quiet hours and digest options\n7. Rate limiting (cost control + fatigue prevention)\n\n## Success Criteria\n- 99.5% monthly uptime for alert delivery pipeline\n- Zero lost alerts (outbox pattern ensures delivery)\n- No duplicate notifications for same permit event\n- Users can configure quiet hours and receive digests\n- Cost per alert is predictable and within margin targets\n\n## Dependencies\n- Phase 1 (Trust Foundations) - needs clean permit data to evaluate rules against\n\n## Architectural Decisions\n- **Outbox Pattern**: Alert evaluation creates durable events; separate workers handle delivery\n- **Idempotent Delivery**: Each notification attempt is idempotent with delivery status tracking\n- **Channel Abstraction**: SMS/email/in-app share common interface for consistent behavior\n\n## Risks\n- SMS costs can spike with high-volume users (mitigate: quotas, digest mode, pricing tiers)\n- Email deliverability issues (mitigate: SendGrid reputation, fallback to in-app)\n- Carrier/provider outages (mitigate: retry logic, in-app fallback, delivery status visibility)\n\n## Technical Notes\n- alert_rules table: AOI geometry, filters JSON, operator watchlist, channel preferences\n- alert_events table: immutable record of each triggered alert\n- notifications table: delivery attempts with status, timestamps, error details\n- Use database triggers or application events to create alert_events when new permits match rules",
+    "id": "ubuntu-08m",
+    "issue_type": "epic",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "EPIC: Phase 2 - Durable Alerting System",
+    "updated_at": "2026-01-29T19:34:25.726134430Z"
+  },
+  {
+    "created_at": "2026-01-29T04:01:47.088531398Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nThis epic delivers the user-facing experience: the map interface, search functionality, AOI drawing, and notification center that users interact with daily.\n\n## Why This Matters\n- **First impressions**: The map is the first thing users see; it must be fast and intuitive\n- **Activation driver**: Users who create an AOI in <3 minutes are far more likely to convert\n- **Mobile-first reality**: Field users need responsive, touch-friendly interfaces\n\n## Key Deliverables\n1. Interactive map with Mapbox (vector tiles for performance)\n2. Permit/well browsing with click-to-detail\n3. AOI drawing tools (polygon, circle, rectangle) with buffer distance option\n4. Saved searches (filters + optional AOI)\n5. Fast filtered list queries (<2s for typical AOI)\n6. In-app notification center\n7. 'Last updated' indicators for trust/transparency\n\n## Success Criteria\n- Map tile responses <300ms during pan/zoom\n- Filtered list queries <2s for typical AOI\n- 60% of new signups create an AOI or Saved Search (activation rate)\n- Mobile usability score >90 on Lighthouse\n- Users can find and view permit details in <3 clicks\n\n## Dependencies\n- Phase 1 (Trust Foundations) - needs permit data to display\n- Phase 2 (Durable Alerting) - notification center displays alert events\n\n## UX Principles\n- **Map-first**: The map is the primary navigation paradigm\n- **Progressive disclosure**: Show summary on map, details on click\n- **Mobile-ready**: Touch targets, responsive layouts, offline-friendly where possible\n- **Trust indicators**: Show 'last updated' timestamps, data freshness\n\n## Technical Notes\n- Mapbox GL JS for vector tile rendering\n- PostGIS for spatial queries (ST_Intersects, ST_DWithin for buffers)\n- Cache 'AOI+filters' query signatures to speed repeat usage\n- Partition permits by time for query performance\n- Use React Query or similar for data fetching with caching\n\n## Risks\n- Mapbox costs at scale (mitigate: tile caching, usage monitoring, pricing tiers)\n- Complex AOI geometries causing slow queries (mitigate: geometry simplification, query timeouts)\n- Mobile browser limitations (mitigate: progressive enhancement, feature detection)",
+    "id": "ubuntu-6pw",
+    "issue_type": "epic",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "EPIC: Phase 3 - Core UX (Map, Search, AOI, Notifications)",
+    "updated_at": "2026-01-30T21:22:03.611212065Z"
+  },
+  {
+    "created_at": "2026-01-29T04:02:29.081550215Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nThis epic completes the MVP by adding monetization infrastructure (Stripe billing), export capabilities, and the external API for Pro users.\n\n## Why This Matters\n- **Revenue enablement**: Can't charge without billing infrastructure\n- **Power user retention**: Exports and API access are key for consultants and analysts\n- **Scalability proof**: Async exports and API rate limiting prove the system can handle growth\n\n## Key Deliverables\n1. Stripe integration (subscriptions, usage-based billing where applicable)\n2. Pricing tiers (Starter, Pro, Enterprise)\n3. Async export system (CSV/Excel with job status and history)\n4. Templated 'AOI Activity Report' (MVP-lite reporting)\n5. External API with keys, rate limits, quotas, versioning\n6. Usage metering and billing dashboard\n7. Trial-to-paid conversion flow\n\n## Success Criteria\n- 25% trial → paid conversion rate\n- 15% API adoption among Pro users\n- Exports complete reliably without timeouts\n- API rate limits enforced correctly\n- Usage visible to users in billing dashboard\n\n## Dependencies\n- Phase 1-4 (all prior phases) - billing wraps existing functionality\n- Phase 3 (Core UX) - export UI integrated into search/map\n\n## Pricing Strategy (from PRD)\n- Starter: $99/month - basic alerts, limited AOIs\n- Pro: $199/month - unlimited AOIs, API access, advanced exports\n- Enterprise: Custom - team features, SLA, dedicated support\n- Breakeven: ~65 customers @ $186 blended ARPU\n\n## Technical Notes\n- Stripe Checkout for subscription management\n- Webhooks for subscription lifecycle events\n- Export jobs run async with status polling\n- API versioning (/v1/) with deprecation policy\n- Rate limiting via Redis or Supabase edge functions\n\n## Risks\n- Stripe integration complexity (mitigate: use Stripe Checkout, not custom flows)\n- Export timeouts for large datasets (mitigate: async jobs, pagination, streaming)\n- API abuse (mitigate: rate limits, quotas, monitoring)\n- Unprofitable power users (mitigate: usage-based pricing, quota enforcement)\n\n## Guardrails\n- Track gross margin per tier\n- Alert volume controls (digest/quiet hours)\n- Make usage transparent to users\n- Monitor for quota gaming",
+    "id": "ubuntu-gvs",
+    "issue_type": "epic",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 1,
+    "status": "open",
+    "title": "EPIC: Phase 5 - Monetization & Scale (Billing, Exports, API)",
+    "updated_at": "2026-01-29T04:02:29.081550215Z"
+  },
+  {
+    "created_at": "2026-01-29T04:02:55.294442889Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nDesign and implement the foundational database schema with clear separation between raw ingested data and cleaned/normalized data.\n\n## Why Raw/Clean Separation?\n- **Auditability**: Raw data preserved exactly as received from source for debugging and compliance\n- **Reprocessing**: Can re-run cleaning/normalization logic without re-fetching from source\n- **Schema evolution**: Clean layer can evolve independently of raw layer\n- **Trust**: Users can verify data lineage when questions arise\n\n## Tables to Create\n\n### Core Tables\n- **permits_raw**: Exact data as received from RRC, with source metadata\n- **permits_clean**: Normalized, validated permit data ready for queries\n- **wells**: Related well records (where available from RRC)\n- **operators**: Normalized operator entities\n- **operator_aliases**: Variant names linked to canonical operators\n\n### User/Tenant Tables\n- **workspaces**: Top-level tenant (supports future teams)\n- **users**: User accounts linked to workspaces\n- **aois**: Areas of Interest with geometry\n- **saved_searches**: Filter configurations\n- **alert_rules**: Alert configurations\n- **alert_events**: Triggered alert records\n- **notifications**: Delivery attempts\n\n### System Tables\n- **audit_log**: Billing changes, API key actions, exports, rule edits\n- **exports**: Export job records\n- **api_keys**: External API credentials\n\n## Key Design Decisions\n1. Use PostGIS for spatial data (geometry columns, spatial indexes)\n2. Partition permits by time (year/quarter) for query performance at scale\n3. Track source_seen_at (when we saw it) and effective_at (when RRC says it's effective)\n4. Use JSONB for flexible metadata fields\n5. Enforce RLS from day one (workspace-scoped access)\n\n## Indexes Required\n- GIST indexes on geometry columns\n- B-tree indexes on common filter columns (operator, county, status, dates)\n- Composite indexes for typical query patterns\n\n## Success Criteria\n- Schema supports all PRD entities\n- Migrations are reversible\n- RLS policies enforce workspace isolation\n- Spatial queries perform well with test data",
+    "id": "ubuntu-ejd.1",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Database Schema Design (Raw/Clean Separation)",
+    "updated_at": "2026-01-29T14:38:48.866718529Z"
+  },
+  {
+    "created_at": "2026-01-29T04:03:07.830379534Z",
+    "created_by": "Clayton",
+    "description": "## Task\nCreate the permits_raw table that stores permit data exactly as received from RRC.\n\n## Schema\n```sql\nCREATE TABLE permits_raw (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  source_id VARCHAR(50) NOT NULL,  -- RRC's permit identifier\n  source_url TEXT,                  -- URL where data was fetched\n  source_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),  -- When we ingested it\n  raw_data JSONB NOT NULL,          -- Complete raw response\n  raw_hash VARCHAR(64),             -- SHA256 of raw_data for change detection\n  ingestion_batch_id UUID,          -- Links records from same ingestion run\n  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  UNIQUE(source_id, raw_hash)       -- Prevent exact duplicates\n);\n\nCREATE INDEX idx_permits_raw_source_id ON permits_raw(source_id);\nCREATE INDEX idx_permits_raw_source_seen_at ON permits_raw(source_seen_at);\nCREATE INDEX idx_permits_raw_batch ON permits_raw(ingestion_batch_id);\n```\n\n## Rationale\n- source_id: RRC's identifier, not ours - allows tracking across versions\n- raw_hash: Detect when data actually changed vs just re-fetched\n- ingestion_batch_id: Group records for debugging and rollback\n- JSONB: Flexible schema handles RRC format changes gracefully\n\n## Acceptance Criteria\n- [ ] Table created with all columns\n- [ ] Indexes created\n- [ ] Migration is reversible\n- [ ] Can insert sample raw permit data",
+    "id": "ubuntu-ejd.1.1",
+    "issue_type": "task",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Create permits_raw table with source metadata",
+    "updated_at": "2026-01-29T05:15:05.869294708Z"
+  },
+  {
+    "created_at": "2026-01-29T04:03:23.854609587Z",
+    "created_by": "Clayton",
+    "description": "## Task\nCreate the permits_clean table with normalized, validated permit data including PostGIS geometry.\n\n## Schema\n```sql\nCREATE TABLE permits_clean (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  raw_id UUID REFERENCES permits_raw(id),  -- Link to source\n  permit_number VARCHAR(50) NOT NULL,\n  permit_type VARCHAR(50),           -- drilling, amendment, etc.\n  status VARCHAR(50),                -- approved, pending, etc.\n  operator_name_raw VARCHAR(255),    -- Original operator name\n  operator_id UUID REFERENCES operators(id),  -- Normalized operator\n  county VARCHAR(100),\n  district VARCHAR(50),\n  lease_name VARCHAR(255),\n  well_number VARCHAR(50),\n  api_number VARCHAR(20),\n  location GEOMETRY(Point, 4326),    -- PostGIS point (WGS84)\n  surface_lat DECIMAL(10, 7),\n  surface_lon DECIMAL(10, 7),\n  filed_date DATE,\n  approved_date DATE,\n  effective_at TIMESTAMPTZ,          -- When RRC says it's effective\n  source_seen_at TIMESTAMPTZ,        -- When we first saw it\n  metadata JSONB,                    -- Additional fields\n  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  version INT NOT NULL DEFAULT 1,    -- For tracking amendments\n  UNIQUE(permit_number, version)\n);\n\n-- Spatial index for map queries\nCREATE INDEX idx_permits_clean_location ON permits_clean USING GIST(location);\n\n-- Common filter indexes\nCREATE INDEX idx_permits_clean_operator ON permits_clean(operator_id);\nCREATE INDEX idx_permits_clean_county ON permits_clean(county);\nCREATE INDEX idx_permits_clean_filed_date ON permits_clean(filed_date);\nCREATE INDEX idx_permits_clean_status ON permits_clean(status);\n\n-- Composite index for typical queries\nCREATE INDEX idx_permits_clean_county_filed ON permits_clean(county, filed_date DESC);\n```\n\n## Rationale\n- raw_id: Maintains lineage to source data\n- operator_id: Links to normalized operator (Phase 4)\n- version: Tracks amendments to same permit\n- GEOMETRY(Point, 4326): Standard WGS84 for web mapping\n\n## Acceptance Criteria\n- [ ] Table created with PostGIS geometry column\n- [ ] All indexes created including GIST spatial index\n- [ ] Can insert sample permit with valid geometry\n- [ ] Spatial query (ST_DWithin) works correctly",
+    "id": "ubuntu-ejd.1.2",
+    "issue_type": "task",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Create permits_clean table with PostGIS geometry",
+    "updated_at": "2026-01-29T06:50:06.570474738Z"
+  },
+  {
+    "created_at": "2026-01-29T04:04:34.664167860Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nBuild the core ETL pipeline that fetches permit data from RRC, stores raw data, and transforms it into the clean layer. Must be idempotent (safe to rerun) and support backfills.\n\n## Why Idempotency Matters\n- **Safe reruns**: If pipeline fails mid-run, can restart without duplicates\n- **Backfills**: Can re-process historical data without corruption\n- **Debugging**: Can replay specific batches to diagnose issues\n- **Trust**: Users trust data that's consistently processed\n\n## Pipeline Stages\n1. **Fetch**: Download permit data from RRC source\n2. **Store Raw**: Insert into permits_raw with hash for change detection\n3. **Transform**: Parse, validate, normalize into permits_clean\n4. **Link**: Associate with operators (create new or match existing)\n5. **Notify**: Trigger alert evaluation for new/changed permits\n\n## Idempotency Strategy\n- Use raw_hash to detect actual changes vs re-fetches\n- UPSERT on (source_id, raw_hash) prevents duplicates\n- Track ingestion_batch_id for rollback capability\n- Transform step uses raw_id FK to avoid reprocessing\n\n## Key Components\n- Fetcher: HTTP client with retry, rate limiting, error handling\n- Parser: Extract structured data from RRC format\n- Validator: Check required fields, geometry validity, data types\n- Transformer: Normalize values, geocode if needed, link operators\n- Loader: Batch insert with conflict handling\n\n## Success Criteria\n- Pipeline runs on schedule without manual intervention\n- Reruns produce identical results (idempotent)\n- Backfills work for any date range\n- Failed runs can be resumed from last checkpoint\n- All errors logged with context for debugging",
+    "id": "ubuntu-ejd.2",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Idempotent ETL Pipeline for RRC Permits",
+    "updated_at": "2026-01-29T15:09:57.693919853Z"
+  },
+  {
+    "created_at": "2026-01-29T04:06:20.743622310Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nImplement monitoring and alerting for the ingestion pipeline to ensure SLO compliance and rapid incident response.\n\n## Why This Matters\n- **SLO Compliance**: 95% freshness SLO requires knowing when we're falling behind\n- **Silent Failures**: Worst case is pipeline fails silently; users lose trust\n- **Rapid Response**: Alerts enable quick intervention before users notice\n\n## Metrics to Track\n\n### Freshness Metrics\n- Time since last successful ingestion\n- Lag between RRC filing and our ingestion\n- Permits pending processing\n\n### Volume Metrics\n- Permits ingested per hour/day\n- Records in raw vs clean (processing backlog)\n- Error rate (failed records / total)\n\n### Performance Metrics\n- Pipeline run duration\n- Database query latency\n- API response times\n\n## Alerts to Configure\n\n### Critical (Page immediately)\n- No ingestion for >2 hours\n- Error rate >10%\n- Pipeline crash/hang\n\n### Warning (Slack/email)\n- Ingestion lag >1 hour\n- Error rate >5%\n- Volume anomaly (>30% deviation)\n- QA gate failures\n\n### Info (Dashboard only)\n- Successful run completion\n- Daily summary stats\n\n## Implementation\n```typescript\ninterface IngestionMetrics {\n  lastSuccessfulRun: Date;\n  lastRunDuration: number;\n  recordsProcessed: number;\n  errorCount: number;\n  lagMinutes: number;\n}\n\nclass IngestionMonitor {\n  async recordRunStart(runId: UUID): Promise<void>;\n  async recordRunComplete(runId: UUID, metrics: RunMetrics): Promise<void>;\n  async recordRunError(runId: UUID, error: Error): Promise<void>;\n  async checkSLOs(): Promise<SLOStatus[]>;\n  async getMetrics(timeRange: TimeRange): Promise<IngestionMetrics>;\n}\n```\n\n## Dashboard Requirements\n- Real-time ingestion status\n- Historical trends (7/30/90 days)\n- SLO compliance percentage\n- Recent errors with details\n\n## Acceptance Criteria\n- [ ] All metrics tracked and stored\n- [ ] Alerts fire correctly for each threshold\n- [ ] Dashboard shows real-time status\n- [ ] SLO compliance visible at a glance\n- [ ] Alert fatigue minimized (proper thresholds)",
+    "id": "ubuntu-ejd.4",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Ingestion Monitoring and Alerting",
+    "updated_at": "2026-01-31T21:29:39.683945455Z"
+  },
+  {
+    "created_at": "2026-01-29T04:08:32.588850581Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nBuild the primary map interface using Mapbox GL JS with vector tiles for performant permit/well visualization.\n\n## Why Vector Tiles?\n- **Performance**: Only load visible data, not entire dataset\n- **Interactivity**: Smooth pan/zoom without re-fetching\n- **Scalability**: Handles 1M+ permits without degradation\n- **Styling**: Dynamic styling based on permit attributes\n\n## Key Features\n1. Base map with Texas counties, roads, terrain\n2. Permit layer with clustering at low zoom\n3. Well layer (where available)\n4. AOI overlay layer\n5. Click-to-select with popup/detail panel\n6. Zoom-dependent detail levels\n\n## Technical Implementation\n```typescript\ninterface MapConfig {\n  style: string;  // Mapbox style URL\n  center: [number, number];  // Default center (Texas)\n  zoom: number;\n  maxBounds: [[number, number], [number, number]];  // Texas bounds\n}\n\ninterface PermitLayer {\n  id: string;\n  source: string;\n  type: 'circle' | 'symbol';\n  paint: object;\n  filter?: any[];\n}\n\nclass PermitMap {\n  initialize(container: HTMLElement, config: MapConfig): void;\n  addPermitLayer(permits: GeoJSON): void;\n  addAOILayer(aois: GeoJSON): void;\n  setFilters(filters: MapFilters): void;\n  onPermitClick(callback: (permit: Permit) => void): void;\n}\n```\n\n## Performance Targets\n- Map tile response: <300ms\n- Initial load: <2s\n- Pan/zoom: 60fps\n- Cluster update: <100ms\n\n## Acceptance Criteria\n- [ ] Map loads with Texas-centered view\n- [ ] Permits display as points with clustering\n- [ ] Click on permit shows popup with key details\n- [ ] AOIs display as polygon overlays\n- [ ] Filters update map in real-time\n- [ ] Mobile touch interactions work smoothly",
+    "id": "ubuntu-6pw.1",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Interactive Map with Mapbox Vector Tiles",
+    "updated_at": "2026-01-29T20:20:39.439540621Z"
+  },
+  {
+    "created_at": "2026-01-29T04:09:04.808766919Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nBuild the search and filter interface for querying permits with fast, responsive results.\n\n## Why This Matters\n- **Discovery**: Users need to find specific permits quickly\n- **Analysis**: Filtering enables pattern recognition\n- **Workflow**: Search results feed into exports, alerts, reports\n\n## Filter Options\n1. **Spatial**: Within AOI, within county, within radius of point\n2. **Operator**: Select from list or search by name\n3. **County**: Multi-select from Texas counties\n4. **Status**: Approved, pending, denied, etc.\n5. **Permit Type**: Drilling, amendment, recompletion, etc.\n6. **Date Range**: Filed date, approved date\n7. **Text Search**: Lease name, well number, API number\n\n## Implementation\n```typescript\ninterface PermitFilters {\n  aoiId?: UUID;\n  operators?: UUID[];\n  counties?: string[];\n  statuses?: string[];\n  permitTypes?: string[];\n  filedDateRange?: DateRange;\n  approvedDateRange?: DateRange;\n  textSearch?: string;\n}\n\ninterface SearchResult {\n  permits: Permit[];\n  total: number;\n  page: number;\n  pageSize: number;\n  aggregations: {\n    byCounty: Record<string, number>;\n    byOperator: Record<string, number>;\n    byStatus: Record<string, number>;\n  };\n}\n\nclass PermitSearch {\n  async search(filters: PermitFilters, pagination: Pagination): Promise<SearchResult>;\n  async getFilterOptions(): Promise<FilterOptions>;\n  async saveSearch(name: string, filters: PermitFilters): Promise<SavedSearch>;\n}\n```\n\n## Performance Targets\n- Search response: <2s for typical queries\n- Filter options load: <500ms\n- Typeahead suggestions: <200ms\n\n## UX Features\n- Collapsible filter panel\n- Active filter chips (click to remove)\n- Result count updates as filters change\n- Save search for reuse\n- Clear all filters button\n\n## Acceptance Criteria\n- [ ] All filter types work correctly\n- [ ] Filters combine with AND logic\n- [ ] Results update in <2s\n- [ ] Can save and load searches\n- [ ] Mobile-friendly filter UI",
+    "id": "ubuntu-6pw.3",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Permit Search and Filter Interface",
+    "updated_at": "2026-01-30T21:10:46.670182946Z"
+  },
+  {
+    "created_at": "2026-01-29T04:10:47.551958293Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nIntegrate Stripe for subscription billing with tiered pricing plans.\n\n## Pricing Tiers (from PRD)\n| Tier | Price | AOIs | Alerts | Exports | API |\n|------|-------|------|--------|---------|-----|\n| Free | $0 | 1 | 10/mo | 100/mo | No |\n| Pro | $49/mo | 5 | 100/mo | 1000/mo | No |\n| Team | $149/mo | 20 | 500/mo | 5000/mo | Yes |\n| Enterprise | Custom | Unlimited | Unlimited | Unlimited | Yes |\n\n## Stripe Integration\n```typescript\ninterface SubscriptionPlan {\n  id: string;\n  name: string;\n  stripePriceId: string;\n  limits: {\n    aois: number;\n    alertsPerMonth: number;\n    exportsPerMonth: number;\n    apiAccess: boolean;\n    teamMembers: number;\n  };\n}\n\nclass BillingService {\n  async createCheckoutSession(workspaceId: UUID, planId: string): Promise<string>;\n  async handleWebhook(event: Stripe.Event): Promise<void>;\n  async getSubscription(workspaceId: UUID): Promise<Subscription>;\n  async cancelSubscription(workspaceId: UUID): Promise<void>;\n  async updateSubscription(workspaceId: UUID, planId: string): Promise<Subscription>;\n}\n```\n\n## Data Model\n```sql\nCREATE TABLE subscriptions (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  workspace_id UUID NOT NULL REFERENCES workspaces(id),\n  stripe_customer_id VARCHAR(255),\n  stripe_subscription_id VARCHAR(255),\n  plan_id VARCHAR(50) NOT NULL,\n  status VARCHAR(50) NOT NULL,  -- 'active', 'past_due', 'canceled'\n  current_period_start TIMESTAMPTZ,\n  current_period_end TIMESTAMPTZ,\n  cancel_at_period_end BOOLEAN DEFAULT false,\n  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()\n);\n\nCREATE TABLE usage_tracking (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  workspace_id UUID NOT NULL REFERENCES workspaces(id),\n  period_start DATE NOT NULL,\n  period_end DATE NOT NULL,\n  alerts_sent INTEGER DEFAULT 0,\n  exports_count INTEGER DEFAULT 0,\n  api_calls INTEGER DEFAULT 0,\n  UNIQUE(workspace_id, period_start)\n);\n```\n\n## Acceptance Criteria\n- [ ] Checkout flow works\n- [ ] Webhooks update subscription status\n- [ ] Usage tracking is accurate\n- [ ] Plan limits are enforced\n- [ ] Upgrade/downgrade works",
+    "id": "ubuntu-gvs.1",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Stripe Billing Integration",
+    "updated_at": "2026-01-30T21:25:31.218129513Z"
+  },
+  {
+    "created_at": "2026-01-29T04:11:02.498753846Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nBuild export functionality for permits data in multiple formats.\n\n## Export Formats\n1. **CSV**: Standard spreadsheet format\n2. **Excel**: .xlsx with formatting\n3. **GeoJSON**: For GIS applications\n4. **Shapefile**: Industry standard GIS format\n5. **KML**: For Google Earth\n\n## Export Options\n- Current search results\n- AOI permits\n- Custom date range\n- Selected permits only\n\n## Implementation\n```typescript\ninterface ExportRequest {\n  format: 'csv' | 'xlsx' | 'geojson' | 'shapefile' | 'kml';\n  filters: PermitFilters;\n  fields?: string[];  // Optional field selection\n  includeGeometry: boolean;\n}\n\ninterface ExportJob {\n  id: UUID;\n  status: 'pending' | 'processing' | 'completed' | 'failed';\n  downloadUrl?: string;\n  expiresAt?: Date;\n  recordCount?: number;\n}\n\nclass ExportService {\n  async createExport(request: ExportRequest): Promise<ExportJob>;\n  async getExportStatus(jobId: UUID): Promise<ExportJob>;\n  async listExports(workspaceId: UUID): Promise<ExportJob[]>;\n}\n```\n\n## Background Processing\n- Large exports run as background jobs\n- Email notification when complete\n- Download links expire after 24 hours\n- Track export count against plan limits\n\n## Acceptance Criteria\n- [ ] All export formats work\n- [ ] Large exports handled asynchronously\n- [ ] Download links work\n- [ ] Usage tracked against limits\n- [ ] Export history available",
+    "id": "ubuntu-gvs.2",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Data Export System",
+    "updated_at": "2026-01-30T21:26:08.294370059Z"
+  },
+  {
+    "assignee": "CrimsonRiver",
+    "created_at": "2026-01-29T04:11:30.427643470Z",
+    "created_by": "Clayton",
+    "description": "## Overview\nBuild system to track usage and enforce plan limits.\n\n## Tracked Metrics\n- AOI count per workspace\n- Alerts sent per month\n- Exports per month\n- API calls per month (Team+)\n\n## Enforcement Points\n1. **AOI Creation**: Check limit before allowing new AOI\n2. **Alert Sending**: Check monthly limit before sending\n3. **Export Creation**: Check monthly limit before processing\n4. **API Calls**: Check rate limit on each request\n\n## Implementation\n```typescript\ninterface UsageLimits {\n  aois: { current: number; limit: number };\n  alertsThisMonth: { current: number; limit: number };\n  exportsThisMonth: { current: number; limit: number };\n  apiCallsThisMonth: { current: number; limit: number };\n}\n\nclass UsageService {\n  async getUsage(workspaceId: UUID): Promise<UsageLimits>;\n  async checkLimit(workspaceId: UUID, resource: string): Promise<boolean>;\n  async incrementUsage(workspaceId: UUID, resource: string, amount?: number): Promise<void>;\n  async resetMonthlyUsage(): Promise<void>;  // Cron job\n}\n```\n\n## Soft vs Hard Limits\n- **Soft Limit (80%)**: Warning notification\n- **Hard Limit (100%)**: Block action, prompt upgrade\n\n## Acceptance Criteria\n- [ ] Usage tracking is accurate\n- [ ] Limits are enforced\n- [ ] Warning at 80% usage\n- [ ] Block at 100% usage\n- [ ] Monthly reset works",
+    "id": "ubuntu-gvs.4",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "open",
+    "title": "Usage Metering and Limits Enforcement",
+    "updated_at": "2026-02-23T04:34:36.439961677Z"
+  },
+  {
+    "assignee": "CrimsonRiver",
+    "created_at": "2026-01-29T04:34:28.296659187Z",
+    "created_by": "Clayton",
+    "description": "## Overview\n**CRITICAL**: Operator name normalization must happen during ETL, not as a separate Phase 4 concern. This ensures clean data from day one.\n\n## Why This Must Be Phase 1\n- Raw RRC data has inconsistent operator names\n- If we wait until Phase 4, we'll have dirty data that's hard to fix\n- Alerts and searches need normalized operators to work correctly\n- Users will see duplicate operators in filters/dropdowns\n\n## Approach\n1. **During ETL**: Normalize operator names as permits are ingested\n2. **Fuzzy Matching**: Use pg_trgm for similarity matching\n3. **Canonical Table**: Build operator lookup table incrementally\n4. **Manual Override**: Admin can merge/split operators later\n\n## Implementation\n```typescript\nclass OperatorNormalizer {\n  async normalizeOperatorName(rawName: string): Promise<{\n    operatorId: UUID;\n    canonicalName: string;\n    confidence: number;\n    isNewOperator: boolean;\n  }>;\n  \n  async findSimilarOperators(name: string, threshold: number): Promise<Operator[]>;\n}\n```\n\n## Algorithm\n1. Clean input: uppercase, remove punctuation, standardize suffixes (LLC, INC, CORP)\n2. Check exact match in operator_aliases\n3. If no match, fuzzy search with pg_trgm (threshold 0.7)\n4. If high confidence match (>0.9), auto-assign\n5. If medium confidence (0.7-0.9), create with needs_review flag\n6. If no match, create new operator\n\n## Acceptance Criteria\n- [ ] Normalization runs during ETL\n- [ ] Common variations auto-matched (95%+ accuracy)\n- [ ] New operators created when no match\n- [ ] Review queue for uncertain matches",
+    "id": "ubuntu-ejd.5",
+    "issue_type": "feature",
+    "owner": "claytonw@quattrotx.com",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "Operator Name Normalization (ETL Integration)",
+    "updated_at": "2026-01-30T21:57:32.774764957Z"
+  },
+  {
+    "created_at": "2026-01-31T12:46:26.850370245Z",
+    "created_by": "WhiteHill",
+    "description": "Comprehensive overhaul of the application's UI/UX to achieve a premium, Stripe-level experience. This epic encompasses all visual design improvements, interaction enhancements, and user experience refinements needed to elevate the application to world-class standards. The goal is to create an intuitive, delightful, and efficient interface that delights users and makes complex functionality accessible. This work will directly impact user satisfaction, retention, and conversion rates.",
+    "id": "ubuntu-b79",
+    "issue_type": "epic",
+    "owner": "whitehill@rrc.local",
+    "priority": 0,
+    "status": "in_progress",
+    "title": "UI/UX Improvements for Premium-Quality Experience",
+    "updated_at": "2026-01-31T21:55:54.178277991Z"
+  },
+  {
+    "created_at": "2026-01-31T12:59:02.521476058Z",
+    "created_by": "WhiteHill",
+    "description": "Establish a comprehensive design system to ensure visual consistency and streamline development across the application. This foundational work will define typography scales, color palettes, spacing systems, component libraries, and interaction patterns. The design system will serve as a single source of truth for all UI elements, enabling faster development, easier maintenance, and a cohesive user experience. This work is critical as it underpins all other UI/UX improvements and ensures consistency across all parts of the application.",
+    "id": "ubuntu-b79.1",
+    "issue_type": "feature",
+    "owner": "whitehill@rrc.local",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Design System Implementation",
+    "updated_at": "2026-01-31T22:02:22.345302487Z"
+  },
+  {
+    "created_at": "2026-01-31T13:06:53.432137347Z",
+    "created_by": "WhiteHill",
+    "description": "Create a foundational component library with reusable UI elements such as buttons, cards, forms, modals, and navigation components. Each component should be well-documented, accessible, and customizable through props. The components should follow the established design system (typography, color, spacing) and include appropriate hover, focus, and active states. This library will significantly speed up development, ensure consistency, and make future UI updates easier to implement. Currently, components are inconsistently implemented across the application with duplicated styles and varying interaction patterns. The new component library should include variants for different contexts and states, along with clear usage guidelines.",
+    "id": "ubuntu-b79.1.4",
+    "issue_type": "task",
+    "owner": "whitehill@rrc.local",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Implement Component Library Foundation",
+    "updated_at": "2026-01-31T21:05:04.020330357Z"
+  },
+  {
+    "created_at": "2026-01-31T13:08:23.714366722Z",
+    "created_by": "WhiteHill",
+    "description": "Redesign and enhance the dashboard to provide users with actionable insights at a glance. This includes implementing data visualization components, improving information hierarchy, and creating a more engaging layout. The enhanced dashboard should surface the most important information immediately while providing pathways to deeper insights. This work involves researching user needs, designing new layouts, implementing charts and graphs, and optimizing for both desktop and mobile viewing. The current dashboard presents basic statistics in card format but lacks visualizations that could help users identify trends and patterns. A premium dashboard experience should balance information density with clarity, using visual elements to make data more digestible and actionable.",
+    "id": "ubuntu-b79.3",
+    "issue_type": "feature",
+    "owner": "whitehill@rrc.local",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Dashboard Enhancements",
+    "updated_at": "2026-02-23T20:19:48.692162196Z"
+  },
+  {
+    "created_at": "2026-01-31T13:12:23.145545248Z",
+    "created_by": "WhiteHill",
+    "description": "Redesign the dashboard layout to improve information hierarchy and visual flow. Implement a grid-based system that accommodates different widget sizes and priorities. Create distinct sections for overview metrics, recent activity, and detailed analytics. Add drag-and-drop reordering capabilities for power users who want to customize their view. Implement responsive breakpoints that adapt the layout for different screen sizes while maintaining usability. Consider adding collapsible sections for users who want to focus on specific areas. The current dashboard uses a simple grid of cards but lacks visual distinction between different types of information and doesn't prioritize the most important metrics. A well-designed layout guides the user's eye to the most critical information while providing clear pathways to deeper insights.",
+    "id": "ubuntu-b79.3.2",
+    "issue_type": "task",
+    "owner": "whitehill@rrc.local",
+    "priority": 1,
+    "status": "in_progress",
+    "title": "Implement Dashboard Layout Improvements",
+    "updated_at": "2026-01-31T21:24:44.041047242Z"
+  }
+]
+{"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"Error calling tool 'send_message': Invalid recipient 'All': 'All' looks like a broadcast attempt. Agent Mail doesn't support broadcasting to all agents. List specific recipient agent names in the 'to' parameter."}],"isError":true}}{"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"deliveries\":[{\"project\":\"/home/ubuntu/Developer/rrc\",\"payload\":{\"id\":56,\"project_id\":2,\"sender_id\":18,\"thread_id\":null,\"topic\":null,\"subject\":\"Introduction: CrimsonForge joining the team\",\"importance\":\"normal\",\"ack_required\":false,\"created_ts\":\"2026-02-23T20:23:49.308395+00:00\",\"attachments\":[],\"body_md\":\"Hello TopazGate! I'm CrimsonForge, an Abacus AI agent powered by GLM 5. I've reviewed the project documentation and I'm ready to start working on tasks. Looking forward to collaborating on the Texas Drilling Permit Alerts project!\",\"from\":\"CrimsonForge\",\"to\":[\"TopazGate\"],\"cc\":[],\"bcc\":[]}}],\"count\":1,\"verified_sender\":false,\"attachments\":[]}"}],"structuredContent":{"deliveries":[{"project":"/home/ubuntu/Developer/rrc","payload":{"id":56,"project_id":2,"sender_id":18,"thread_id":null,"topic":null,"subject":"Introduction: CrimsonForge joining the team","importance":"normal","ack_required":false,"created_ts":"2026-02-23T20:23:49.308395+00:00","attachments":[],"body_md":"Hello TopazGate! I'm CrimsonForge, an Abacus AI agent powered by GLM 5. I've reviewed the project documentation and I'm ready to start working on tasks. Looking forward to collaborating on the Texas Drilling Permit Alerts project!","from":"CrimsonForge","to":["TopazGate"],"cc":[],"bcc":[]}}],"count":1,"verified_sender":false,"attachments":[]},"isError":false}}{"generated_at":"2026-02-23T20:24:11Z","data_hash":"7b6fc796ee76f4f0","triage":{"meta":{"version":"1.0.0","generated_at":"2026-02-23T21:24:10.992342484+01:00","phase2_ready":true,"issue_count":236,"compute_time_ms":0},"quick_ref":{"open_count":49,"actionable_count":41,"blocked_count":8,"in_progress_count":27,"top_picks":[{"id":"ubuntu-z1j","title":"SECURITY-EPIC: Comprehensive Security Hardening Initiative","score":0.29927844425445904,"reasons":["🔓 Unblocks 2 item(s): ubuntu-1hr, ubuntu-ty3","✅ Currently unclaimed - available for work","🚨 High priority (P0) - prioritize this work"],"unblocks":2},{"id":"ubuntu-4fd.3","title":"Actionable Error Messages \u0026 Recovery System","score":0.2774913648355497,"reasons":["🎯 Completing this unblocks 3 downstream issues (ubuntu-4fd.4, ubuntu-4fd.5, ubuntu-4fd.8)","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"],"unblocks":3},{"id":"ubuntu-gvs","title":"EPIC: Phase 5 - Monetization \u0026 Scale (Billing, Exports, API)","score":0.17220435625996072,"reasons":["🕐 No activity in 25 days - may need review","✅ Currently unclaimed - available for work","🚨 High priority (P1) - prioritize this work"],"unblocks":0}]},"recommendations":[{"id":"ubuntu-z1j","title":"SECURITY-EPIC: Comprehensive Security Hardening Initiative","type":"epic","status":"open","priority":0,"labels":null,"score":0.29927844425445904,"breakdown":{"pagerank":0.055218157353911765,"betweenness":0,"blocker_ratio":0.065,"staleness":0.009305672484728666,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.02748022222542903,"risk":0.0020000000000000005,"pagerank_norm":0.25099162433596256,"betweenness_norm":0,"blocker_ratio_norm":0.5,"staleness_norm":0.1861134496945733,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.2748022222542903,"risk_norm":0.020000000000000004,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"moderate time pressure","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0,"cross_repo_risk":0,"status_risk":0.1,"composite_risk":0.020000000000000004,"explanation":"Low risk - stable dependency structure"}},"action":"Start work on this issue","reasons":["🔓 Unblocks 2 item(s): ubuntu-1hr, ubuntu-ty3","✅ Currently unclaimed - available for work","🚨 High priority (P0) - prioritize this work"],"unblocks_ids":["ubuntu-1hr","ubuntu-ty3"]},{"id":"ubuntu-4fd.3","title":"Actionable Error Messages \u0026 Recovery System","type":"feature","status":"in_progress","priority":0,"labels":null,"score":0.2774913648355497,"breakdown":{"pagerank":0.04941483897976044,"betweenness":0,"blocker_ratio":0.027857142857142858,"staleness":0.008845257949529629,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.048037493180546745,"risk":0.011190073940948559,"pagerank_norm":0.22461290445345655,"betweenness_norm":0,"blocker_ratio_norm":0.21428571428571427,"staleness_norm":0.1769051589905926,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.4803749318054674,"risk_norm":0.11190073940948558,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (23 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.3063357980316186,"cross_repo_risk":0,"status_risk":0.1,"composite_risk":0.11190073940948558,"explanation":"Low risk - stable dependency structure"}},"action":"Continue work on this issue","reasons":["🎯 Completing this unblocks 3 downstream issues (ubuntu-4fd.4, ubuntu-4fd.5, ubuntu-4fd.8)","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"],"unblocks_ids":["ubuntu-4fd.4","ubuntu-4fd.5","ubuntu-4fd.8"]},{"id":"ubuntu-4fd.4","title":"API Response Standardization \u0026 User-Friendly Errors","type":"feature","status":"open","priority":0,"labels":null,"score":0.23612804407278923,"breakdown":{"pagerank":0.02139671655266216,"betweenness":0.016666666666666666,"blocker_ratio":0.009285714285714286,"staleness":0.03777359013303145,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.048037367452912,"risk":0.0020000000000000005,"pagerank_norm":0.09725780251210073,"betweenness_norm":0.08333333333333333,"blocker_ratio_norm":0.07142857142857142,"staleness_norm":0.755471802660629,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.48037367452911994,"risk_norm":0.020000000000000004,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (23 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0,"cross_repo_risk":0,"status_risk":0.1,"composite_risk":0.020000000000000004,"explanation":"Low risk - stable dependency structure"}},"action":"Work on ubuntu-4fd.3 first to unblock this","reasons":["🔓 Unblocks 1 item(s): ubuntu-4fd.6","🕐 No activity in 22 days - may need review","✅ Currently unclaimed - available for work","⏳ Blocked by ubuntu-4fd.3 - complete that first","🚨 High priority (P0) - prioritize this work"],"unblocks_ids":["ubuntu-4fd.6"],"blocked_by":["ubuntu-4fd.3"]},{"id":"ubuntu-gvs","title":"EPIC: Phase 5 - Monetization \u0026 Scale (Billing, Exports, API)","type":"epic","status":"open","priority":1,"labels":null,"score":0.17220435625996072,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.042802891797690375,"priority_boost":0.07500000000000001,"time_to_impact":0.0225,"urgency":0.04872467160712843,"risk":0.0020000000000000005,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8560578359538075,"priority_boost_norm":0.75,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.4872467160712842,"risk_norm":0.020000000000000004,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0,"cross_repo_risk":0,"status_risk":0.1,"composite_risk":0.020000000000000004,"explanation":"Low risk - stable dependency structure"}},"action":"Start work on this issue","reasons":["🕐 No activity in 25 days - may need review","✅ Currently unclaimed - available for work","🚨 High priority (P1) - prioritize this work"]},{"id":"ubuntu-ejd","title":"EPIC: Phase 1 - Trust Foundations (ETL + Schema + QA)","type":"epic","status":"in_progress","priority":0,"labels":null,"score":0.16875894905467442,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.042094555439096064,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.04872484292252993,"risk":0.016199017672605804,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8418911087819212,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.4872484292252993,"risk_norm":0.16199017672605803,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.00663392242019332,"cross_repo_risk":0,"status_risk":0.8,"composite_risk":0.16199017672605803,"explanation":"Low risk - stable dependency structure"}},"action":"Check if this is stuck and needs help","reasons":["🕐 No activity in 25 days - may need review","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"]},{"id":"ubuntu-ejd.1","title":"Database Schema Design (Raw/Clean Separation)","type":"feature","status":"in_progress","priority":0,"labels":null,"score":0.16874420660005277,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.04206639902823987,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.04872461633138314,"risk":0.01620634002514926,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8413279805647974,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.48724616331383136,"risk_norm":0.1620634002514926,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.006878000838308604,"cross_repo_risk":0,"status_risk":0.8,"composite_risk":0.1620634002514926,"explanation":"Low risk - stable dependency structure"}},"action":"Check if this is stuck and needs help","reasons":["🕐 No activity in 25 days - may need review","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"]},{"id":"ubuntu-ejd.2","title":"Idempotent ETL Pipeline for RRC Permits","type":"feature","status":"in_progress","priority":0,"labels":null,"score":0.16872553037507992,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.042030349120806935,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.048724406766342945,"risk":0.01621591917623263,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8406069824161386,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.4872440676634294,"risk_norm":0.1621591917623263,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.007197305874420876,"cross_repo_risk":0,"status_risk":0.8,"composite_risk":0.1621591917623263,"explanation":"Low risk - stable dependency structure"}},"action":"Check if this is stuck and needs help","reasons":["🕐 No activity in 25 days - may need review","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"]},{"id":"ubuntu-08m","title":"EPIC: Phase 2 - Durable Alerting System","type":"epic","status":"in_progress","priority":0,"labels":null,"score":0.16857229337985966,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.04172425282037142,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.048724797012381076,"risk":0.016302715237458198,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8344850564074283,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.4872479701238107,"risk_norm":0.16302715237458199,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.010090507915273203,"cross_repo_risk":0,"status_risk":0.8,"composite_risk":0.16302715237458199,"explanation":"Low risk - stable dependency structure"}},"action":"Check if this is stuck and needs help","reasons":["🕐 No activity in 25 days - may need review","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"]},{"id":"ubuntu-6pw.1","title":"Interactive Map with Mapbox Vector Tiles","type":"feature","status":"in_progress","priority":0,"labels":null,"score":0.16854315610176768,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.04167074754633224,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.048723904856918666,"risk":0.016315487983971266,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.8334149509266447,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.48723904856918665,"risk_norm":0.16315487983971264,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.01051626613237536,"cross_repo_risk":0,"status_risk":0.8,"composite_risk":0.16315487983971264,"explanation":"Low risk - stable dependency structure"}},"action":"Check if this is stuck and needs help","reasons":["🕐 No activity in 25 days - may need review","🚧 In progress - already being worked","🚨 High priority (P0) - prioritize this work"]},{"id":"ubuntu-gvs.4","title":"Usage Metering and Limits Enforcement","type":"feature","status":"open","priority":0,"labels":null,"score":0.16794314829861964,"breakdown":{"pagerank":0.011565796901017396,"betweenness":0,"blocker_ratio":0,"staleness":0.0010990461493211227,"priority_boost":0.1,"time_to_impact":0.0225,"urgency":0.0487235295715543,"risk":0.01369180184707149,"pagerank_norm":0.052571804095533615,"betweenness_norm":0,"blocker_ratio_norm":0,"staleness_norm":0.021980922986422454,"priority_boost_norm":1,"time_to_impact_norm":0.22499999999999998,"urgency_norm":0.48723529571554297,"risk_norm":0.1369180184707149,"time_to_impact_explanation":"Leaf node, median estimate 120m","urgency_explanation":"aging (26 days)","risk_explanation":"Low risk - stable dependency structure","risk_signals":{"fan_variance":0,"activity_churn":0.3897267282357163,"cross_repo_risk":0,"status_risk":0.1,"composite_risk":0.1369180184707149,"explanation":"Low risk - stable dependency structure"}},"action":"Start work on this issue","reasons":["✅ Currently unclaimed - available for work","🚨 High priority (P0) - prioritize this work"]}],"quick_wins":[{"id":"ubuntu-4fd.3","title":"Actionable Error Messages \u0026 Recovery System","score":1.1,"reason":"Unblocks 3 items, high priority","unblocks_ids":["ubuntu-4fd.4","ubuntu-4fd.5","ubuntu-4fd.8"]},{"id":"ubuntu-4fd.2","title":"Rich Progress Reporting \u0026 Visual Feedback","score":0.9,"reason":"Unblocks 1 items, high priority","unblocks_ids":["ubuntu-4fd.7"]},{"id":"ubuntu-4fd.4","title":"API Response Standardization \u0026 User-Friendly Errors","score":0.9,"reason":"Unblocks 1 items, high priority","unblocks_ids":["ubuntu-4fd.6"]},{"id":"ubuntu-z1j","title":"SECURITY-EPIC: Comprehensive Security Hardening Initiative","score":0.7339850002884626,"reason":"Unblocks 2 items, high priority","unblocks_ids":["ubuntu-1hr","ubuntu-ty3"]},{"id":"ubuntu-08m","title":"EPIC: Phase 2 - Durable Alerting System","score":0.5,"reason":"Low complexity, high priority"}],"blockers_to_clear":[{"id":"ubuntu-4fd.3","title":"Actionable Error Messages \u0026 Recovery System","unblocks_count":3,"unblocks_ids":["ubuntu-4fd.4","ubuntu-4fd.5","ubuntu-4fd.8"],"actionable":true},{"id":"ubuntu-z1j","title":"SECURITY-EPIC: Comprehensive Security Hardening Initiative","unblocks_count":2,"unblocks_ids":["ubuntu-1hr","ubuntu-ty3"],"actionable":true},{"id":"ubuntu-4fd.2","title":"Rich Progress Reporting \u0026 Visual Feedback","unblocks_count":1,"unblocks_ids":["ubuntu-4fd.7"],"actionable":true},{"id":"ubuntu-4fd.4","title":"API Response Standardization \u0026 User-Friendly Errors","unblocks_count":1,"unblocks_ids":["ubuntu-4fd.6"],"actionable":false,"blocked_by":["ubuntu-4fd.3"]}],"project_health":{"counts":{"total":236,"open":49,"closed":187,"blocked":8,"actionable":41,"by_status":{"closed":173,"in_progress":27,"open":22,"tombstone":14},"by_type":{"bug":19,"epic":21,"feature":73,"task":123},"by_priority":{"0":125,"1":73,"2":37,"3":1}},"graph":{"node_count":236,"edge_count":112,"density":0.002019473494410386,"has_cycles":false,"phase2_ready":true},"velocity":{"closed_last_7_days":16,"closed_last_30_days":173,"avg_days_to_close":0.700613391149566,"weekly":[{"week_start":"2026-02-23T00:00:00Z","closed":3},{"week_start":"2026-02-16T00:00:00Z","closed":13},{"week_start":"2026-02-09T00:00:00Z","closed":0},{"week_start":"2026-02-02T00:00:00Z","closed":0},{"week_start":"2026-01-26T00:00:00Z","closed":157},{"week_start":"2026-01-19T00:00:00Z","closed":0},{"week_start":"2026-01-12T00:00:00Z","closed":0},{"week_start":"2026-01-05T00:00:00Z","closed":0}]},"staleness":{"stale_count":34,"stalest_issue_id":"ubuntu-08m","stalest_issue_days":25,"threshold_days":14}},"commands":{"claim_top":"CI=1 bd update ubuntu-z1j --status in_progress --json","show_top":"CI=1 bd show ubuntu-z1j --json","list_ready":"CI=1 bd ready --json","list_blocked":"CI=1 bd blocked --json","refresh_triage":"bv --robot-triage"}},"usage_hints":["jq '.triage.quick_ref.top_picks[:3]' - Top 3 picks for immediate work","jq '.triage.recommendations[3:10] | map({id,title,score})' - Next candidates after top picks","jq '.triage.blockers_to_clear | map(.id)' - High-impact blockers to clear","jq '.triage.recommendations[] | select(.type == \"bug\")' - Bug-focused recommendations","jq '.triage.quick_ref.top_picks[] | select(.unblocks \u003e 2)' - High-impact picks","jq '.triage.quick_wins' - Low-effort, high-impact items","--robot-next - Get only the single top recommendation","--robot-triage-by-track - Group by execution track for multi-agent coordination","--robot-triage-by-label - Group by label for area-focused agents","jq '.triage.recommendations_by_track[].top_pick' - Top pick per track","jq '.triage.recommendations_by_label[].claim_command' - Claim commands per label","jq '.feedback.weight_adjustments' - View feedback-adjusted weights (bv-90)"]}
+[
+  {
+    "id": "ubuntu-gvs.4",
+    "title": "Usage Metering and Limits Enforcement",
+    "description": "## Overview\nBuild system to track usage and enforce plan limits.\n\n## Tracked Metrics\n- AOI count per workspace\n- Alerts sent per month\n- Exports per month\n- API calls per month (Team+)\n\n## Enforcement Points\n1. **AOI Creation**: Check limit before allowing new AOI\n2. **Alert Sending**: Check monthly limit before sending\n3. **Export Creation**: Check monthly limit before processing\n4. **API Calls**: Check rate limit on each request\n\n## Implementation\n```typescript\ninterface UsageLimits {\n  aois: { current: number; limit: number };\n  alertsThisMonth: { current: number; limit: number };\n  exportsThisMonth: { current: number; limit: number };\n  apiCallsThisMonth: { current: number; limit: number };\n}\n\nclass UsageService {\n  async getUsage(workspaceId: UUID): Promise<UsageLimits>;\n  async checkLimit(workspaceId: UUID, resource: string): Promise<boolean>;\n  async incrementUsage(workspaceId: UUID, resource: string, amount?: number): Promise<void>;\n  async resetMonthlyUsage(): Promise<void>;  // Cron job\n}\n```\n\n## Soft vs Hard Limits\n- **Soft Limit (80%)**: Warning notification\n- **Hard Limit (100%)**: Block action, prompt upgrade\n\n## Acceptance Criteria\n- [ ] Usage tracking is accurate\n- [ ] Limits are enforced\n- [ ] Warning at 80% usage\n- [ ] Block at 100% usage\n- [ ] Monthly reset works",
+    "status": "open",
+    "priority": 0,
+    "issue_type": "feature",
+    "assignee": "CrimsonRiver",
+    "owner": "claytonw@quattrotx.com",
+    "created_at": "2026-01-29T04:11:30.427643470Z",
+    "created_by": "Clayton",
+    "updated_at": "2026-02-23T04:34:36.439961677Z",
+    "source_repo": ".",
+    "compaction_level": 0,
+    "dependencies": [
+      {
+        "id": "ubuntu-gvs",
+        "title": "EPIC: Phase 5 - Monetization & Scale (Billing, Exports, API)",
+        "status": "open",
+        "priority": 1,
+        "dependency_type": "parent-child"
+      }
+    ],
+    "parent": "ubuntu-gvs"
+  }
+]
+[
+  {
+    "id": "ubuntu-gvs.4",
+    "title": "Usage Metering and Limits Enforcement",
+    "status": "in_progress",
+    "priority": 0,
+    "updated_at": "2026-02-23T20:25:40.016702856Z"
+  }
+]
+
+STDERR:
+2026-02-23T20:23:15.789285Z  INFO beads_rust::cli::commands::ready: Fetching ready issues
+2026-02-23T20:23:15.790356Z  INFO beads_rust::cli::commands::ready: Found ready issues count=20
+2026-02-23T20:25:41.129777Z  INFO beads_rust::sync: Auto-flush complete exported=236

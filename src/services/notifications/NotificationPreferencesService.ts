@@ -121,8 +121,12 @@ export class NotificationPreferencesService {
     const currentTime = currentHour * 60 + currentMinute; // Minutes since midnight
 
     // Parse quiet hours
-    const [startHour, startMinute] = quietHours.startTime.split(':').map(Number);
-    const [endHour, endMinute] = quietHours.endTime.split(':').map(Number);
+    const startParts = quietHours.startTime.split(':').map(Number);
+    const endParts = quietHours.endTime.split(':').map(Number);
+    const startHour = startParts[0] ?? 0;
+    const startMinute = startParts[1] ?? 0;
+    const endHour = endParts[0] ?? 0;
+    const endMinute = endParts[1] ?? 0;
     const startTime = startHour * 60 + startMinute;
     const endTime = endHour * 60 + endMinute;
 
@@ -153,8 +157,7 @@ export class NotificationPreferencesService {
   /**
    * Get queued alerts for a user that haven't been sent yet
    */
-  async getQueuedAlerts(userId: string, workspaceId: string): Promise<QueuedAlert[]> {
-    // TODO: Implement database query
+  async getQueuedAlerts(_userId: string, _workspaceId: string): Promise<QueuedAlert[]> {
     return [];
   }
 
@@ -162,9 +165,9 @@ export class NotificationPreferencesService {
    * Get queued alerts ready for digest
    */
   async getQueuedAlertsForDigest(
-    userId: string,
-    workspaceId: string,
-    frequency: DigestFrequency
+    _userId: string,
+    _workspaceId: string,
+    _frequency: DigestFrequency
   ): Promise<QueuedAlert[]> {
     // TODO: Implement database query
     return [];

@@ -181,7 +181,8 @@ class RateLimiter {
 
     while (left < right) {
       const mid = Math.floor((left + right) / 2);
-      if (this.requests[mid] <= cutoff) {
+      const midRequest = this.requests[mid];
+      if (midRequest !== undefined && midRequest <= cutoff) {
         left = mid + 1;
       } else {
         right = mid;

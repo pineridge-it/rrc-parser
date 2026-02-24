@@ -6,7 +6,7 @@
 AGENT_MAIL_URL="http://127.0.0.1:8765/mcp/"
 PROJECT_SLUG="home-ubuntu-developer-rrc"
 PROJECT_KEY="/home/ubuntu/Developer/rrc"
-AGENT_NAME="IvoryWaterfall"
+AGENT_NAME="CrimsonForge"
 
 # Register agent
 am_register() {

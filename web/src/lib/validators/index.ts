@@ -160,7 +160,53 @@ export function validateQuery<T>(
   return { success: false, errors: formatZodError(result.error) };
 }
 
+/**
+ * AOI Geometry schema (GeoJSON)
+ */
+export const aoiGeometrySchema = z.object({
+  type: z.enum(['Point', 'Polygon', 'MultiPolygon']),
+  coordinates: z.array(z.any()), // GeoJSON coordinates structure
+});
+
+/**
+ * AOI creation request schema
+ */
+export const aoiCreateSchema = z.object({
+  name: z.string()
+    .min(1, 'Name is required')
+    .max(255, 'Name too long (max 255 characters)'),
+  geometry: aoiGeometrySchema,
+  bufferMeters: z.number().int().min(0).max(10000).optional(),
+}).strict();
+
+/**
+ * Permits query parameters schema
+ */
+export const permitsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(50),
+  county: z.string().max(100).optional(),
+  operator: z.string().max(255).optional(),
+  status: z.enum(['active', 'inactive', 'pending', 'approved', 'drilling', 'completed']).optional(),
+  filedAfter: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format').optional(),
+}).strict();
+
 // Export types for TypeScript inference
 export type QuietHoursInput = z.infer<typeof quietHoursSchema>;
 export type DigestPreferencesInput = z.infer<typeof digestPreferencesSchema>;
 export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;
+export type AoiGeometryInput = z.infer<typeof aoiGeometrySchema>;
+export type AoiCreateInput = z.infer<typeof aoiCreateSchema>;
+export type PermitsQueryInput = z.infer<typeof permitsQuerySchema>;
+
+/**
+ * Operators query parameters schema
+ */
+export const operatorsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(50),
+  search: z.string().max(255).optional(),
+}).strict();
+
+// Export types for TypeScript inference
+export type OperatorsQueryInput = z.infer<typeof operatorsQuerySchema>;

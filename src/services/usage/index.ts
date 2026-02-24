@@ -10,6 +10,7 @@ import {
   SOFT_LIMIT_THRESHOLD,
   HARD_LIMIT_THRESHOLD,
 } from '../../types/usage';
+import { createDatabaseClient } from '../../lib/database';
 
 export interface UsageServiceConfig {
   supabaseUrl: string;
@@ -19,9 +20,8 @@ export interface UsageServiceConfig {
 }
 
 export class UsageService {
-  /**
-   * Get current usage for a workspace
-   */
+  private db = createDatabaseClient();
+
   async getUsage(workspaceId: UUID): Promise<UsageLimits> {
     const plan = await this.getWorkspacePlan(workspaceId);
     const limits = PLAN_LIMITS[plan];
@@ -37,9 +37,6 @@ export class UsageService {
     };
   }
 
-  /**
-   * Check if an action would exceed limits
-   */
   async checkLimit(
     workspaceId: UUID,
     resource: 'aois' | 'alerts' | 'exports' | 'apiCalls',
@@ -84,37 +81,22 @@ export class UsageService {
     };
   }
 
-  /**
-   * Increment usage for a resource
-   */
   async incrementUsage(
     workspaceId: UUID,
     resource: 'alerts' | 'exports' | 'apiCalls',
     amount: number = 1
   ): Promise<void> {
-    const period = await this.getOrCreateCurrentPeriod(workspaceId);
-    
-    let field: string;
-    switch (resource) {
-      case 'alerts':
-        field = 'alerts_sent';
-        break;
-      case 'exports':
-        field = 'exports_count';
-        break;
-      case 'apiCalls':
-        field = 'api_calls';
-        break;
-      default:
-        throw new Error(`Unknown resource: ${resource}`);
-    }
+    const { error } = await this.db.rpc('increment_usage', {
+      p_workspace_id: workspaceId,
+      p_resource: resource,
+      p_amount: amount,
+    });
 
-    await this.updateUsageField(period.workspaceId, period.periodStart, field, amount);
+    if (error) {
+      throw new Error(`Failed to increment usage: ${error.message}`);
+    }
   }
 
-  /**
-   * Check for usage warnings (soft limit at 80%)
-   */
   async checkWarnings(workspaceId: UUID): Promise<UsageWarning[]> {
     const usage = await this.getUsage(workspaceId);
     const warnings: UsageWarning[] = [];
@@ -153,38 +135,95 @@ export class UsageService {
     return warnings;
   }
 
-  /**
-   * Get plan limits for a workspace
-   */
   async getPlanLimits(workspaceId: UUID): Promise<PlanLimits> {
     const plan = await this.getWorkspacePlan(workspaceId);
     return PLAN_LIMITS[plan];
   }
 
-  // Placeholder methods for database interactions
-  
-  private async getWorkspacePlan(_workspaceId: UUID): Promise<PlanType> {
-    // TODO: Implement database query
-    // Placeholder - should query workspaces table
-    return 'free';
+  private async getWorkspacePlan(workspaceId: UUID): Promise<PlanType> {
+    try {
+      const { data, error } = await this.db
+        .from('workspaces')
+        .select('plan')
+        .eq('id', workspaceId)
+        .single();
+
+      if (error) {
+        console.error('Failed to fetch workspace plan:', error);
+        return 'free';
+      }
+
+      const planValue = data?.plan || 'free';
+      if (['free', 'pro', 'team', 'enterprise'].includes(planValue)) {
+        return planValue as PlanType;
+      }
+
+      return 'free';
+    } catch (error) {
+      console.error('Error in getWorkspacePlan:', error);
+      return 'free';
+    }
   }
 
-  private async getAOICount(_workspaceId: UUID): Promise<number> {
-    // TODO: Implement database query
-    // Placeholder - should count AOIs for workspace
-    return 0;
+  private async getAOICount(workspaceId: UUID): Promise<number> {
+    try {
+      const { count, error } = await this.db
+        .from('areas_of_interest')
+        .select('*', { count: 'exact', head: true })
+        .eq('workspace_id', workspaceId)
+        .is('deleted_at', null);
+
+      if (error) {
+        console.error('Failed to count AOIs:', error);
+        return 0;
+      }
+
+      return count || 0;
+    } catch (error) {
+      console.error('Error in getAOICount:', error);
+      return 0;
+    }
   }
 
   private async getOrCreateCurrentPeriod(workspaceId: UUID): Promise<UsagePeriod> {
+    try {
+      const { data, error } = await this.db.rpc('get_or_create_usage_period', {
+        p_workspace_id: workspaceId,
+      });
+
+      if (error) {
+        console.error('Failed to get/create usage period:', error);
+        return this.getDefaultPeriod(workspaceId);
+      }
+
+      if (!data || data.length === 0) {
+        return this.getDefaultPeriod(workspaceId);
+      }
+
+      const period = Array.isArray(data) ? data[0] : data;
+
+      return {
+        workspaceId: period.workspace_id,
+        periodStart: new Date(period.period_start),
+        periodEnd: new Date(period.period_end),
+        alertsSent: period.alerts_sent || 0,
+        exportsCount: period.exports_count || 0,
+        apiCalls: period.api_calls || 0,
+      };
+    } catch (error) {
+      console.error('Error in getOrCreateCurrentPeriod:', error);
+      return this.getDefaultPeriod(workspaceId);
+    }
+  }
+
+  private getDefaultPeriod(workspaceId: UUID): UsagePeriod {
     const now = new Date();
-    const _periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    // TODO: Implement database query/insert
-    // Placeholder
     return {
       workspaceId: workspaceId.toString(),
-      periodStart: _periodStart,
+      periodStart,
       periodEnd,
       alertsSent: 0,
       exportsCount: 0,
@@ -192,22 +231,9 @@ export class UsageService {
     };
   }
 
-  private async updateUsageField(
-    workspaceId: string,
-    _periodStart: Date,
-    field: string,
-    amount: number
-  ): Promise<void> {
-    // TODO: Implement database update
-    console.log(`Updating ${field} for workspace ${workspaceId} by ${amount}`);
-  }
 
-  /**
-   * Reset monthly usage (should be called by cron job)
-   */
+
   async resetMonthlyUsage(): Promise<void> {
-    // TODO: Implement monthly reset logic
-    // This would create new periods for all active workspaces
     console.log('Resetting monthly usage...');
   }
 }

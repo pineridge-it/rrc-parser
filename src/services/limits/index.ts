@@ -1,11 +1,9 @@
-/**
- * Free Tier Limits Enforcement Service
- * Prevents abuse by enforcing limits from day one
- */
-
 import { UUID } from '../../types/common';
 import { UsageService } from '../usage';
-import { PLAN_LIMITS } from '../../types/usage';
+import { PLAN_LIMITS, PlanType } from '../../types/usage';
+import { createDatabaseClient, Database } from '../../lib/database';
+import { createLogger } from '../logger';
+import { Logger } from '../../types/logging';
 
 export interface LimitCheckResult {
   allowed: boolean;
@@ -19,16 +17,15 @@ export interface LimitCheckResult {
 export interface FreeTierConfig {
   enforceStrictly: boolean;
   softWarningThreshold: number;
+  cacheTTLMs: number;
 }
 
 const DEFAULT_CONFIG: FreeTierConfig = {
   enforceStrictly: true,
   softWarningThreshold: 0.8,
+  cacheTTLMs: 60000,
 };
 
-/**
- * Error thrown when free tier limit is exceeded
- */
 export class FreeTierLimitExceededError extends Error {
   public resource: string;
   public current: number;
@@ -43,9 +40,6 @@ export class FreeTierLimitExceededError extends Error {
   }
 }
 
-/**
- * Error thrown when API access is not allowed
- */
 export class ApiAccessDeniedError extends Error {
   constructor() {
     super('API access is not available on the free tier. Please upgrade to access the API.');
@@ -53,21 +47,25 @@ export class ApiAccessDeniedError extends Error {
   }
 }
 
-/**
- * Limits Enforcer class for free tier enforcement
- */
 export class LimitsEnforcer {
   private config: FreeTierConfig;
   private usageService: UsageService;
+  private planCache = new Map<string, { plan: PlanType; expiresAt: number }>();
+  private logger: Logger;
+  private db?: Database;
 
-  constructor(config: Partial<FreeTierConfig> = {}) {
+  constructor(
+    config: Partial<FreeTierConfig> = {},
+    db?: Database,
+    logger?: Logger,
+    usageService?: UsageService
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
-    this.usageService = new UsageService();
+    this.usageService = usageService ?? new UsageService();
+    this.db = db;
+    this.logger = logger ?? createLogger({ service: 'limits-enforcer' });
   }
 
-  /**
-   * Check if an action would exceed free tier limits
-   */
   async checkLimit(
     workspaceId: UUID,
     resource: 'aois' | 'alerts' | 'exports' | 'apiAccess',
@@ -76,7 +74,6 @@ export class LimitsEnforcer {
     const plan = await this.getWorkspacePlan(workspaceId);
     const limits = PLAN_LIMITS[plan];
 
-    // Special handling for API access
     if (resource === 'apiAccess') {
       const allowed = limits.apiCallsPerMonth > 0;
       return {
@@ -137,9 +134,6 @@ export class LimitsEnforcer {
     };
   }
 
-  /**
-   * Enforce limit - throws if limit would be exceeded
-   */
   async enforceLimit(
     workspaceId: UUID,
     resource: 'aois' | 'alerts' | 'exports' | 'apiAccess',
@@ -152,6 +146,13 @@ export class LimitsEnforcer {
     const result = await this.checkLimit(workspaceId, resource, amount);
 
     if (!result.allowed) {
+      this.logger.warn('Limit exceeded', {
+        workspaceId,
+        resource,
+        current: result.current,
+        limit: result.limit,
+        amount,
+      });
       if (resource === 'apiAccess') {
         throw new ApiAccessDeniedError();
       }
@@ -159,9 +160,6 @@ export class LimitsEnforcer {
     }
   }
 
-  /**
-   * Increment usage for a resource
-   */
   async incrementUsage(
     workspaceId: UUID,
     resource: 'alerts' | 'exports',
@@ -170,9 +168,6 @@ export class LimitsEnforcer {
     await this.usageService.incrementUsage(workspaceId, resource, amount);
   }
 
-  /**
-   * Get free tier usage summary for display
-   */
   async getFreeTierUsage(workspaceId: UUID): Promise<{
     aois: { current: number; limit: number; percentage: number };
     alerts: { current: number; limit: number; percentage: number };
@@ -227,18 +222,63 @@ export class LimitsEnforcer {
     };
   }
 
-  /**
-   * Check if workspace is on free tier
-   */
   async isFreeTier(workspaceId: UUID): Promise<boolean> {
     const plan = await this.getWorkspacePlan(workspaceId);
     return plan === 'free';
   }
 
-  private async getWorkspacePlan(_workspaceId: UUID): Promise<keyof typeof PLAN_LIMITS> {
-    // TODO: Implement database query
-    // Placeholder - should query workspaces table
+  private async getWorkspacePlan(workspaceId: UUID): Promise<keyof typeof PLAN_LIMITS> {
+    const cached = this.planCache.get(workspaceId);
+    const now = Date.now();
+    if (cached && cached.expiresAt > now) {
+      return cached.plan;
+    }
+
+    try {
+      const db = this.db ?? createDatabaseClient();
+      const { data, error } = await db
+        .from('workspaces')
+        .select('plan')
+        .eq('id', workspaceId)
+        .maybeSingle();
+
+      if (error) {
+        this.logger.error('Failed to fetch workspace plan', error, { workspaceId });
+        return 'free';
+      }
+
+      const plan = this.normalizePlan(data?.plan);
+      this.planCache.set(workspaceId, { plan, expiresAt: now + this.config.cacheTTLMs });
+      return plan;
+    } catch (error) {
+      this.logger.error('Failed to resolve workspace plan', error as Error, { workspaceId });
+      return 'free';
+    }
+  }
+
+  private normalizePlan(plan: string | null | undefined): PlanType {
+    const value = (plan ?? 'free').toLowerCase();
+    if (value in PLAN_LIMITS) {
+      return value as PlanType;
+    }
+    if (value === 'basic' || value === 'starter') {
+      return 'free';
+    }
+    if (value === 'professional') {
+      return 'pro';
+    }
+    if (value === 'business') {
+      return 'team';
+    }
     return 'free';
+  }
+
+  clearCache(workspaceId?: UUID): void {
+    if (workspaceId) {
+      this.planCache.delete(workspaceId);
+    } else {
+      this.planCache.clear();
+    }
   }
 }
 

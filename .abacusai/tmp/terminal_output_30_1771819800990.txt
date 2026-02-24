@@ -1,0 +1,2607 @@
+> daf420-parser-ts@2.0.0 test
+> jest
+
+FAIL tests/alerts/alert-config-service.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/RrcFetcher.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/etl/ChangeDetector.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/RrcPermitParser.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/alerts/alert-rules-engine.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/validators/coordinate-validator.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/log-analyzer.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/notifications/notification-workers.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/SchemaChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/validators/validation-report.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/QAGate.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/performance.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/historical-comparison.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/concurrent.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/MetricsCollector.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-security.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-edge-cases.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-clean.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/Pipeline.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-workspace.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/quiet-hours.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/delivery.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/monitoring/ingestion-monitor.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/Permit.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/complete-ingestion.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-roles.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-relationships.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/pipeline-logger.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/multi-rule.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-generation.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/qa/qa-gates.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/rate-limiting.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/coverage-reporter.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/VolumeChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/complete-workflow.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-quiet-hours.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-concurrent.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-rules.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/error-recovery.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-queue.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/BusinessMetrics.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-raw.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/checkpoint.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/alert-rule.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/rrc-client.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/permit.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/ValueChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-rate-limit.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/transformer.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/field-parsers.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/download-service.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/services/limits.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/rate-limiter.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/PermitParser.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/user.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/EtlMetrics.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/web/app.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/workspace.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/retry.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/index.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/components/map/PermitMap.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/services/logger.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/index.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+Summary of all failing tests
+FAIL tests/alerts/alert-config-service.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/RrcFetcher.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/etl/ChangeDetector.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/RrcPermitParser.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/alerts/alert-rules-engine.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/validators/coordinate-validator.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/log-analyzer.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/notifications/notification-workers.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/SchemaChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/validators/validation-report.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/QAGate.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/performance.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/historical-comparison.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/concurrent.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/MetricsCollector.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-security.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-edge-cases.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-clean.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/Pipeline.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-workspace.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/quiet-hours.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/delivery.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/monitoring/ingestion-monitor.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/Permit.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/complete-ingestion.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/rls-roles.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-relationships.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/pipeline-logger.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/multi-rule.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-generation.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/qa/qa-gates.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/rate-limiting.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/coverage-reporter.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/VolumeChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/alerts/complete-workflow.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-quiet-hours.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-concurrent.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-rules.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/pipeline/error-recovery.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-queue.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/BusinessMetrics.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/permits-raw.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/checkpoint.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/alert-rule.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/rrc-client.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/permit.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/qa/ValueChecks.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/db/alerts-rate-limit.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/etl/transformer.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/field-parsers.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/download-service.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/services/limits.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/rate-limiter.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/parser/PermitParser.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/user.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/metrics/EtlMetrics.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/e2e/web/app.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/factories/workspace.factory.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/integration/api/retry.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/helpers/index.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/components/map/PermitMap.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/services/logger.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+FAIL tests/unit/reporters/index.test.ts
+  ● Test suite failed to run
+
+    TypeError: Attempted to assign to readonly property.
+
+      at node_modules/jest-runtime/build/index.js:1638:6
+      at forEach (native)
+      at Object.<anonymous> (node_modules/stack-utils/index.js:10:9)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:9:30)
+      at Object.<anonymous> (node_modules/expect/build/index.js:23:54)
+      at _expect (node_modules/@jest/expect/build/index.js:8:22)
+      at createJestExpect (node_modules/@jest/expect/build/index.js:29:9)
+      at Object.<anonymous> (node_modules/@jest/expect/build/index.js:39:35)
+      at processTicksAndRejections (native)
+
+
+Test Suites: 63 failed, 63 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        2.502 s
+Ran all test suites.
+
+> daf420-parser-ts@2.0.0 lint
+> eslint src --ext .ts
+
+
+/home/ubuntu/Developer/rrc/src/cli/FilePicker.ts
+   4:7   error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+   4:42  error  Require statement not part of import statement                                                                                                                                                                  @typescript-eslint/no-var-requires
+  30:13  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  30:22  error  Unsafe construction of an any type value                                                                                                                                                                        @typescript-eslint/no-unsafe-call
+  34:7   error  Unsafe return of an `any` typed value                                                                                                                                                                           @typescript-eslint/no-unsafe-return
+  34:20  error  Unsafe call of an `any` typed value                                                                                                                                                                             @typescript-eslint/no-unsafe-call
+  34:27  error  Unsafe member access .run on an `any` value                                                                                                                                                                     @typescript-eslint/no-unsafe-member-access
+  37:13  error  Avoid referencing unbound methods which may cause unintentional scoping of `this`.
+If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead  @typescript-eslint/unbound-method
+  43:19  error  Empty block statement                                                                                                                                                                                           no-empty
+  53:11  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  53:20  error  Unsafe construction of an any type value                                                                                                                                                                        @typescript-eslint/no-unsafe-call
+  64:11  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  64:26  error  Unsafe call of an `any` typed value                                                                                                                                                                             @typescript-eslint/no-unsafe-call
+  64:33  error  Unsafe member access .run on an `any` value                                                                                                                                                                     @typescript-eslint/no-unsafe-member-access
+  67:13  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  67:28  error  Unsafe construction of an any type value                                                                                                                                                                        @typescript-eslint/no-unsafe-call
+  71:7   error  Unsafe return of an `any` typed value                                                                                                                                                                           @typescript-eslint/no-unsafe-return
+  71:20  error  Unsafe call of an `any` typed value                                                                                                                                                                             @typescript-eslint/no-unsafe-call
+  71:33  error  Unsafe member access .run on an `any` value                                                                                                                                                                     @typescript-eslint/no-unsafe-member-access
+  74:5   error  Unsafe return of an `any` typed value                                                                                                                                                                           @typescript-eslint/no-unsafe-return
+  78:11  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  78:20  error  Unsafe construction of an any type value                                                                                                                                                                        @typescript-eslint/no-unsafe-call
+  82:5   error  Unsafe return of an `any` typed value                                                                                                                                                                           @typescript-eslint/no-unsafe-return
+  82:18  error  Unsafe call of an `any` typed value                                                                                                                                                                             @typescript-eslint/no-unsafe-call
+  82:25  error  Unsafe member access .run on an `any` value                                                                                                                                                                     @typescript-eslint/no-unsafe-member-access
+  86:13  error  Unsafe assignment of an `any` value                                                                                                                                                                             @typescript-eslint/no-unsafe-assignment
+  86:22  error  Unsafe construction of an any type value                                                                                                                                                                        @typescript-eslint/no-unsafe-call
+  90:7   error  Unsafe return of an `any` typed value                                                                                                                                                                           @typescript-eslint/no-unsafe-return
+  90:20  error  Unsafe call of an `any` typed value                                                                                                                                                                             @typescript-eslint/no-unsafe-call
+  90:27  error  Unsafe member access .run on an `any` value                                                                                                                                                                     @typescript-eslint/no-unsafe-member-access
+
+/home/ubuntu/Developer/rrc/src/cli/PreferenceStore.ts
+  42:15  error    Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+  43:9   error    Unsafe assignment of an `any` value       @typescript-eslint/no-unsafe-assignment
+  62:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/cli/ProgressReporter.ts
+   68:5   warning  Unexpected console statement     no-console
+   69:5   warning  Unexpected console statement     no-console
+   70:5   warning  Unexpected console statement     no-console
+   71:5   warning  Unexpected console statement     no-console
+   72:5   warning  Unexpected console statement     no-console
+   73:5   warning  Unexpected console statement     no-console
+   74:5   warning  Unexpected console statement     no-console
+   77:7   warning  Unexpected console statement     no-console
+   79:9   warning  Unexpected console statement     no-console
+   82:9   warning  Unexpected console statement     no-console
+   83:9   warning  Unexpected console statement     no-console
+   84:9   warning  Unexpected console statement     no-console
+  140:38  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  152:21  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  191:5   warning  Unexpected console statement     no-console
+  195:5   warning  Unexpected console statement     no-console
+  207:5   warning  Unexpected console statement     no-console
+
+/home/ubuntu/Developer/rrc/src/cli/index.ts
+   22:10  error    'PreferenceStore' is defined but never used  @typescript-eslint/no-unused-vars
+   23:10  error    'FilePicker' is defined but never used       @typescript-eslint/no-unused-vars
+   87:3   warning  Unexpected console statement                 no-console
+  129:3   warning  Unexpected console statement                 no-console
+  130:3   warning  Unexpected console statement                 no-console
+  131:3   warning  Unexpected console statement                 no-console
+  132:3   warning  Unexpected console statement                 no-console
+  133:3   warning  Unexpected console statement                 no-console
+  134:3   warning  Unexpected console statement                 no-console
+  135:3   warning  Unexpected console statement                 no-console
+  136:3   warning  Unexpected console statement                 no-console
+  137:3   warning  Unexpected console statement                 no-console
+  140:3   warning  Unexpected console statement                 no-console
+  141:3   warning  Unexpected console statement                 no-console
+  143:3   warning  Unexpected console statement                 no-console
+  152:5   warning  Unexpected console statement                 no-console
+  161:3   warning  Unexpected console statement                 no-console
+  162:3   warning  Unexpected console statement                 no-console
+  163:3   warning  Unexpected console statement                 no-console
+  168:7   warning  Unexpected console statement                 no-console
+  248:21  warning  Forbidden non-null assertion                 @typescript-eslint/no-non-null-assertion
+  249:22  warning  Forbidden non-null assertion                 @typescript-eslint/no-non-null-assertion
+  275:44  warning  Missing return type on function              @typescript-eslint/explicit-function-return-type
+
+/home/ubuntu/Developer/rrc/src/config/ConfigValidator.ts
+  210:23  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  211:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/ubuntu/Developer/rrc/src/etl/Pipeline.ts
+  100:9   error    'permitsUpserted' is never reassigned. Use 'const' instead  prefer-const
+  101:9   error    'permitsSkipped' is never reassigned. Use 'const' instead   prefer-const
+  119:7   warning  Unexpected console statement                                no-console
+  122:7   warning  Unexpected console statement                                no-console
+  125:7   warning  Unexpected console statement                                no-console
+  130:7   warning  Unexpected console statement                                no-console
+  134:9   warning  Unexpected console statement                                no-console
+  183:9   warning  Unexpected console statement                                no-console
+  185:11  warning  Unexpected console statement                                no-console
+  186:42  warning  Unexpected console statement                                no-console
+  189:11  warning  Unexpected console statement                                no-console
+  190:40  warning  Unexpected console statement                                no-console
+  193:11  warning  Unexpected console statement                                no-console
+  194:48  warning  Unexpected console statement                                no-console
+  268:14  warning  Forbidden non-null assertion                                @typescript-eslint/no-non-null-assertion
+
+/home/ubuntu/Developer/rrc/src/etl/changes/ChangeRepository.ts
+   10:15  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   12:25  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   13:5   error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   43:13  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   43:28  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+   43:36  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+   44:13  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   44:28  error    Unsafe member access .rows on an `any` value         @typescript-eslint/no-unsafe-member-access
+   47:25  error    Unsafe member access .id on an `any` value           @typescript-eslint/no-unsafe-member-access
+   54:9   error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   54:19  error    Unsafe member access .id on an `any` value           @typescript-eslint/no-unsafe-member-access
+   55:9   error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   55:26  error    Unsafe member access .created_at on an `any` value   @typescript-eslint/no-unsafe-member-access
+   83:11  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+   83:26  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+   83:34  error    Unsafe member access .connect on an `any` value      @typescript-eslint/no-unsafe-member-access
+   85:13  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+   85:20  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  107:15  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  107:30  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  107:37  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  108:15  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  108:28  error    Unsafe member access .rows on an `any` value         @typescript-eslint/no-unsafe-member-access
+  112:11  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  112:19  error    Unsafe member access .id on an `any` value           @typescript-eslint/no-unsafe-member-access
+  113:11  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  113:26  error    Unsafe member access .created_at on an `any` value   @typescript-eslint/no-unsafe-member-access
+  117:13  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  117:20  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  125:13  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  125:20  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  135:7   error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  135:14  error    Unsafe member access .release on an `any` value      @typescript-eslint/no-unsafe-member-access
+  178:13  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  178:28  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  178:36  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  180:7   error    Unsafe return of an `any` typed value                @typescript-eslint/no-unsafe-return
+  180:14  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  180:21  error    Unsafe member access .rows on an `any` value         @typescript-eslint/no-unsafe-member-access
+  223:13  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  223:21  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  262:13  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  262:28  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  262:36  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  264:7   error    Unsafe return of an `any` typed value                @typescript-eslint/no-unsafe-return
+  264:14  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  264:21  error    Unsafe member access .rows on an `any` value         @typescript-eslint/no-unsafe-member-access
+  308:13  error    Unsafe assignment of an `any` value                  @typescript-eslint/no-unsafe-assignment
+  308:28  error    Unsafe call of an `any` typed value                  @typescript-eslint/no-unsafe-call
+  308:36  error    Unsafe member access .query on an `any` value        @typescript-eslint/no-unsafe-member-access
+  319:32  error    Unsafe member access .rows on an `any` value         @typescript-eslint/no-unsafe-member-access
+  320:26  error    Unsafe member access .change_type on an `any` value  @typescript-eslint/no-unsafe-member-access
+  321:36  error    Unsafe member access .count on an `any` value        @typescript-eslint/no-unsafe-member-access
+  346:50  warning  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/etl/fetcher/index.ts
+   89:3   warning  Unexpected console statement     no-console
+   90:3   warning  Unexpected console statement     no-console
+   91:3   warning  Unexpected console statement     no-console
+  172:8   warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  175:17  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  180:17  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/home/ubuntu/Developer/rrc/src/etl/loader/PermitLoader.ts
+  114:3  error  Async method 'permitExists' has no 'await' expression      @typescript-eslint/require-await
+  125:3  error  Async method 'hasPermitChanged' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/etl/transformer/PermitTransformer.ts
+    5:16  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+   38:13  error    Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
+   47:9   error    Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
+   71:6   warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  115:30  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  131:41  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  133:15  error    Unsafe member access .source_id on an `any` value      @typescript-eslint/no-unsafe-member-access
+  137:15  error    Unsafe member access .permit_number on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+/home/ubuntu/Developer/rrc/src/etl/transformer/index.ts
+  293:8  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  298:5  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  299:5  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/home/ubuntu/Developer/rrc/src/etl/types/index.ts
+  21:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/etl/utils/HashUtils.ts
+  15:11  error    Unsafe assignment of an `any` value                                 @typescript-eslint/no-unsafe-assignment
+  34:38  warning  Unexpected any. Specify a different type                            @typescript-eslint/no-explicit-any
+  34:44  warning  Unexpected any. Specify a different type                            @typescript-eslint/no-explicit-any
+  40:30  error    Unsafe return of an `any` typed value                               @typescript-eslint/no-unsafe-return
+  43:37  warning  Unexpected any. Specify a different type                            @typescript-eslint/no-explicit-any
+  44:17  error    Unsafe argument of type `any` assigned to a parameter of type `{}`  @typescript-eslint/no-unsafe-argument
+  45:7   error    Unsafe assignment of an `any` value                                 @typescript-eslint/no-unsafe-assignment
+  45:48  error    Unsafe member access [key] on an `any` value                        @typescript-eslint/no-unsafe-member-access
+
+/home/ubuntu/Developer/rrc/src/lib/alerts/AlertConfigService.ts
+  223:55  error  Avoid referencing unbound methods which may cause unintentional scoping of `this`.
+If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead  @typescript-eslint/unbound-method
+  358:3   error  Async method 'create' has no 'await' expression                                                                                                                                                                 @typescript-eslint/require-await
+  371:3   error  Async method 'getById' has no 'await' expression                                                                                                                                                                @typescript-eslint/require-await
+  375:3   error  Async method 'update' has no 'await' expression                                                                                                                                                                 @typescript-eslint/require-await
+  389:3   error  Async method 'delete' has no 'await' expression                                                                                                                                                                 @typescript-eslint/require-await
+  403:3   error  Async method 'list' has no 'await' expression                                                                                                                                                                   @typescript-eslint/require-await
+  470:3   error  Async method 'getHistory' has no 'await' expression                                                                                                                                                             @typescript-eslint/require-await
+  496:3   error  Async method 'searchPermits' has no 'await' expression                                                                                                                                                          @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/lib/alerts/index.ts
+  230:3  error  Async method 'evaluatePermit' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/lib/database.ts
+  3:8  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/home/ubuntu/Developer/rrc/src/lib/notifications/index.ts
+   98:34  warning  Missing return type on function                                    @typescript-eslint/explicit-function-return-type
+  151:3   error    Async method 'checkLimit' has no 'await' expression                @typescript-eslint/require-await
+  534:3   error    Async method 'retry' has no 'await' expression                     @typescript-eslint/require-await
+  546:3   error    Async method 'createNotification' has no 'await' expression        @typescript-eslint/require-await
+  649:3   error    Async method 'createNotificationRecord' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/metrics/MetricsCollector.ts
+  242:13  error  Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  243:42  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, string>`  @typescript-eslint/no-unsafe-argument
+
+/home/ubuntu/Developer/rrc/src/middleware/loggingContext.ts
+  26:5   error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  26:21  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  26:26  error    Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+  27:5   error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  27:26  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  27:31  error    Unsafe member access .user on an `any` value                                                                                                                        @typescript-eslint/no-unsafe-member-access
+  35:30  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  35:46  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  35:56  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  49:31  error    Unsafe argument of type `any` assigned to a parameter of type `BufferEncoding`                                                                                      @typescript-eslint/no-unsafe-argument
+  49:41  error    Unsafe argument of type `any` assigned to a parameter of type `(() => void) | undefined`                                                                            @typescript-eslint/no-unsafe-argument
+  52:3   error    Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  52:41  error    Async arrow function has no 'await' expression                                                                                                                      @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/monitoring/DataFreshnessService.ts
+  142:3  error  Async method 'queryLatestRun' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/monitoring/EtlDatabaseService.ts
+   13:14  error  Require statement not part of import statement                                           @typescript-eslint/no-var-requires
+   76:40  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, unknown>`  @typescript-eslint/no-unsafe-argument
+  120:40  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, unknown>`  @typescript-eslint/no-unsafe-argument
+  143:40  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, unknown>`  @typescript-eslint/no-unsafe-argument
+  198:40  error  Unsafe argument of type `any` assigned to a parameter of type `string`                   @typescript-eslint/no-unsafe-argument
+  198:62  error  Unsafe argument of type `any` assigned to a parameter of type `number`                   @typescript-eslint/no-unsafe-argument
+  228:33  error  Unsafe argument of type `any` assigned to a parameter of type `Record<string, unknown>`  @typescript-eslint/no-unsafe-argument
+
+/home/ubuntu/Developer/rrc/src/monitoring/IngestionMonitor.ts
+  213:32  warning  Forbidden non-null assertion                  @typescript-eslint/no-non-null-assertion
+  345:11  error    Unexpected lexical declaration in case block  no-case-declarations
+  512:37  warning  Forbidden non-null assertion                  @typescript-eslint/no-non-null-assertion
+
+/home/ubuntu/Developer/rrc/src/parser/CheckpointManager.ts
+  140:7   warning  Unexpected console statement         no-console
+  168:13  error    Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
+  194:7   warning  Unexpected console statement         no-console
+  195:7   warning  Unexpected console statement         no-console
+  196:7   warning  Unexpected console statement         no-console
+  229:7   warning  Unexpected console statement         no-console
+  352:11  error    Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
+  385:5   warning  Unexpected console statement         no-console
+  386:5   warning  Unexpected console statement         no-console
+  389:7   warning  Unexpected console statement         no-console
+  390:7   warning  Unexpected console statement         no-console
+  393:5   warning  Unexpected console statement         no-console
+
+/home/ubuntu/Developer/rrc/src/parser/PermitParser.ts
+   51:32  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+  110:12  warning  Forbidden non-null assertion                                            @typescript-eslint/no-non-null-assertion
+  229:15  error    Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  231:21  error    Unsafe member access [permitNum] on an `any` value                      @typescript-eslint/no-unsafe-member-access
+  232:26  error    Unsafe member access [permitNum] on an `any` value                      @typescript-eslint/no-unsafe-member-access
+  268:15  error    Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  528:67  error    Unsafe member access .message on an `any` value                         @typescript-eslint/no-unsafe-member-access
+  548:30  error    Promise returned in function argument where a void return was expected  @typescript-eslint/no-misused-promises
+  782:5   error    Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  782:68  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+  785:7   error    Unsafe assignment of an `any` value                                     @typescript-eslint/no-unsafe-assignment
+  785:76  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+  834:42  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/parser/rrc/RrcPermitParser.ts
+   39:5   warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  229:33  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+  350:20  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+
+/home/ubuntu/Developer/rrc/src/parser/rrc/errors.ts
+  36:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/home/ubuntu/Developer/rrc/src/qa/QAGate.ts
+  41:3  error  Async method 'run' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/services/alerts/index.ts
+  67:3  error    Async method 'getAlertCount' has no 'await' expression  @typescript-eslint/require-await
+  75:3  error    Async method 'listAlerts' has no 'await' expression     @typescript-eslint/require-await
+  80:3  error    Async method 'saveAlert' has no 'await' expression      @typescript-eslint/require-await
+  82:5  warning  Unexpected console statement                            no-console
+
+/home/ubuntu/Developer/rrc/src/services/analytics/AnalyticsService.ts
+  124:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<TrendData>`                                                                        @typescript-eslint/no-unsafe-return
+  136:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<HeatmapData>`                                                                      @typescript-eslint/no-unsafe-return
+  152:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorRanking[]>`                                                                @typescript-eslint/no-unsafe-return
+  164:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<ApprovalRateData>`                                                                 @typescript-eslint/no-unsafe-return
+  181:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ drilling: number; amendment: number; recompletion: number; other: number; }>`    @typescript-eslint/no-unsafe-return
+  196:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ basin: string; permitCount: number; }[]>`                                        @typescript-eslint/no-unsafe-return
+  216:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ currentPeriod: TrendData; previousPeriod: TrendData; percentChange: number; }>`  @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/aoi/index.ts
+  60:3  error    Async method 'getAOICount' has no 'await' expression  @typescript-eslint/require-await
+  68:3  error    Async method 'listAOIs' has no 'await' expression     @typescript-eslint/require-await
+  80:3  error    Async method 'saveAOI' has no 'await' expression      @typescript-eslint/require-await
+  82:5  warning  Unexpected console statement                          no-console
+
+/home/ubuntu/Developer/rrc/src/services/backfill/BackfillService.ts
+  103:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<BackfillResult>`                                                                         @typescript-eslint/no-unsafe-return
+  111:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<BackfillResult>`                                                                         @typescript-eslint/no-unsafe-return
+  143:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<BackfillResult[]>`                                                                       @typescript-eslint/no-unsafe-return
+  151:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<BackfillCheckpoint[]>`                                                                   @typescript-eslint/no-unsafe-return
+  162:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<BackfillResult>`                                                                         @typescript-eslint/no-unsafe-return
+  174:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ last30Days: BackfillConfig; last90Days: BackfillConfig; lastYear: BackfillConfig; }>`  @typescript-eslint/no-unsafe-return
+  190:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ valid: boolean; errors: string[]; warnings: string[]; }>`                              @typescript-eslint/no-unsafe-return
+  206:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ estimatedHours: number; estimatedRecords: number; recommendedBatchSize: number; }>`    @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/email/EmailService.ts
+   19:33  warning  Unexpected any. Specify a different type                                                                                                                                @typescript-eslint/no-explicit-any
+  120:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<EmailResult>`                                                                              @typescript-eslint/no-unsafe-return
+  156:11  error    Unsafe assignment of an `any` value                                                                                                                                     @typescript-eslint/no-unsafe-assignment
+  157:5   error    Unsafe return of an `any` typed value                                                                                                                                   @typescript-eslint/no-unsafe-return
+  157:19  error    Unsafe member access .valid on an `any` value                                                                                                                           @typescript-eslint/no-unsafe-member-access
+  169:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ remaining: number; resetTime: Date; limit: number; }>`                                   @typescript-eslint/no-unsafe-return
+  182:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ totalSent: number; successful: number; failed: number; averageDeliveryTime: number; }>`  @typescript-eslint/no-unsafe-return
+  195:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ recipient: EmailRecipient; error: string; timestamp: Date; }[]>`                         @typescript-eslint/no-unsafe-return
+  214:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<EmailServiceConfig>`                                                                       @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/etl/index.ts
+  150:3  error    Async method 'getNormalizationStats' has no 'await' expression  @typescript-eslint/require-await
+  227:3  error    Async method 'savePermitRecord' has no 'await' expression       @typescript-eslint/require-await
+  232:5  warning  Unexpected console statement                                    no-console
+
+/home/ubuntu/Developer/rrc/src/services/export/index.ts
+  105:7   error    Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  205:7   error    Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  219:7   error    Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+  226:3   error    Async method 'fetchPermits' has no 'await' expression                                                                                                               @typescript-eslint/require-await
+  226:97  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  237:14  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  252:48  error    Invalid type "never" of template literal expression                                                                                                                 @typescript-eslint/restrict-template-expressions
+  259:3   error    Async method 'generateCSV' has no 'await' expression                                                                                                                @typescript-eslint/require-await
+  261:14  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  269:15  error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  269:30  error    Unsafe member access [field] on an `any` value                                                                                                                      @typescript-eslint/no-unsafe-member-access
+  274:9   error    Unsafe return of an `any` typed value                                                                                                                               @typescript-eslint/no-unsafe-return
+  287:14  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  298:3   error    Async method 'generateGeoJSON' has no 'await' expression                                                                                                            @typescript-eslint/require-await
+  300:14  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  306:7   error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  320:3   error    Async method 'generateShapefile' has no 'await' expression                                                                                                          @typescript-eslint/require-await
+  322:15  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  333:3   error    Async method 'generateKML' has no 'await' expression                                                                                                                @typescript-eslint/require-await
+  335:14  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  340:13  error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  343:32  error    Unsafe member access .coordinates on an `any` value                                                                                                                 @typescript-eslint/no-unsafe-member-access
+  344:9   error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  344:23  error    Unsafe call of an `any` typed value                                                                                                                                 @typescript-eslint/no-unsafe-call
+  344:32  error    Unsafe member access .coordinates on an `any` value                                                                                                                 @typescript-eslint/no-unsafe-member-access
+  349:26  error    Unsafe member access .permit_number on an `any` value                                                                                                               @typescript-eslint/no-unsafe-member-access
+  392:32  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  392:72  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  394:34  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  397:7   error    Unsafe assignment of an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-assignment
+  397:30  error    Unsafe member access [field] on an `any` value                                                                                                                      @typescript-eslint/no-unsafe-member-access
+  406:38  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  406:44  warning  Unexpected any. Specify a different type                                                                                                                            @typescript-eslint/no-explicit-any
+  417:3   error    Async method 'storeFile' has no 'await' expression                                                                                                                  @typescript-eslint/require-await
+  432:3   error    Async method 'loadJob' has no 'await' expression                                                                                                                    @typescript-eslint/require-await
+  440:3   error    Async method 'loadJobsForWorkspace' has no 'await' expression                                                                                                       @typescript-eslint/require-await
+  448:3   error    Async method 'loadNextPendingJob' has no 'await' expression                                                                                                         @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/services/fetcher/RRCFetcherService.ts
+   87:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<FetchResult>`                                                                                                                       @typescript-eslint/no-unsafe-return
+   95:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<FetchResult>`                                                                                                                       @typescript-eslint/no-unsafe-return
+  107:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<FetchResult[]>`                                                                                                                     @typescript-eslint/no-unsafe-return
+  119:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<FetcherConfig>`                                                                                                                     @typescript-eslint/no-unsafe-return
+  127:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<FetcherConfig>`                                                                                                                     @typescript-eslint/no-unsafe-return
+  141:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ totalRequests: number; successfulRequests: number; failedRequests: number; averageResponseTime: number; currentRate: number; }>`  @typescript-eslint/no-unsafe-return
+  155:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ url: string; error: string; timestamp: Date; retryCount: number; }[]>`                                                            @typescript-eslint/no-unsafe-return
+  175:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ isLimited: boolean; retryAfter?: number | undefined; }>`                                                                          @typescript-eslint/no-unsafe-return
+  201:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ isValid: boolean; issues: string[]; }>`                                                                                           @typescript-eslint/no-unsafe-return
+  213:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ status: "healthy" | "unhealthy" | "degraded"; message: string; lastSuccessfulFetch: Date; }>`                                     @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/health-check.service.ts
+  129:3  error  Async method 'livenessCheck' has no 'await' expression  @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/services/limits/index.ts
+  105:46  error  Invalid type "never" of template literal expression                                        @typescript-eslint/restrict-template-expressions
+  245:39  error  Unsafe argument of type `any` assigned to a parameter of type `string | null | undefined`  @typescript-eslint/no-unsafe-argument
+
+/home/ubuntu/Developer/rrc/src/services/loader/PermitLoaderService.ts
+   43:29  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   59:14  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   66:29  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  132:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<LoadResult>`                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-return
+  144:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<LoadResult>`                                                                                                                                                                                                                                                            @typescript-eslint/no-unsafe-return
+  176:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ id: UUID; status: "completed" | "failed" | "loading" | "rolled_back"; progress: { total: number; processed: number; inserted: number; updated: number; skipped: number; errors: number; }; startedAt: Date; completedAt?: Date | undefined; errors: LoadError[]; }>`  @typescript-eslint/no-unsafe-return
+  204:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ id: UUID; status: "completed" | "failed" | "loading" | "rolled_back"; progress: { total: number; processed: number; }; startedAt: Date; completedAt?: Date | undefined; }[]>`                                                                                         @typescript-eslint/no-unsafe-return
+  216:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<LoaderConfig>`                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-return
+  224:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<LoaderConfig>`                                                                                                                                                                                                                                                          @typescript-eslint/no-unsafe-return
+  243:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ valid: boolean; errors: LoadError[]; warnings: string[]; }>`                                                                                                                                                                                                          @typescript-eslint/no-unsafe-return
+  262:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ estimatedSeconds: number; estimatedThroughput: number; recommendedBatchSize: number; }>`                                                                                                                                                                              @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/logger.ts
+  114:9  warning  Unexpected console statement  no-console
+
+/home/ubuntu/Developer/rrc/src/services/notifications/DigestService.ts
+    4:3   error  'QueuedAlert' is defined but never used                     @typescript-eslint/no-unused-vars
+   34:3   error  Async method 'sendDailyDigests' has no 'await' expression   @typescript-eslint/require-await
+   51:3   error  Async method 'sendWeeklyDigests' has no 'await' expression  @typescript-eslint/require-await
+  121:11  error  Unsafe call of an `any` typed value                         @typescript-eslint/no-unsafe-call
+
+/home/ubuntu/Developer/rrc/src/services/notifications/NotificationPreferencesService.ts
+   33:3   error    Async method 'getPreferences' has no 'await' expression                        @typescript-eslint/require-await
+  156:3   error    Async method 'getQueuedAlerts' has no 'await' expression                       @typescript-eslint/require-await
+  156:25  error    'userId' is defined but never used. Allowed unused args must match /^_/u       @typescript-eslint/no-unused-vars
+  156:41  error    'workspaceId' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  164:3   error    Async method 'getQueuedAlertsForDigest' has no 'await' expression              @typescript-eslint/require-await
+  165:5   error    'userId' is defined but never used. Allowed unused args must match /^_/u       @typescript-eslint/no-unused-vars
+  166:5   error    'workspaceId' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  167:5   error    'frequency' is defined but never used. Allowed unused args must match /^_/u    @typescript-eslint/no-unused-vars
+  176:3   error    Async method 'markAlertsAsSentInDigest' has no 'await' expression              @typescript-eslint/require-await
+  178:5   warning  Unexpected console statement                                                   no-console
+  214:3   error    Async method 'savePreferences' has no 'await' expression                       @typescript-eslint/require-await
+  216:5   warning  Unexpected console statement                                                   no-console
+  222:3   error    Async method 'saveQueuedAlert' has no 'await' expression                       @typescript-eslint/require-await
+  224:5   warning  Unexpected console statement                                                   no-console
+
+/home/ubuntu/Developer/rrc/src/services/operators/OperatorAdminService.ts
+   74:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ items: OperatorReviewItem[]; total: number; }>`                                                        @typescript-eslint/no-unsafe-return
+  119:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<Operator>`                                                                                               @typescript-eslint/no-unsafe-return
+  131:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorAlias>`                                                                                          @typescript-eslint/no-unsafe-return
+  151:22  warning  Unexpected any. Specify a different type                                                                                                                                              @typescript-eslint/no-explicit-any
+  155:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ operator: Operator; aliases: OperatorAlias[]; activitySummary: any; relatedOperators: Operator[]; }>`  @typescript-eslint/no-unsafe-return
+  167:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<Operator>`                                                                                               @typescript-eslint/no-unsafe-return
+  179:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<Operator>`                                                                                               @typescript-eslint/no-unsafe-return
+  195:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ success: number; failed: number; errors: { id: UUID; error: string; }[]; }>`                           @typescript-eslint/no-unsafe-return
+  211:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ success: number; failed: number; errors: { id: UUID; error: string; }[]; }>`                           @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/operators/OperatorService.ts
+   84:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorListResponse>`                                        @typescript-eslint/no-unsafe-return
+   92:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<Operator>`                                                    @typescript-eslint/no-unsafe-return
+  105:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorSearchResult[]>`                                      @typescript-eslint/no-unsafe-return
+  113:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorActivitySummary>`                                     @typescript-eslint/no-unsafe-return
+  137:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ entries: OperatorPermitTimelineEntry[]; total: number; }>`  @typescript-eslint/no-unsafe-return
+  145:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorGeographicFootprint>`                                 @typescript-eslint/no-unsafe-return
+  156:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorComparison[]>`                                        @typescript-eslint/no-unsafe-return
+  164:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<OperatorAlias[]>`                                             @typescript-eslint/no-unsafe-return
+  172:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<Operator[]>`                                                  @typescript-eslint/no-unsafe-return
+  181:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<Operator[]>`                                                  @typescript-eslint/no-unsafe-return
+  190:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<Operator[]>`                                                  @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/operators/index.ts
+   78:3  error  Async method 'normalizeOperatorName' has no 'await' expression  @typescript-eslint/require-await
+  102:3  error  Async method 'findSimilarOperators' has no 'await' expression   @typescript-eslint/require-await
+
+/home/ubuntu/Developer/rrc/src/services/permits/PermitService.ts
+   66:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<PermitDetail>`    @typescript-eslint/no-unsafe-return
+   74:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<PermitDetail>`    @typescript-eslint/no-unsafe-return
+   80:54  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   82:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<any[]>`           @typescript-eslint/no-unsafe-return
+   88:50  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   90:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<any[]>`           @typescript-eslint/no-unsafe-return
+  102:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<PermitDetail[]>`  @typescript-eslint/no-unsafe-return
+  136:11  error    Unsafe assignment of an `any` value                                                            @typescript-eslint/no-unsafe-assignment
+  137:5   error    Unsafe return of an `any` typed value                                                          @typescript-eslint/no-unsafe-return
+  137:19  error    Unsafe member access .link on an `any` value                                                   @typescript-eslint/no-unsafe-member-access
+  143:65  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+  155:59  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+  155:73  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/services/rate-limiting/RateLimitingService.ts
+  107:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<RateLimitCheckResult>`                                           @typescript-eslint/no-unsafe-return
+  131:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<UsageStats>`                                                     @typescript-eslint/no-unsafe-return
+  139:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<RateLimitStatus>`                                                @typescript-eslint/no-unsafe-return
+  164:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<RateLimitConfig>`                                                @typescript-eslint/no-unsafe-return
+  172:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<RateLimitConfig>`                                                @typescript-eslint/no-unsafe-return
+  180:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ inCooldown: boolean; cooldownEndsAt?: string | undefined; }>`  @typescript-eslint/no-unsafe-return
+  188:11  error  Unsafe assignment of an `any` value                                                                                                           @typescript-eslint/no-unsafe-assignment
+  189:5   error  Unsafe return of an `any` typed value                                                                                                         @typescript-eslint/no-unsafe-return
+  189:19  error  Unsafe member access .warnings on an `any` value                                                                                              @typescript-eslint/no-unsafe-member-access
+
+/home/ubuntu/Developer/rrc/src/services/transformer/PermitTransformerService.ts
+    9:10  warning  Unexpected any. Specify a different type                                                                                                                                         @typescript-eslint/no-explicit-any
+   77:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<TransformResult>`                                                                                   @typescript-eslint/no-unsafe-return
+   89:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<TransformResult[]>`                                                                                 @typescript-eslint/no-unsafe-return
+   95:26  warning  Unexpected any. Specify a different type                                                                                                                                         @typescript-eslint/no-explicit-any
+   98:30  error    Unsafe assignment of an `any` value                                                                                                                                              @typescript-eslint/no-unsafe-assignment
+  101:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<ValidationError[]>`                                                                                 @typescript-eslint/no-unsafe-return
+  107:27  warning  Unexpected any. Specify a different type                                                                                                                                         @typescript-eslint/no-explicit-any
+  107:41  warning  Unexpected any. Specify a different type                                                                                                                                         @typescript-eslint/no-explicit-any
+  110:30  error    Unsafe assignment of an `any` value                                                                                                                                              @typescript-eslint/no-unsafe-assignment
+  125:11  error    Unsafe assignment of an `any` value                                                                                                                                              @typescript-eslint/no-unsafe-assignment
+  126:5   error    Unsafe return of an `any` typed value                                                                                                                                            @typescript-eslint/no-unsafe-return
+  126:19  error    Unsafe member access .geometry on an `any` value                                                                                                                                 @typescript-eslint/no-unsafe-member-access
+  138:11  error    Unsafe assignment of an `any` value                                                                                                                                              @typescript-eslint/no-unsafe-assignment
+  139:5   error    Unsafe return of an `any` typed value                                                                                                                                            @typescript-eslint/no-unsafe-return
+  139:19  error    Unsafe member access .operatorId on an `any` value                                                                                                                               @typescript-eslint/no-unsafe-member-access
+  152:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ totalTransformed: number; successful: number; failed: number; averageProcessingTime: number; }>`  @typescript-eslint/no-unsafe-return
+  165:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ permitId: UUID; errors: ValidationError[]; timestamp: Date; }[]>`                                 @typescript-eslint/no-unsafe-return
+  176:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<TransformResult>`                                                                                   @typescript-eslint/no-unsafe-return
+  184:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<TransformResult>`                                                                                   @typescript-eslint/no-unsafe-return
+  214:5   error    Unsafe return of type `Promise<any>` from function with return type `Promise<{ strictMode: boolean; maxRetries: number; validationLevel: "strict" | "relaxed"; }>`               @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/services/usage/index.ts
+   68:46  error    Invalid type "never" of template literal expression                                     @typescript-eslint/restrict-template-expressions
+  156:13  error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  157:58  error    Unsafe argument of type `any` assigned to a parameter of type `string`                  @typescript-eslint/no-unsafe-argument
+  190:15  error    Unsafe array destructuring of a tuple element with an `any` value                       @typescript-eslint/no-unsafe-assignment
+  199:25  error    Unsafe member access .length on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+  203:13  error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  206:9   error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  206:29  error    Unsafe member access .workspace_id on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+  207:31  error    Unsafe argument of type `any` assigned to a parameter of type `string | number | Date`  @typescript-eslint/no-unsafe-argument
+  207:38  error    Unsafe member access .period_start on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+  208:29  error    Unsafe argument of type `any` assigned to a parameter of type `string | number | Date`  @typescript-eslint/no-unsafe-argument
+  208:36  error    Unsafe member access .period_end on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+  209:9   error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  209:28  error    Unsafe member access .alerts_sent on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+  210:9   error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  210:30  error    Unsafe member access .exports_count on an `any` value                                   @typescript-eslint/no-unsafe-member-access
+  211:9   error    Unsafe assignment of an `any` value                                                     @typescript-eslint/no-unsafe-assignment
+  211:26  error    Unsafe member access .api_calls on an `any` value                                       @typescript-eslint/no-unsafe-member-access
+  234:3   error    Async method 'updateUsageField' has no 'await' expression                               @typescript-eslint/require-await
+  243:3   error    Async method 'resetMonthlyUsage' has no 'await' expression                              @typescript-eslint/require-await
+  244:5   warning  Unexpected console statement                                                            no-console
+
+/home/ubuntu/Developer/rrc/src/services/watchlist/WatchlistService.ts
+   83:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<WatchlistItem>`                               @typescript-eslint/no-unsafe-return
+   99:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<WatchlistItem>`                               @typescript-eslint/no-unsafe-return
+  121:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ items: WatchlistItem[]; total: number; }>`  @typescript-eslint/no-unsafe-return
+  142:5   error  Unsafe return of type `Promise<any>` from function with return type `Promise<WatchlistItem>`                               @typescript-eslint/no-unsafe-return
+  150:11  error  Unsafe assignment of an `any` value                                                                                        @typescript-eslint/no-unsafe-assignment
+  151:5   error  Unsafe return of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-return
+  151:19  error  Unsafe member access .watched on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+  159:11  error  Unsafe assignment of an `any` value                                                                                        @typescript-eslint/no-unsafe-assignment
+  160:5   error  Unsafe return of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-return
+  160:19  error  Unsafe member access .watched on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+
+/home/ubuntu/Developer/rrc/src/services/workspace/WorkspaceService.ts
+   97:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceInvitation>`                     @typescript-eslint/no-unsafe-return
+  105:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceInvitation[]>`                   @typescript-eslint/no-unsafe-return
+  116:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceInvitation>`                     @typescript-eslint/no-unsafe-return
+  133:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceMember[]>`                       @typescript-eslint/no-unsafe-return
+  145:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceMember>`                         @typescript-eslint/no-unsafe-return
+  163:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceSettings>`                       @typescript-eslint/no-unsafe-return
+  175:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceSettings>`                       @typescript-eslint/no-unsafe-return
+  187:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<{ success: boolean; message: string; }>`  @typescript-eslint/no-unsafe-return
+  195:5  error  Unsafe return of type `Promise<any>` from function with return type `Promise<WorkspaceInvitation>`                     @typescript-eslint/no-unsafe-return
+
+/home/ubuntu/Developer/rrc/src/types/common.ts
+  27:5  error    "api_number" is overridden by string in this union type       @typescript-eslint/no-redundant-type-constituents
+  28:5  error    "permit_number" is overridden by string in this union type    @typescript-eslint/no-redundant-type-constituents
+  29:5  error    "operator_number" is overridden by string in this union type  @typescript-eslint/no-redundant-type-constituents
+  30:5  error    "county" is overridden by string in this union type           @typescript-eslint/no-redundant-type-constituents
+  31:5  error    "district" is overridden by string in this union type         @typescript-eslint/no-redundant-type-constituents
+  32:5  error    "date" is overridden by string in this union type             @typescript-eslint/no-redundant-type-constituents
+  33:5  error    "depth" is overridden by string in this union type            @typescript-eslint/no-redundant-type-constituents
+  34:5  error    "coordinate" is overridden by string in this union type       @typescript-eslint/no-redundant-type-constituents
+  92:7  warning  Unexpected console statement                                  no-console
+
+/home/ubuntu/Developer/rrc/src/types/email.ts
+  17:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/types/loader.ts
+  41:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:29  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/types/map.ts
+  15:12  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/types/transformer.ts
+   6:10  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:11  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/ubuntu/Developer/rrc/src/utils/PerformanceMonitor.ts
+   94:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:5   warning  Unexpected console statement              no-console
+  114:5   warning  Unexpected console statement              no-console
+  115:5   warning  Unexpected console statement              no-console
+  121:7   warning  Unexpected console statement              no-console
+  129:7   warning  Unexpected console statement              no-console
+
+/home/ubuntu/Developer/rrc/src/utils/addressDiagnostic.ts
+   16:1   warning  Unexpected console statement                     no-console
+   17:1   warning  Unexpected console statement                     no-console
+   18:1   warning  Unexpected console statement                     no-console
+   19:1   warning  Unexpected console statement                     no-console
+   23:7   error    Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
+   23:66  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   24:32  error    Unsafe member access .schemas on an `any` value  @typescript-eslint/no-unsafe-member-access
+   27:58  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   27:68  error    Unsafe member access .name on an `any` value     @typescript-eslint/no-unsafe-member-access
+   40:1   warning  Unexpected console statement                     no-console
+   51:1   warning  Unexpected console statement                     no-console
+   58:1   warning  Unexpected console statement                     no-console
+   63:1   warning  Unexpected console statement                     no-console
+   64:1   warning  Unexpected console statement                     no-console
+   73:3   warning  Unexpected console statement                     no-console
+   74:3   warning  Unexpected console statement                     no-console
+   75:3   warning  Unexpected console statement                     no-console
+   76:3   warning  Unexpected console statement                     no-console
+   77:3   warning  Unexpected console statement                     no-console
+   78:18  warning  Unexpected console statement                     no-console
+   79:3   warning  Unexpected console statement                     no-console
+   83:1   warning  Unexpected console statement                     no-console
+   84:1   warning  Unexpected console statement                     no-console
+   85:1   warning  Unexpected console statement                     no-console
+   86:1   warning  Unexpected console statement                     no-console
+   89:3   warning  Unexpected console statement                     no-console
+   90:3   warning  Unexpected console statement                     no-console
+   92:3   warning  Unexpected console statement                     no-console
+   96:5   warning  Unexpected console statement                     no-console
+   97:5   warning  Unexpected console statement                     no-console
+   98:5   warning  Unexpected console statement                     no-console
+  101:3   warning  Unexpected console statement                     no-console
+  104:1   warning  Unexpected console statement                     no-console
+  105:1   warning  Unexpected console statement                     no-console
+
+/home/ubuntu/Developer/rrc/src/validators/ValidationReport.ts
+  172:5  warning  Unexpected console statement  no-console
+  173:5  warning  Unexpected console statement  no-console
+  174:5  warning  Unexpected console statement  no-console
+  175:5  warning  Unexpected console statement  no-console
+  176:5  warning  Unexpected console statement  no-console
+  177:5  warning  Unexpected console statement  no-console
+  180:7  warning  Unexpected console statement  no-console
+  186:9  warning  Unexpected console statement  no-console
+  191:7  warning  Unexpected console statement  no-console
+  196:9  warning  Unexpected console statement  no-console
+
+/home/ubuntu/Developer/rrc/src/validators/Validator.ts
+  35:13  error    Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  35:64  warning  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  36:13  error    Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  36:40  error    Unsafe member access .valid_values on an `any` value  @typescript-eslint/no-unsafe-member-access
+  37:7   error    Unsafe return of an `any` typed value                 @typescript-eslint/no-unsafe-return
+  37:14  error    Unsafe call of an `any` typed value                   @typescript-eslint/no-unsafe-call
+  37:26  error    Unsafe member access .includes on an `any` value      @typescript-eslint/no-unsafe-member-access
+
+✖ 537 problems (343 errors, 194 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+
+
+> daf420-parser-ts@2.0.0 build
+> tsc
+
+src/cli/index.ts(22,1): error TS6133: 'PreferenceStore' is declared but its value is never read.
+src/cli/index.ts(23,1): error TS6133: 'FilePicker' is declared but its value is never read.
+src/lib/notifications/index.ts(184,11): error TS2532: Object is possibly 'undefined'.
+src/services/notifications/DigestService.ts(4,3): error TS6133: 'QueuedAlert' is declared but its value is never read.
+src/services/notifications/DigestService.ts(121,29): error TS2339: Property 'send' does not exist on type 'EmailService'.
+src/services/notifications/NotificationPreferencesService.ts(126,23): error TS18048: 'startHour' is possibly 'undefined'.
+src/services/notifications/NotificationPreferencesService.ts(126,40): error TS18048: 'startMinute' is possibly 'undefined'.
+src/services/notifications/NotificationPreferencesService.ts(127,21): error TS18048: 'endHour' is possibly 'undefined'.
+src/services/notifications/NotificationPreferencesService.ts(127,36): error TS18048: 'endMinute' is possibly 'undefined'.
+src/services/notifications/NotificationPreferencesService.ts(156,25): error TS6133: 'userId' is declared but its value is never read.
+src/services/notifications/NotificationPreferencesService.ts(156,41): error TS6133: 'workspaceId' is declared but its value is never read.
+src/services/notifications/NotificationPreferencesService.ts(165,5): error TS6133: 'userId' is declared but its value is never read.
+src/services/notifications/NotificationPreferencesService.ts(166,5): error TS6133: 'workspaceId' is declared but its value is never read.
+src/services/notifications/NotificationPreferencesService.ts(167,5): error TS6133: 'frequency' is declared but its value is never read.
+src/services/usage/index.ts(234,17): error TS6133: 'updateUsageField' is declared but its value is never read.
+/home/ubuntu/Developer/rrc

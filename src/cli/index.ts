@@ -21,11 +21,13 @@ import { ConfigurationError } from '../utils/ParseError';
 import { RecordSchema } from '../config';
 import { PreferenceStore } from './PreferenceStore';
 import { FilePicker } from './FilePicker';
+import { DryRunSimulator, DryRunResult } from './DryRunSimulator';
 
 // Constants
 const EXIT_SUCCESS = 0;
 const EXIT_ERROR = 1;
 const AVERAGE_BYTES_PER_LINE = 100;
+const SAMPLE_PREVIEW_LINES = 100;
 
 interface CLIArgs {
   input?: string;
@@ -37,6 +39,7 @@ interface CLIArgs {
   performance?: boolean;
   validationReport?: string;
   interactive?: boolean;
+  dryRun?: boolean;
 }
 
 interface PerformanceMetrics {
@@ -55,11 +58,13 @@ function parseArgs(): CLIArgs {
   
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    
+
     if (arg === '-h' || arg === '--help') {
       args.help = true;
     } else if (arg === '--interactive' || arg === '--init') {
       args.interactive = true;
+    } else if (arg === '--dry-run') {
+      args.dryRun = true;
     } else if (arg === '-i' || arg === '--input') {
       args.input = argv[++i];
     } else if (arg === '-o' || arg === '--output') {

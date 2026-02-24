@@ -1,7 +1,6 @@
 import { EmailService } from '../email/EmailService';
 import { NotificationPreferencesService } from './NotificationPreferencesService';
 import {
-  QueuedAlert,
   DigestFrequency,
   DigestEmail,
 } from '../../types/notifications';
@@ -118,7 +117,7 @@ export class DigestService {
     // TODO: Get user email from user service
     const userEmail = 'user@example.com';
 
-    await this.emailService.send({
+    await this.emailService.sendRawEmail({
       to: { email: userEmail },
       subject,
       htmlBody,
