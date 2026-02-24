@@ -288,11 +288,30 @@ async function main(): Promise<number> {
     logger.info('Loading configuration...');
     const config = new Config(args.config);
     const configSummary = config.getSummary();
-    
+
     if (args.verbose) {
       logger.info(`Loaded ${configSummary.schemasCount} schemas and ${configSummary.lookupTablesCount} lookup tables`);
     }
-    
+
+    if (args.dryRun) {
+      logger.info('Running in dry-run mode...');
+      const simulator = new DryRunSimulator(config, SAMPLE_PREVIEW_LINES);
+      const dryRunResult = await simulator.simulate({
+        inputPath,
+        outputPath,
+        configPath: args.config,
+        strictMode: args.strict,
+      });
+
+      simulator.printPreview(dryRunResult, inputPath, outputPath);
+
+      if (dryRunResult.errors.length > 0) {
+        return EXIT_ERROR;
+      }
+
+      return EXIT_SUCCESS;
+    }
+
     // File info
     const fileStats = fs.statSync(inputPath);
     logger.info(`Processing: ${inputPath}`);
