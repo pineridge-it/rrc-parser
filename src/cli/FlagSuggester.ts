@@ -12,6 +12,7 @@ export class FlagSuggester {
     '--help',
     '--interactive',
     '--init',
+    '--dry-run',
     '-i',
     '-o',
     '-c',
@@ -25,6 +26,11 @@ export class FlagSuggester {
 
   suggest(input: string): string | null {
     if (!input) return null;
+
+    const prefixMatches = this.knownFlags.filter(flag => flag.startsWith(input));
+    if (prefixMatches.length === 1) {
+      return prefixMatches[0];
+    }
 
     let bestMatch: string | null = null;
     let bestDistance = Infinity;

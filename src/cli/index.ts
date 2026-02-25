@@ -2,7 +2,7 @@
 /**
  * Enhanced CLI with progress reporting and better UI
  * Location: src/cli/index.ts
- * 
+ *
  * IMPROVEMENTS:
  * - Removed all 'as any' type casts for better type safety
  * - Added proper type definitions for all functions
@@ -22,6 +22,7 @@ import { RecordSchema } from '../config';
 import { PreferenceStore } from './PreferenceStore';
 import { FilePicker } from './FilePicker';
 import { DryRunSimulator } from './DryRunSimulator';
+import { FlagSuggester } from './FlagSuggester';
 
 // Constants
 const EXIT_SUCCESS = 0;
@@ -40,6 +41,7 @@ interface CLIArgs {
   validationReport?: string;
   interactive?: boolean;
   dryRun?: boolean;
+  usage?: boolean;
 }
 
 interface PerformanceMetrics {
@@ -48,6 +50,13 @@ interface PerformanceMetrics {
   count: number;
 }
 
+const KNOWN_FLAGS = new Set([
+  '-h', '--help', '--interactive', '--init', '--dry-run',
+  '-i', '--input', '-o', '--output', '-c', '--config',
+  '--strict', '-v', '--verbose', '-p', '--performance',
+  '--validation-report'
+]);
+
 /**
  * Parse command-line arguments
  * @returns Parsed arguments object
@@ -55,9 +64,24 @@ interface PerformanceMetrics {
 function parseArgs(): CLIArgs {
   const args: CLIArgs = {};
   const argv = process.argv.slice(2);
-  
+  const flagSuggester = new FlagSuggester();
+  const unknownFlags: string[] = [];
+
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
+
+    if (arg && arg.startsWith('-')) {
+      if (!KNOWN_FLAGS.has(arg)) {
+        const suggestion = flagSuggester.getSuggestionMessage(arg);
+        if (suggestion) {
+          console.error(suggestion);
+        } else {
+          console.error(`⚠️  Unknown option "${arg}"`);
+        }
+        unknownFlags.push(arg);
+        continue;
+      }
+    }
 
     if (arg === '-h' || arg === '--help') {
       args.help = true;
@@ -81,7 +105,12 @@ function parseArgs(): CLIArgs {
       args.validationReport = argv[++i];
     }
   }
-  
+
+  if (unknownFlags.length > 0) {
+    console.error(`\nUse --help to see available options.`);
+    process.exit(EXIT_ERROR);
+  }
+
   return args;
 }
 
