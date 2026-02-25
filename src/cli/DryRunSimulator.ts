@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 import { Config } from '../config';
 import { PermitParser, ParseResult } from '../parser';
-import { CSVRow, DaRootRecord, DaPermitRecord, GisSurfaceRecord, GisBottomholeRecord } from '../types/permit';
+import { CSVRow, DaRootRecord, DaPermitRecord, GisSurfaceRecord } from '../types/permit';
 
 export interface DryRunResult {
   configValid: boolean;
@@ -107,31 +107,31 @@ export class DryRunSimulator {
 
       rows.push({
         permit_number: permitNum.padStart(7, '0'),
-        lease_name: (daroot.lease_name || dapermit.lease_name || '') as string,
-        operator_name: (daroot.operator_name || '') as string,
-        operator_number: (daroot.operator_number || dapermit.operator_number || '') as string,
-        county_code: (daroot.county_code || dapermit.county_code || '') as string,
+        lease_name: (daroot?.lease_name || dapermit?.lease_name || '') as string,
+        operator_name: (daroot?.operator_name || '') as string,
+        operator_number: (daroot?.operator_number || dapermit?.operator_number || '') as string,
+        county_code: (daroot?.county_code || dapermit?.county_code || '') as string,
         county_name: '',
-        district: (daroot.district || dapermit.district || '') as string,
-        issue_date: (daroot.issue_date || dapermit.issued_date || '') as string,
-        received_date: (daroot.received_date || dapermit.received_date || '') as string,
-        amended_date: (dapermit.amended_date || '') as string,
-        extended_date: (dapermit.extended_date || '') as string,
-        spud_date: (dapermit.spud_date || '') as string,
-        well_number: (dapermit.well_number || '') as string,
-        well_status: (dapermit.well_status || '') as string,
-        total_depth: dapermit.total_depth ?? '',
-        application_type: (dapermit.application_type || '') as string,
+        district: (daroot?.district || dapermit?.district || '') as string,
+        issue_date: (daroot?.issue_date || dapermit?.issued_date || '') as string,
+        received_date: (daroot?.received_date || dapermit?.received_date || '') as string,
+        amended_date: (dapermit?.amended_date || '') as string,
+        extended_date: (dapermit?.extended_date || '') as string,
+        spud_date: (dapermit?.spud_date || '') as string,
+        well_number: (dapermit?.well_number || '') as string,
+        well_status: (dapermit?.well_status || '') as string,
+        total_depth: dapermit?.total_depth ?? '',
+        application_type: (dapermit?.application_type || '') as string,
         app_type_desc: '',
-        horizontal_flag: (dapermit.horizontal_flag || '') as string,
-        directional_flag: (dapermit.directional_flag || '') as string,
-        sidetrack_flag: (dapermit.sidetrack_flag || '') as string,
-        surface_section: (dapermit.surface_section || '') as string,
-        surface_block: (dapermit.surface_block || '') as string,
-        surface_survey: (dapermit.surface_survey || '') as string,
-        surface_abstract: (dapermit.surface_abstract || '') as string,
-        gis_surface_lat: gisSurf.latitude ?? '',
-        gis_surface_lon: gisSurf.longitude ?? '',
+        horizontal_flag: (dapermit?.horizontal_flag || '') as string,
+        directional_flag: (dapermit?.directional_flag || '') as string,
+        sidetrack_flag: (dapermit?.sidetrack_flag || '') as string,
+        surface_section: (dapermit?.surface_section || '') as string,
+        surface_block: (dapermit?.surface_block || '') as string,
+        surface_survey: (dapermit?.surface_survey || '') as string,
+        surface_abstract: (dapermit?.surface_abstract || '') as string,
+        gis_surface_lat: gisSurf?.latitude ?? '',
+        gis_surface_lon: gisSurf?.longitude ?? '',
         gis_bottomhole_lat: data.gis_bottomhole?.latitude ?? '',
         gis_bottomhole_lon: data.gis_bottomhole?.longitude ?? '',
         field_count: data.dafield?.length ?? 0,
@@ -253,20 +253,25 @@ export class DryRunSimulator {
 
     if (result.sampleOutput.length > 0) {
       console.log('\n┌─── Sample Output (first 3 rows) ───┐');
-      
-      const headers = Object.keys(result.sampleOutput[0]).slice(0, 6);
-      console.log(`| ${headers.map(h => h.padEnd(12)).join(' | ')} |`);
-      console.log(`|${headers.map(() => '-'.repeat(12)).join('|')}|`);
 
-      for (const row of result.sampleOutput) {
-        const values = headers.map(h => {
-          const val = row[h as keyof CSVRow];
-          const strVal = val != null ? String(val) : '';
-          return strVal.substring(0, 12).padEnd(12);
-        });
-        console.log(`| ${values.join(' | ')} |`);
+      const firstRow = result.sampleOutput[0];
+      if (!firstRow) {
+        console.log('└' + '─'.repeat(35) + '┘');
+      } else {
+        const headers = Object.keys(firstRow).slice(0, 6);
+        console.log(`| ${headers.map(h => h.padEnd(12)).join(' | ')} |`);
+        console.log(`|${headers.map(() => '-'.repeat(12)).join('|')}|`);
+
+        for (const row of result.sampleOutput) {
+          const values = headers.map(h => {
+            const val = row[h as keyof CSVRow];
+            const strVal = val !== null && val !== undefined ? String(val) : '';
+            return strVal.substring(0, 12).padEnd(12);
+          });
+          console.log(`| ${values.join(' | ')} |`);
+        }
+        console.log('└' + '─'.repeat(headers.length * 14 + 1) + '┘');
       }
-      console.log('└' + '─'.repeat(headers.length * 14 + 1) + '┘');
     }
 
     console.log('\n' + '═'.repeat(80));

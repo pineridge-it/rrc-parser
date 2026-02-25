@@ -21,7 +21,7 @@ import { ConfigurationError } from '../utils/ParseError';
 import { RecordSchema } from '../config';
 import { PreferenceStore } from './PreferenceStore';
 import { FilePicker } from './FilePicker';
-import { DryRunSimulator, DryRunResult } from './DryRunSimulator';
+import { DryRunSimulator } from './DryRunSimulator';
 
 // Constants
 const EXIT_SUCCESS = 0;
