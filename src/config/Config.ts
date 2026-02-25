@@ -20,6 +20,8 @@ import {
 import { RecordSchema } from './RecordSchema';
 import { ConfigValidator } from './ConfigValidator';
 import { ConfigurationError } from '../utils/ParseError';
+import { ErrorFormatter } from '../utils/ErrorFormatter';
+import { AutoFixEngine } from '../utils/AutoFixEngine';
 
 export class Config {
   settings: ISettings;
@@ -64,19 +66,33 @@ export class Config {
     
     // Validate configuration
     const validation = ConfigValidator.validate(this.rawConfig);
+
+    // Display rich warnings with auto-fix hints
+    if (validation.userWarnings.length > 0) {
+      const formatter = new ErrorFormatter();
+      const engine = new AutoFixEngine();
+      engine.registerFromErrors(validation.userWarnings);
+      if (engine.hasFixableIssues()) {
+        process.stderr.write(engine.getSummary() + '\n');
+      }
+      process.stderr.write(formatter.formatList(validation.userWarnings, { compact: false }));
+    }
+
     if (!validation.isValid) {
+      const formatter = new ErrorFormatter();
+      const engine = new AutoFixEngine();
+      engine.registerFromErrors(validation.userErrors);
+
+      // Print rich error list to stderr before throwing
+      process.stderr.write(formatter.formatList(validation.userErrors, { compact: false }));
+      if (engine.hasFixableIssues()) {
+        process.stderr.write(engine.getSummary() + '\n');
+      }
+
       throw new ConfigurationError(
         'Invalid configuration detected',
         validation.errors
       );
-    }
-    
-    // Log warnings if any
-    if (validation.warnings.length > 0) {
-      console.warn('⚠️  Configuration warnings:');
-      for (const warning of validation.warnings) {
-        console.warn(`  - ${warning}`);
-      }
     }
     
     // Initialize settings with defaults
