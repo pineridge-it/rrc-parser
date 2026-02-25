@@ -182,52 +182,182 @@ export async function authenticateApiRequest(
   };
 }
 
-export function createApiResponse<T>(
-  data: T,
-  statusCode: number = 200,
-  rateLimit?: RateLimitInfo
-): NextResponse {
-  const response = NextResponse.json(
-    {
-      success: true,
-      data,
-      meta: {
-        requestId: crypto.randomUUID(),
-        timestamp: new Date().toISOString(),
-      },
-    },
-    { status: statusCode }
-  );
+// ── Response type definitions ──────────────────────────────────────────────
 
+export type ApiErrorCategory =
+  | 'authentication'
+  | 'authorization'
+  | 'validation'
+  | 'quota'
+  | 'server';
+
+export interface ApiError {
+  code: string;
+  category: ApiErrorCategory;
+  title: string;
+  message: string;
+  suggestion?: string;
+  example?: unknown;
+  learnMore?: string;
+  current?: number;
+  limit?: number;
+  resetsAt?: string;
+}
+
+export interface ApiMeta {
+  requestId: string;
+  timestamp: string;
+  documentation?: string;
+}
+
+export interface StandardApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: ApiError;
+  meta: ApiMeta;
+}
+
+// ── Error code → rich metadata map ────────────────────────────────────────
+
+const API_ERROR_METADATA: Record<string, Pick<ApiError, 'category' | 'title' | 'suggestion'>> = {
+  NO_AUTH_HEADER: {
+    category: 'authentication',
+    title: 'Missing Authorization Header',
+    suggestion: 'Add "Authorization: Bearer <your-api-key>" to your request headers.',
+  },
+  INVALID_AUTH_FORMAT: {
+    category: 'authentication',
+    title: 'Invalid Authorization Format',
+    suggestion: 'Use the format: Authorization: Bearer <your-api-key>',
+  },
+  INVALID_API_KEY: {
+    category: 'authentication',
+    title: 'Invalid or Revoked API Key',
+    suggestion: 'Check your API key in the dashboard. Generate a new one if it has been revoked.',
+  },
+  RATE_LIMIT_EXCEEDED: {
+    category: 'quota',
+    title: 'Rate Limit Exceeded',
+    suggestion: 'Wait until your rate limit resets, or upgrade your plan for higher limits.',
+  },
+  INTERNAL_ERROR: {
+    category: 'server',
+    title: 'Internal Server Error',
+    suggestion: 'This is our fault. Please try again later or contact support with your Request ID.',
+  },
+  VALIDATION_ERROR: {
+    category: 'validation',
+    title: 'Request Validation Failed',
+    suggestion: 'Check the request parameters against the API documentation.',
+  },
+  FORBIDDEN: {
+    category: 'authorization',
+    title: 'Access Denied',
+    suggestion: 'Your API key does not have permission for this resource. Check required scopes.',
+  },
+};
+
+function buildMeta(requestId?: string): ApiMeta {
+  return {
+    requestId: requestId ?? crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function setResponseHeaders(response: NextResponse, requestId: string, rateLimit?: RateLimitInfo): void {
+  response.headers.set('X-Request-Id', requestId);
   if (rateLimit) {
     response.headers.set('X-RateLimit-Limit', rateLimit.limit.toString());
     response.headers.set('X-RateLimit-Remaining', rateLimit.remaining.toString());
     response.headers.set('X-RateLimit-Reset', rateLimit.reset.toString());
   }
+}
 
+// ── Public response helpers ────────────────────────────────────────────────
+
+export function createApiResponse<T>(
+  data: T,
+  statusCode: number = 200,
+  rateLimit?: RateLimitInfo
+): NextResponse {
+  const requestId = crypto.randomUUID();
+  const response = NextResponse.json(
+    {
+      success: true,
+      data,
+      meta: buildMeta(requestId),
+    } satisfies StandardApiResponse<T>,
+    { status: statusCode }
+  );
+  setResponseHeaders(response, requestId, rateLimit);
   return response;
 }
 
 export function createApiErrorResponse(
   error: Error | ApiAuthError,
-  statusCode?: number
+  statusCode?: number,
+  rateLimit?: RateLimitInfo
 ): NextResponse {
   const isAuthError = error instanceof ApiAuthError;
   const code = isAuthError ? error.code : 'INTERNAL_ERROR';
-  const status = isAuthError ? error.statusCode : statusCode || 500;
+  const status = isAuthError ? error.statusCode : statusCode ?? 500;
+  const requestId = crypto.randomUUID();
 
-  return NextResponse.json(
+  const meta = API_ERROR_METADATA[code] ?? API_ERROR_METADATA['INTERNAL_ERROR']!;
+
+  const apiError: ApiError = {
+    code,
+    category: meta.category,
+    title: meta.title,
+    message: error.message,
+    suggestion: meta.suggestion,
+    learnMore: `https://docs.rrc-alerts.com/api/errors/${code.toLowerCase()}`,
+  };
+
+  const response = NextResponse.json(
     {
       success: false,
-      error: {
-        code,
-        message: error.message,
-      },
+      error: apiError,
       meta: {
-        requestId: crypto.randomUUID(),
-        timestamp: new Date().toISOString(),
+        ...buildMeta(requestId),
+        documentation: `https://docs.rrc-alerts.com/api/errors/${code.toLowerCase()}`,
       },
-    },
+    } satisfies StandardApiResponse,
     { status }
   );
+  setResponseHeaders(response, requestId, rateLimit);
+  return response;
+}
+
+export function createValidationErrorResponse(
+  validationErrors: unknown,
+  rateLimit?: RateLimitInfo,
+  statusCode = 422
+): NextResponse {
+  const requestId = crypto.randomUUID();
+  const meta = API_ERROR_METADATA['VALIDATION_ERROR']!;
+
+  const apiError: ApiError = {
+    code: 'VALIDATION_ERROR',
+    category: meta.category,
+    title: meta.title,
+    message: 'One or more request parameters failed validation.',
+    suggestion: meta.suggestion,
+    example: validationErrors,
+    learnMore: 'https://docs.rrc-alerts.com/api/errors/validation',
+  };
+
+  const response = NextResponse.json(
+    {
+      success: false,
+      error: apiError,
+      meta: {
+        ...buildMeta(requestId),
+        documentation: 'https://docs.rrc-alerts.com/api/errors/validation',
+      },
+    } satisfies StandardApiResponse,
+    { status: statusCode }
+  );
+  setResponseHeaders(response, requestId, rateLimit);
+  return response;
 }

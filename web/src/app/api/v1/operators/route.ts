@@ -3,6 +3,7 @@ import {
   authenticateApiRequest,
   createApiResponse,
   createApiErrorResponse,
+  createValidationErrorResponse,
 } from '../../../../../src/middleware/api-auth';
 import { createDatabaseClient } from '../../../../../src/lib/database';
 import { OperatorApiResponse } from '../../../../../src/types/api';
@@ -35,11 +36,7 @@ export async function GET(request: NextRequest) {
     // Validate query parameters
     const validation = validateQuery(queryParams, operatorsQuerySchema);
     if (!validation.success) {
-      return createApiResponse(
-        { error: 'Validation failed', details: validation.errors },
-        400,
-        rateLimit
-      );
+      return createValidationErrorResponse(validation.errors, rateLimit);
     }
 
     const { page, pageSize, search } = validation.data;
