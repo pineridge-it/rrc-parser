@@ -40,7 +40,7 @@ export class ParseError extends Error {
 /**
  * Error thrown during validation
  */
-export class ValidationError extends Error {
+export class ParseValidationError extends Error {
   constructor(
     message: string,
     public readonly fieldName: string,
@@ -48,13 +48,13 @@ export class ValidationError extends Error {
     public readonly context: string
   ) {
     super(message);
-    this.name = 'ValidationError';
-    
+    this.name = 'ParseValidationError';
+
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ValidationError);
+      Error.captureStackTrace(this, ParseValidationError);
     }
   }
-  
+
   toString(): string {
     return `${this.name} [${this.context}] field '${this.fieldName}' = '${this.value}': ${this.message}`;
   }

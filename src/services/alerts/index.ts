@@ -66,8 +66,15 @@ export class AlertService {
   }
 
   async sendAlert(request: AlertCreateRequest): Promise<Alert> {
+    let validatedWorkspaceId: string;
+    try {
+      validatedWorkspaceId = asUUID(request.workspaceId);
+    } catch (error) {
+      throw new Error(`Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
     await this.limitsEnforcer.enforceLimit(
-      asUUID(request.workspaceId),
+      workspaceId,
       'alerts'
     );
 
@@ -86,8 +93,15 @@ export class AlertService {
 
     const savedAlert = await this.saveAlert(alert);
 
+    let validatedWorkspaceId2: string;
+    try {
+      validatedWorkspaceId2 = asUUID(request.workspaceId);
+    } catch (error) {
+      throw new Error(`Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
     await this.limitsEnforcer.incrementUsage(
-      asUUID(request.workspaceId),
+      validatedWorkspaceId2,
       'alerts'
     );
 

@@ -35,6 +35,36 @@ export {
   DEFAULT_FRESHNESS_CONFIG
 } from './DataFreshnessService';
 
+// Alert Notification exports
+export {
+  AlertNotificationService,
+  AlertNotificationConfig,
+  DEFAULT_NOTIFICATION_CONFIG,
+  EmailChannel,
+  SlackChannel,
+  PagerDutyChannel,
+  ConsoleChannel,
+  NotificationChannel,
+  alertNotificationService
+} from './AlertNotificationService';
+
+// Health Check exports
+export {
+  HealthCheckService,
+  HealthCheckConfig,
+  DEFAULT_HEALTH_CHECK_CONFIG,
+  healthCheckService,
+  HealthStatus,
+  ComponentHealth,
+  SystemHealth
+} from './HealthCheckService';
+
+// ETL Database exports
+export {
+  EtlDatabaseService,
+  EtlDatabaseConfig
+} from './EtlDatabaseService';
+
 // Logging exports
 export {
   createLogger,

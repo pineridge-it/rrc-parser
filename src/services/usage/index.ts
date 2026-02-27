@@ -234,7 +234,20 @@ export class UsageService {
 
 
   async resetMonthlyUsage(): Promise<void> {
-    console.log('Resetting monthly usage...');
+    try {
+      // Rotate usage periods - move current period to history and create new period
+      const { error } = await this.db.rpc('rotate_usage_periods');
+
+      if (error) {
+        console.error('Failed to rotate usage periods:', error);
+        throw new Error(`Failed to reset monthly usage: ${error.message}`);
+      }
+
+      console.log('Monthly usage reset completed successfully');
+    } catch (error) {
+      console.error('Error in resetMonthlyUsage:', error);
+      throw error;
+    }
   }
 }
 

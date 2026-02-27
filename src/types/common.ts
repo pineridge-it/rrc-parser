@@ -4,11 +4,40 @@
 export type UUID = string & { __brand: 'UUID' };
 
 /**
- * Converts a string to a UUID branded type
- * Use this when you have a string that you know is a valid UUID
+ * UUID v4 format validation regex
+ */
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * ValidationError for validation failures
+ */
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+/**
+ * Converts a string to a UUID branded type with runtime validation
+ * Throws ValidationError if the string is not a valid UUID v4
  */
 export function asUUID(value: string): UUID {
-  return value as UUID;
+  if (!UUID_REGEX.test(value)) {
+    throw new ValidationError(`Invalid UUID format: ${value}`);
+  }
+  return value.toLowerCase() as UUID;
+}
+
+/**
+ * Safely parses a string to a UUID branded type
+ * Returns null if the string is not a valid UUID v4
+ */
+export function parseUUID(value: string): UUID | null {
+  if (!UUID_REGEX.test(value)) {
+    return null;
+  }
+  return value.toLowerCase() as UUID;
 }
 
 /**

@@ -425,14 +425,14 @@ export class ConfigValidator {
 
     if (validation.flags) {
       const f = validation.flags;
-      if (!f.valid_values) {
-        errors.push(ConfigValidator.err(ErrorCodes.CFG_GENERAL, 'Invalid Flags: missing valid_values',
-          'validation.flags: missing required field valid_values',
-          'Add valid_values: [...] to the flags section'));
-      } else if (!Array.isArray(f.valid_values)) {
-        errors.push(ConfigValidator.err(ErrorCodes.CFG_GENERAL, 'Invalid Flags: valid_values type',
-          'validation.flags.valid_values must be an array',
-          'Define valid_values as a YAML list'));
+      if (!f.validValues) {
+        errors.push(ConfigValidator.err(ErrorCodes.CFG_GENERAL, 'Invalid Flags: missing validValues',
+          'validation.flags: missing required field validValues',
+          'Add validValues: [...] to the flags section'));
+      } else if (!Array.isArray(f.validValues)) {
+        errors.push(ConfigValidator.err(ErrorCodes.CFG_GENERAL, 'Invalid Flags: validValues type',
+          'validation.flags.validValues must be an array',
+          'Define validValues as a YAML list'));
       }
     }
 

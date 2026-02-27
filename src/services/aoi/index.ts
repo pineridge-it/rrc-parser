@@ -34,8 +34,15 @@ export class AOIService {
    */
   async createAOI(request: AOICreateRequest): Promise<AOI> {
     // Check AOI limit before creating
+    let workspaceId: string;
+    try {
+      workspaceId = asUUID(request.workspaceId);
+    } catch (error) {
+      throw new Error(`Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
     await this.limitsEnforcer.enforceLimit(
-      asUUID(request.workspaceId),
+      workspaceId,
       'aois'
     );
 

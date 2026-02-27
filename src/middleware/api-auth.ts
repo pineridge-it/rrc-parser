@@ -43,7 +43,13 @@ export async function validateApiKey(apiKey: string): Promise<ApiKeyAuth | null>
   }
 
   return {
-    workspaceId: asUUID(data.workspace_id),
+    workspaceId: (() => {
+      try {
+        return asUUID(data.workspace_id);
+      } catch (error) {
+        throw new Error(`Invalid workspace ID format in API key data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    })(),
     apiKey,
     keyHash,
     scopes: data.scopes || [],
@@ -148,7 +154,13 @@ export async function authenticateApiRequest(
     throw new ApiAuthError('API key not found', 401, 'INVALID_API_KEY');
   }
 
-  const apiKeyId = asUUID(apiKeyData.id);
+  let apiKeyId: string;
+  try {
+    apiKeyId = asUUID(apiKeyData.id);
+  } catch (error) {
+    throw new ApiAuthError(`Invalid API key ID format: ${error instanceof Error ? error.message : 'Unknown error'}`, 500, 'INTERNAL_ERROR');
+  }
+
   const rateLimit = await checkRateLimit(keyAuth.workspaceId, apiKeyId);
 
   if (rateLimit.remaining <= 0) {

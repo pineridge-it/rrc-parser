@@ -5,7 +5,7 @@ import {
   DigestFrequency,
   QueuedAlert,
 } from '../../types/notifications';
-import { asUUID } from '../../types/common';
+import { asUUID, ValidationError } from '../../types/common';
 
 export interface CreatePreferencesRequest {
   userId: string;
@@ -45,9 +45,22 @@ export class NotificationPreferencesService {
   async createPreferences(
     request: CreatePreferencesRequest
   ): Promise<NotificationPreferences> {
+    let userId: string;
+    let workspaceId: string;
+
+    try {
+      userId = asUUID(request.userId);
+      workspaceId = asUUID(request.workspaceId);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw new Error(`Invalid UUID format in request: ${error.message}`);
+      }
+      throw error;
+    }
+
     const preferences: NotificationPreferences = {
-      userId: asUUID(request.userId),
-      workspaceId: asUUID(request.workspaceId),
+      userId: userId as any, // Type assertion needed because we've validated it
+      workspaceId: workspaceId as any,
       quietHours: {
         enabled: request.quietHours?.enabled ?? false,
         startTime: request.quietHours?.startTime ?? '22:00',
@@ -188,9 +201,23 @@ export class NotificationPreferencesService {
     userId: string,
     workspaceId: string
   ): NotificationPreferences {
+    const DEFAULT_TIMEZONE = 'America/New_York';
+    let validatedUserId: string;
+    let validatedWorkspaceId: string;
+
+    try {
+      validatedUserId = asUUID(userId);
+      validatedWorkspaceId = asUUID(workspaceId);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw new Error(`Invalid UUID format in request: ${error.message}`);
+      }
+      throw error;
+    }
+
     return {
-      userId: asUUID(userId),
-      workspaceId: asUUID(workspaceId),
+      userId: validatedUserId as any, // Type assertion needed because we've validated it
+      workspaceId: validatedWorkspaceId as any,
       quietHours: {
         enabled: false,
         startTime: '22:00',

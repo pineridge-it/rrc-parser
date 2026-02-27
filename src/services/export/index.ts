@@ -63,8 +63,15 @@ export class ExportService {
   async createExport(request: ExportRequest): Promise<ExportJob> {
     // Check usage limits if enforcement is enabled
     if (this.config.enforceUsageLimits) {
+      let workspaceId: string;
+      try {
+        workspaceId = asUUID(request.workspaceId);
+      } catch (error) {
+        throw new Error(`Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+
       const checkResult = await this.usageService.checkLimit(
-        asUUID(request.workspaceId),
+        workspaceId,
         'exports',
         1
       );

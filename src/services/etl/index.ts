@@ -4,6 +4,7 @@
  */
 
 import { OperatorNormalizer, OperatorNormalizationResult } from '../operators';
+import { createDatabaseClient, Database } from '../../lib/database';
 
 export interface PermitIngestionRecord {
   permitId: string;
@@ -16,6 +17,13 @@ export interface PermitIngestionRecord {
   status?: string;
   effectiveDate?: Date;
   expirationDate?: Date;
+  // Additional permit fields
+  operatorNumber?: string;
+  countyCode?: string;
+  wellNumber?: string;
+  totalDepth?: number;
+  surfaceLatitude?: number;
+  surfaceLongitude?: number;
 }
 
 export interface IngestionResult {
@@ -26,6 +34,7 @@ export interface IngestionResult {
   needsReview: boolean;
   success: boolean;
   error?: string;
+  isNewOperator: boolean;
 }
 
 export interface ETLStats {
@@ -41,12 +50,16 @@ export interface ETLStats {
 
 export class ETLService {
   private normalizer: OperatorNormalizer;
+  private db: Database;
 
-  constructor() {
+  constructor(db?: Database) {
+    this.db = db ?? createDatabaseClient();
     this.normalizer = new OperatorNormalizer({
       autoCreateOperators: true,
       similarityThreshold: 0.7,
       highConfidenceThreshold: 0.9,
+      reviewThreshold: 0.6,
+      db: this.db
     });
   }
 
@@ -81,6 +94,10 @@ export class ETLService {
             stats.needsReview++;
           }
 
+          if (result.isNewOperator) {
+            stats.newOperators++;
+          }
+
           // Track confidence levels
           if (result.confidence >= 0.9) {
             stats.highConfidence++;
@@ -88,14 +105,6 @@ export class ETLService {
             stats.mediumConfidence++;
           } else {
             stats.lowConfidence++;
-          }
-
-          // Track new operators
-          // Note: This is a simplified check - in production we'd track this differently
-          if (result.confidence < 1.0 && result.confidence >= 0.9) {
-            // Likely an existing operator match
-          } else if (result.confidence === 1.0) {
-            // Could be new or exact alias match
           }
         } else {
           stats.failed++;
@@ -108,6 +117,7 @@ export class ETLService {
           confidence: 0,
           needsReview: true,
           success: false,
+          isNewOperator: false,
           error: error instanceof Error ? error.message : 'Unknown error',
         });
         stats.failed++;
@@ -131,7 +141,7 @@ export class ETLService {
       sourceFile
     );
 
-    // TODO: Insert/update permit record with normalized operator
+    // Insert/update permit record with normalized operator
     await this.savePermitRecord(record, normalizationResult);
 
     return {
@@ -141,6 +151,7 @@ export class ETLService {
       confidence: normalizationResult.confidence,
       needsReview: normalizationResult.needsReview,
       success: true,
+      isNewOperator: normalizationResult.isNewOperator,
     };
   }
 
@@ -157,16 +168,52 @@ export class ETLService {
       newOperators: number;
     };
   }> {
-    // TODO: Implement database queries
+    // Get operator counts
+    const { data: operatorData, error: _operatorError } = await this.db
+      .from('operators')
+      .select('id', { count: 'exact' });
+
+    const { data: aliasData, error: _aliasError } = await this.db
+      .from('operator_aliases')
+      .select('id', { count: 'exact' });
+
+    const { data: reviewData, error: _reviewError } = await this.db
+      .from('operator_review_queue')
+      .select('id', { count: 'exact' })
+      .eq('status', 'pending');
+
+    // Get recent review stats (last 24 hours)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const { data: recentReviews, error: _recentError } = await this.db
+      .from('operator_review_queue')
+      .select('suggested_confidence, status')
+      .gte('created_at', yesterday.toISOString());
+
+    const recentStats = {
+      highConfidence: 0,
+      mediumConfidence: 0,
+      newOperators: 0
+    };
+
+    if (recentReviews) {
+      recentReviews.forEach((review: { suggested_confidence: number; status: string }) => {
+        if (review.suggested_confidence >= 0.9) {
+          recentStats.highConfidence++;
+        } else if (review.suggested_confidence >= 0.7) {
+          recentStats.mediumConfidence++;
+        } else if (review.status === 'approved' && review.suggested_confidence === 0) {
+          recentStats.newOperators++;
+        }
+      });
+    }
+
     return {
-      totalOperators: 0,
-      totalAliases: 0,
-      pendingReviews: 0,
-      recentMatches: {
-        highConfidence: 0,
-        mediumConfidence: 0,
-        newOperators: 0,
-      },
+      totalOperators: operatorData?.length || 0,
+      totalAliases: aliasData?.length || 0,
+      pendingReviews: reviewData?.length || 0,
+      recentMatches: recentStats
     };
   }
 
@@ -193,6 +240,7 @@ export class ETLService {
       try {
         const tempNormalizer = new OperatorNormalizer({
           autoCreateOperators: false,
+          db: this.db
         });
         const result = await tempNormalizer.normalizeOperatorName(name);
 
@@ -224,16 +272,105 @@ export class ETLService {
     return results;
   }
 
+  /**
+   * Get review queue items
+   */
+  async getReviewQueue(
+    status?: 'pending' | 'approved' | 'rejected',
+    limit: number = 50
+  ): Promise<Array<{
+    id: string;
+    rawName: string;
+    suggestedOperatorId: string | null;
+    suggestedConfidence: number;
+    similarOperators: Array<{ operatorId: string; name: string; similarity: number }>;
+    permitId: string | null;
+    sourceFile: string | null;
+    status: string;
+    createdAt: string;
+  }>> {
+    let query = this.db
+      .from('operator_review_queue')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    const { data, error } = await query;
+
+    if (error || !data) return [];
+
+    return data.map((item: {
+      id: string;
+      raw_operator_name: string;
+      suggested_operator_id: string | null;
+      suggested_confidence: number;
+      similar_operators: Array<{ operatorId: string; name: string; similarity: number }> | null;
+      permit_id: string | null;
+      source_file: string | null;
+      status: string;
+      created_at: string;
+    }) => ({
+      id: item.id,
+      rawName: item.raw_operator_name,
+      suggestedOperatorId: item.suggested_operator_id,
+      suggestedConfidence: item.suggested_confidence,
+      similarOperators: item.similar_operators || [],
+      permitId: item.permit_id,
+      sourceFile: item.source_file,
+      status: item.status,
+      createdAt: item.created_at
+    }));
+  }
+
+  /**
+   * Resolve a review queue item
+   */
+  async resolveReview(
+    reviewId: string,
+    resolution: 'approved' | 'rejected',
+    operatorId?: string,
+    notes?: string
+  ): Promise<void> {
+    await this.normalizer.resolveReview(reviewId, resolution, operatorId, notes);
+  }
+
   private async savePermitRecord(
     record: PermitIngestionRecord,
     operatorResult: OperatorNormalizationResult
   ): Promise<void> {
-    // TODO: Implement database insert/update
-    console.log('Saving permit:', {
-      permitId: record.permitId,
-      operatorId: operatorResult.operatorId,
-      operatorName: operatorResult.canonicalName,
-    });
+    // Prepare permit data for upsert
+    const permitData = {
+      permit_number: record.permitId,
+      operator_name: operatorResult.canonicalName,
+      operator_number: record.operatorNumber || null,
+      lease_name: record.leaseName || null,
+      well_number: record.wellNumber || null,
+      well_type: record.wellType || null,
+      well_status: record.status || null,
+      district: record.district || null,
+      county_code: record.countyCode || null,
+      total_depth: record.totalDepth || null,
+      surface_latitude: record.surfaceLatitude || null,
+      surface_longitude: record.surfaceLongitude || null,
+      surface_location: (record.surfaceLatitude && record.surfaceLongitude) 
+        ? `POINT(${record.surfaceLongitude} ${record.surfaceLatitude})`
+        : null
+    };
+
+    // Upsert permit record
+    const { error } = await this.db
+      .from('permits')
+      .upsert(permitData, {
+        onConflict: 'permit_number'
+      });
+
+    if (error) {
+      throw new Error(`Failed to save permit: ${error.message}`);
+    }
   }
 }
 

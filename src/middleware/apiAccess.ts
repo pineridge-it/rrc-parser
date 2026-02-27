@@ -24,8 +24,19 @@ export function apiAccessControl(limitsEnforcer: LimitsEnforcer) {
         return;
       }
 
+      let validatedWorkspaceId: string;
+      try {
+        validatedWorkspaceId = asUUID(workspaceId);
+      } catch (error) {
+        res.status(400).json({
+          error: 'Invalid workspace ID format',
+          message: `Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`
+        });
+        return;
+      }
+
       const result = await limitsEnforcer.checkLimit(
-        asUUID(workspaceId),
+        validatedWorkspaceId,
         'apiAccess'
       );
 
@@ -75,8 +86,19 @@ export function requireResourceLimit(
         return;
       }
 
+      let validatedWorkspaceId: string;
+      try {
+        validatedWorkspaceId = asUUID(workspaceId);
+      } catch (error) {
+        res.status(400).json({
+          error: 'Invalid workspace ID format',
+          message: `Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`
+        });
+        return;
+      }
+
       await limitsEnforcer.enforceLimit(
-        asUUID(workspaceId),
+        validatedWorkspaceId,
         resource
       );
 

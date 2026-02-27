@@ -3,7 +3,11 @@
  * Handles subscriptions, usage-based billing, and payment processing
  */
 
+import Stripe from 'stripe';
 import { UUID } from '../../types/common';
+import { createLogger } from '../logger';
+
+const logger = createLogger({ service: 'BillingService' });
 
 export interface BillingConfig {
   stripeSecretKey: string;
@@ -136,9 +140,14 @@ export const PLANS: Record<string, SubscriptionPlan> = {
 
 export class BillingService {
   private config: BillingConfig;
+  private stripe: Stripe;
 
   constructor(config: BillingConfig) {
     this.config = config;
+    this.stripe = new Stripe(config.stripeSecretKey, {
+      apiVersion: '2026-02-25.clover',
+    });
+    logger.info('BillingService initialized');
   }
 
   /**
@@ -156,138 +165,318 @@ export class BillingService {
   }
 
   /**
+   * Create or get Stripe customer for workspace
+   */
+  async createCustomer(workspaceId: UUID, email: string, name?: string): Promise<string> {
+    try {
+      const customer = await this.stripe.customers.create({
+        email,
+        name,
+        metadata: {
+          workspaceId,
+        },
+      });
+      
+      logger.info('Created Stripe customer', { customerId: customer.id, workspaceId });
+      return customer.id;
+    } catch (error) {
+      logger.error('Failed to create Stripe customer', error instanceof Error ? error : new Error(String(error)), { workspaceId });
+      throw error;
+    }
+  }
+
+  /**
    * Create a checkout session for subscription
    */
   async createCheckoutSession(
-    _workspaceId: UUID,
+    workspaceId: UUID,
     planId: string,
-    _billingCycle: 'monthly' | 'yearly'
+    billingCycle: 'monthly' | 'yearly',
+    customerEmail: string,
+    successUrl: string,
+    cancelUrl: string
   ): Promise<{ sessionId: string; url: string }> {
     const plan = this.getPlan(planId);
     if (!plan) {
       throw new Error(`Invalid plan: ${planId}`);
     }
 
-    // Placeholder for Stripe checkout session creation
-    // In production, this would call Stripe API
-    return {
-      sessionId: `cs_${Date.now()}`,
-      url: `https://checkout.stripe.com/pay/cs_${Date.now()}`
-    };
+    if (planId === 'enterprise') {
+      throw new Error('Enterprise plans require custom setup. Please contact sales.');
+    }
+
+    const priceId = billingCycle === 'monthly' ? plan.stripePriceIdMonthly : plan.stripePriceIdYearly;
+    
+    if (!priceId) {
+      throw new Error(`Stripe price ID not configured for plan: ${planId}`);
+    }
+
+    try {
+      const session = await this.stripe.checkout.sessions.create({
+        customer_email: customerEmail,
+        billing_address_collection: 'required',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        subscription_data: {
+          metadata: {
+            workspaceId,
+            planId,
+          },
+        },
+        metadata: {
+          workspaceId,
+          planId,
+        },
+      });
+
+      logger.info('Created checkout session', { sessionId: session.id, workspaceId, planId });
+      
+      return {
+        sessionId: session.id,
+        url: session.url || '',
+      };
+    } catch (error) {
+      logger.error('Failed to create checkout session', error instanceof Error ? error : new Error(String(error)), { workspaceId, planId });
+      throw error;
+    }
+  }
+
+  /**
+   * Create customer portal session
+   */
+  async createPortalSession(customerId: string, returnUrl: string): Promise<{ url: string }> {
+    try {
+      const session = await this.stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: returnUrl,
+      });
+
+      return { url: session.url };
+    } catch (error) {
+      logger.error('Failed to create portal session', error instanceof Error ? error : new Error(String(error)));
+      throw error;
+    }
   }
 
   /**
    * Cancel subscription
    */
   async cancelSubscription(
-    workspaceId: UUID,
-    _cancelAtPeriodEnd: boolean = true
+    stripeSubscriptionId: string,
+    cancelAtPeriodEnd: boolean = true
   ): Promise<void> {
-    // Placeholder for Stripe subscription cancellation
-    console.log(`Cancelling subscription for workspace ${workspaceId}`);
+    try {
+      if (cancelAtPeriodEnd) {
+        await this.stripe.subscriptions.update(stripeSubscriptionId, {
+          cancel_at_period_end: true,
+        });
+        logger.info('Subscription set to cancel at period end', { stripeSubscriptionId });
+      } else {
+        await this.stripe.subscriptions.cancel(stripeSubscriptionId);
+        logger.info('Subscription cancelled immediately', { stripeSubscriptionId });
+      }
+    } catch (error) {
+      logger.error('Failed to cancel subscription', error instanceof Error ? error : new Error(String(error)), { stripeSubscriptionId });
+      throw error;
+    }
   }
 
   /**
    * Update subscription plan
    */
   async updateSubscription(
-    workspaceId: UUID,
-    newPlanId: string
+    stripeSubscriptionId: string,
+    newPlanId: string,
+    billingCycle: 'monthly' | 'yearly'
   ): Promise<void> {
     const plan = this.getPlan(newPlanId);
     if (!plan) {
       throw new Error(`Invalid plan: ${newPlanId}`);
     }
 
-    // Placeholder for Stripe subscription update
-    console.log(`Updating subscription for workspace ${workspaceId} to plan ${newPlanId}`);
+    const priceId = billingCycle === 'monthly' ? plan.stripePriceIdMonthly : plan.stripePriceIdYearly;
+    
+    if (!priceId) {
+      throw new Error(`Stripe price ID not configured for plan: ${newPlanId}`);
+    }
+
+    try {
+      const subscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+      if (!subscription.items.data[0]?.id) {
+        throw new Error('Subscription has no items');
+      }
+
+      await this.stripe.subscriptions.update(stripeSubscriptionId, {
+        items: [
+          {
+            id: subscription.items.data[0].id!,
+            price: priceId,
+          },
+        ],
+        metadata: {
+          planId: newPlanId,
+        },
+      });
+
+      logger.info('Subscription updated', { stripeSubscriptionId, newPlanId });
+    } catch (error) {
+      logger.error('Failed to update subscription', error instanceof Error ? error : new Error(String(error)), { stripeSubscriptionId, newPlanId });
+      throw error;
+    }
   }
 
   /**
    * Record usage for usage-based billing
+   * Note: This method is a placeholder for future metered billing implementation.
+   * The current Stripe SDK version (20.4.0) doesn't include the usage records API.
    */
   async recordUsage(
-    workspaceId: UUID,
-    resource: 'alerts' | 'exports' | 'api_calls',
-    quantity: number
+    _stripeSubscriptionItemId: string,
+    _quantity: number,
+    _timestamp?: number
   ): Promise<void> {
-    // Placeholder for Stripe usage record creation
-    console.log(`Recording usage for workspace ${workspaceId}: ${resource} = ${quantity}`);
+    logger.warn('Usage recording not implemented - requires Stripe SDK upgrade for metered billing');
+    // TODO: Implement when upgrading to newer Stripe SDK with usageRecords API
+    // await this.stripe.subscriptionItems.usageRecords.create(...)
   }
 
   /**
-   * Get subscription for workspace
+   * Get subscription from Stripe
    */
-  async getSubscription(_workspaceId: UUID): Promise<Subscription | null> {
-    // Placeholder - would fetch from database
-    return null;
+  async getStripeSubscription(stripeSubscriptionId: string): Promise<Stripe.Subscription | null> {
+    try {
+      return await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
+    } catch (error) {
+      logger.error('Failed to get subscription', error instanceof Error ? error : new Error(String(error)), { stripeSubscriptionId });
+      return null;
+    }
   }
 
   /**
-   * Get invoices for workspace
+   * Get invoices for customer
    */
-  async getInvoices(_workspaceId: UUID): Promise<Invoice[]> {
-    // Placeholder - would fetch from database
-    return [];
+  async getInvoices(stripeCustomerId: string): Promise<Stripe.Invoice[]> {
+    try {
+      const invoices = await this.stripe.invoices.list({
+        customer: stripeCustomerId,
+        limit: 100,
+      });
+      
+      return invoices.data;
+    } catch (error) {
+      logger.error('Failed to get invoices', error instanceof Error ? error : new Error(String(error)), { stripeCustomerId });
+      return [];
+    }
   }
 
   /**
    * Handle Stripe webhook
    */
-  async handleWebhook(_payload: unknown, _signature: string): Promise<void> {
-    // Placeholder for Stripe webhook handling
-    console.log('Processing Stripe webhook');
+  async handleWebhook(payload: string, signature: string): Promise<Stripe.Event> {
+    try {
+      const event = this.stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        this.config.stripeWebhookSecret
+      );
+
+      logger.info('Webhook received', { type: event.type, id: event.id });
+
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object as Stripe.Checkout.Session;
+          logger.info('Checkout session completed', { sessionId: session.id, customer: session.customer });
+          // TODO: Update workspace with subscription info
+          break;
+        }
+
+        case 'invoice.payment_succeeded': {
+          const invoice = event.data.object as Stripe.Invoice;
+          logger.info('Invoice payment succeeded', { invoiceId: invoice.id });
+          break;
+        }
+
+        case 'invoice.payment_failed': {
+          const invoice = event.data.object as Stripe.Invoice;
+          logger.error('Invoice payment failed', new Error('Payment failed'), { invoiceId: invoice.id });
+          break;
+        }
+
+        case 'customer.subscription.updated': {
+          const subscription = event.data.object as Stripe.Subscription;
+          logger.info('Subscription updated', { subscriptionId: subscription.id, status: subscription.status });
+          break;
+        }
+
+        case 'customer.subscription.deleted': {
+          const subscription = event.data.object as Stripe.Subscription;
+          logger.info('Subscription deleted', { subscriptionId: subscription.id });
+          break;
+        }
+
+        default:
+          logger.debug('Unhandled webhook event', { type: event.type });
+      }
+
+      return event;
+    } catch (error) {
+      logger.error('Webhook processing failed', error instanceof Error ? error : new Error(String(error)));
+      throw error;
+    }
   }
 
   /**
    * Start trial for workspace
    */
-  async startTrial(workspaceId: UUID, planId: string, days: number = 14): Promise<void> {
+  async startTrial(
+    stripeCustomerId: string,
+    planId: string,
+    days: number = 14
+  ): Promise<Stripe.Subscription> {
     const plan = this.getPlan(planId);
     if (!plan) {
       throw new Error(`Invalid plan: ${planId}`);
     }
 
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + days);
+    const priceId = plan.stripePriceIdMonthly;
+    
+    if (!priceId) {
+      throw new Error(`Stripe price ID not configured for plan: ${planId}`);
+    }
 
-    // Placeholder - would create trial subscription in database
-    console.log(`Starting ${days}-day trial for workspace ${workspaceId} on plan ${planId}`);
+    try {
+      const subscription = await this.stripe.subscriptions.create({
+        customer: stripeCustomerId,
+        items: [{ price: priceId }],
+        trial_period_days: days,
+        metadata: {
+          planId,
+          isTrial: 'true',
+        },
+      });
+
+      logger.info('Trial started', { subscriptionId: subscription.id, customerId: stripeCustomerId, planId, days });
+      
+      return subscription;
+    } catch (error) {
+      logger.error('Failed to start trial', error instanceof Error ? error : new Error(String(error)), { stripeCustomerId, planId });
+      throw error;
+    }
   }
 
   /**
-   * Check if workspace is in trial
+   * Get Stripe instance for advanced operations
    */
-  async isInTrial(workspaceId: UUID): Promise<boolean> {
-    const subscription = await this.getSubscription(workspaceId);
-    if (!subscription) return false;
-    const trialEnd = subscription.trialEnd;
-    if (!trialEnd) return false;
-    return subscription.status === 'trialing' && trialEnd > new Date();
-  }
-
-  /**
-   * Get days remaining in trial
-   */
-  async getTrialDaysRemaining(workspaceId: UUID): Promise<number> {
-    const subscription = await this.getSubscription(workspaceId);
-    if (!subscription || !subscription.trialEnd) return 0;
-    
-    const now = new Date();
-    const trialEnd = subscription.trialEnd;
-    
-    if (trialEnd <= now) return 0;
-    
-    const diffTime = trialEnd.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  getStripeInstance(): Stripe {
+    return this.stripe;
   }
 }
-
-// Export singleton instance
-export const billingService = new BillingService({
-  stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
-  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
-  defaultCurrency: 'usd'
-});
-
-export default BillingService;
