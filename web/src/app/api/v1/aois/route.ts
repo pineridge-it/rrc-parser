@@ -15,6 +15,7 @@ import {
   validatePayloadSize,
   PAYLOAD_SIZE_LIMITS,
 } from '@/lib/validators';
+import { UsageService } from '../../../../../src/services/usage';
 
 export async function GET(request: NextRequest) {
   try {
@@ -86,6 +87,24 @@ export async function POST(request: NextRequest) {
     if (!payloadValidation.valid) {
       return createValidationErrorResponse(
         [{ field: 'payload', message: payloadValidation.error }],
+        rateLimit
+      );
+    }
+
+    // Check AOI limit before creating
+    const usageService = new UsageService();
+    const limitCheck = await usageService.checkLimit(auth.workspaceId, 'aois', 1);
+
+    if (!limitCheck.allowed) {
+      return createApiResponse(
+        {
+          error: 'LIMIT_EXCEEDED',
+          message: 'AOI limit reached. Please upgrade your plan to create more AOIs.',
+          current: limitCheck.current,
+          limit: limitCheck.limit,
+          percentage: limitCheck.percentage,
+        },
+        402,
         rateLimit
       );
     }
