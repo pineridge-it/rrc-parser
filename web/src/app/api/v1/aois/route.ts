@@ -12,6 +12,8 @@ import {
   validateBody,
   validateQuery,
   paginationSchema,
+  validatePayloadSize,
+  PAYLOAD_SIZE_LIMITS,
 } from '@/lib/validators';
 
 export async function GET(request: NextRequest) {
@@ -74,6 +76,19 @@ export async function POST(request: NextRequest) {
   try {
     const { auth, rateLimit } = await authenticateApiRequest(request);
     const db = createDatabaseClient();
+
+    // Validate payload size
+    const contentLength = request.headers.get('content-length');
+    const payloadValidation = validatePayloadSize(
+      contentLength ? parseInt(contentLength, 10) : null,
+      PAYLOAD_SIZE_LIMITS.default
+    );
+    if (!payloadValidation.valid) {
+      return createValidationErrorResponse(
+        [{ field: 'payload', message: payloadValidation.error }],
+        rateLimit
+      );
+    }
 
     const body = await request.json();
 

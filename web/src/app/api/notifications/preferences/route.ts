@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { 
-  notificationPreferencesSchema, 
+import {
+  notificationPreferencesSchema,
   validateBody,
   workspaceIdSchema,
-  type ValidationError 
+  validatePayloadSize,
+  PAYLOAD_SIZE_LIMITS,
+  type ValidationError
 } from "@/lib/validators";
 
 interface QuietHours {
@@ -208,14 +210,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
-    
+
+    // Validate payload size
+    const contentLength = request.headers.get("content-length");
+    const payloadValidation = validatePayloadSize(
+      contentLength ? parseInt(contentLength, 10) : null,
+      PAYLOAD_SIZE_LIMITS.small
+    );
+    if (!payloadValidation.valid) {
+      return NextResponse.json(
+        { error: payloadValidation.error },
+        { status: 413 }
+      );
+    }
+
     // Parse and validate request body
     let body: unknown;
     try {
@@ -226,7 +241,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Validate workspace ID
     const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
     if (!workspaceId) {
@@ -235,7 +250,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     const workspaceValidation = validateWorkspaceId(workspaceId);
     if (!workspaceValidation.valid) {
       return NextResponse.json(

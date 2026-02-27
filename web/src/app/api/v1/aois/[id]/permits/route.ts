@@ -3,9 +3,15 @@ import {
   authenticateApiRequest,
   createApiResponse,
   createApiErrorResponse,
+  createValidationErrorResponse,
 } from '../../../../../../src/middleware/api-auth';
 import { createDatabaseClient } from '../../../../../../src/lib/database';
 import { PermitApiResponse } from '../../../../../../src/types/api';
+import {
+  uuidSchema,
+  validateQuery,
+  paginationSchema,
+} from '@/lib/validators';
 
 export async function GET(
   request: NextRequest,
@@ -13,6 +19,16 @@ export async function GET(
 ) {
   try {
     const { auth, rateLimit } = await authenticateApiRequest(request);
+
+    // Validate AOI ID format
+    const idValidation = uuidSchema.safeParse(params.id);
+    if (!idValidation.success) {
+      return createValidationErrorResponse(
+        [{ field: 'id', message: 'Invalid AOI ID format' }],
+        rateLimit
+      );
+    }
+
     const db = createDatabaseClient();
     const aoiId = params.id;
 
@@ -28,12 +44,18 @@ export async function GET(
     }
 
     const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const pageSize = Math.min(
-      parseInt(url.searchParams.get('pageSize') || '50', 10),
-      100
-    );
+    const queryParams = {
+      page: url.searchParams.get('page') || '1',
+      limit: url.searchParams.get('pageSize') || '50',
+    };
 
+    // Validate pagination parameters
+    const paginationValidation = validateQuery(queryParams, paginationSchema);
+    if (!paginationValidation.success) {
+      return createValidationErrorResponse(paginationValidation.errors, rateLimit);
+    }
+
+    const { page, limit: pageSize } = paginationValidation.data;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 

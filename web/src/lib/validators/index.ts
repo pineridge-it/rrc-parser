@@ -210,3 +210,55 @@ export const operatorsQuerySchema = z.object({
 
 // Export types for TypeScript inference
 export type OperatorsQueryInput = z.infer<typeof operatorsQuerySchema>;
+
+/**
+ * Payload size limits (in bytes)
+ */
+export const PAYLOAD_SIZE_LIMITS = {
+  default: 1024 * 1024, // 1MB
+  large: 10 * 1024 * 1024, // 10MB for file uploads
+  small: 100 * 1024, // 100KB for simple forms
+} as const;
+
+/**
+ * Validate payload size
+ */
+export function validatePayloadSize(
+  contentLength: number | null,
+  limit: number = PAYLOAD_SIZE_LIMITS.default
+): { valid: true } | { valid: false; error: string } {
+  if (contentLength === null) {
+    return { valid: true }; // No content-length header
+  }
+
+  if (contentLength > limit) {
+    const limitMB = (limit / (1024 * 1024)).toFixed(1);
+    const actualMB = (contentLength / (1024 * 1024)).toFixed(1);
+    return {
+      valid: false,
+      error: `Payload too large: ${actualMB}MB exceeds ${limitMB}MB limit`,
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Validation failure logger for security monitoring
+ */
+export function logValidationFailure(
+  endpoint: string,
+  errors: ValidationError[],
+  ipAddress?: string
+): void {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    endpoint,
+    errors,
+    ipAddress,
+    severity: errors.length > 5 ? 'high' : 'medium',
+  };
+
+  // Log to console for now (could be sent to security monitoring service)
+  console.warn('[VALIDATION_FAILURE]', JSON.stringify(logEntry));
+}
