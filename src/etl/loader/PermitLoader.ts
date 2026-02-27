@@ -120,9 +120,17 @@ export class PermitLoader {
             this.logger.debug(`Skipped unchanged permit ${permitNumber}`);
           }
         } else {
-          await this.insertPermit(permit, versionHash);
-          result.inserted++;
-          this.logger.debug(`Inserted permit ${permitNumber}`);
+          const insertResult = await this.insertPermitWithConflictHandling(permit, versionHash);
+          if (insertResult.inserted) {
+            result.inserted++;
+            this.logger.debug(`Inserted permit ${permitNumber}`);
+          } else if (insertResult.updated) {
+            result.updated++;
+            this.logger.debug(`Race condition resolved - updated permit ${permitNumber}`);
+          } else {
+            result.skipped++;
+            this.logger.debug(`Race condition resolved - skipped unchanged permit ${permitNumber}`);
+          }
         }
       } catch (error) {
         result.errors++;
@@ -274,6 +282,68 @@ export class PermitLoader {
 
     this.logger.debug(`Inserted permit ${permitNumber} with id ${permitId}`);
     return permitId;
+  }
+
+  private async insertPermitWithConflictHandling(
+    permit: PermitData,
+    versionHash?: string
+  ): Promise<{ inserted: boolean; updated: boolean }> {
+    const permitNumber = this.getPermitNumber(permit);
+    if (!permitNumber) {
+      throw new Error('Cannot insert permit without permit_number');
+    }
+
+    const hash = versionHash || this.computeVersionHash(permit);
+    const now = new Date().toISOString();
+
+    const { data: permitData, error: permitError } = await this.supabase
+      .from('permits')
+      .upsert(
+        {
+          permit_number: permitNumber,
+          created_at: now,
+        },
+        {
+          onConflict: 'permit_number',
+          ignoreDuplicates: false,
+        }
+      )
+      .select('id, created_at')
+      .single();
+
+    if (permitError || !permitData) {
+      throw new Error(`Failed to upsert permit: ${permitError?.message || 'Unknown error'}`);
+    }
+
+    const permitId = permitData.id;
+    const wasInserted = permitData.created_at === now;
+
+    if (this.config.enableVersionHistory) {
+      const { error: versionError } = await this.supabase
+        .from('permit_versions')
+        .insert({
+          permit_id: permitId,
+          version_hash: hash,
+          source_seen_at: now,
+          effective_at: permit.dapermit?.issued_date || now,
+          status: permit.daroot?.status_flag,
+          permit_type: permit.dapermit?.application_type,
+          county: permit.daroot?.county_code,
+          filed_date: permit.dapermit?.received_date,
+          attributes: this.buildPermitAttributes(permit),
+        });
+
+      if (versionError) {
+        this.logger.error(`Failed to insert permit version: ${versionError.message}`);
+      }
+    }
+
+    if (this.config.enableChangeFeed) {
+      await this.createPermitChange(permitId, permitId, wasInserted ? 'new' : 'updated', now);
+    }
+
+    this.logger.debug(`Upserted permit ${permitNumber} with id ${permitId} (inserted: ${wasInserted})`);
+    return { inserted: wasInserted, updated: !wasInserted };
   }
 
   async updatePermit(permitId: string, permit: PermitData, versionHash?: string): Promise<void> {

@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Dashboard API error:', error);
     return createApiErrorResponse(
-      error instanceof Error ? error.message : 'Internal server error',
+      error instanceof Error ? error : new Error('Internal server error'),
       500
     );
   }

@@ -72,22 +72,22 @@ export interface Invoice {
 
 // Plan definitions matching PRD
 export const PLANS: Record<string, SubscriptionPlan> = {
-  starter: {
-    id: 'starter',
-    name: 'Starter',
+  free: {
+    id: 'free',
+    name: 'Free',
     description: 'Basic alerts and limited AOIs',
-    priceMonthly: 99,
-    priceYearly: 990,
+    priceMonthly: 0,
+    priceYearly: 0,
     currency: 'usd',
     features: [
-      'Up to 10 AOIs',
-      '100 alerts per month',
+      'Up to 3 AOIs',
+      '50 alerts per month',
       '10 exports per month',
       'Email support'
     ],
     limits: {
-      aois: 10,
-      alertsPerMonth: 100,
+      aois: 3,
+      alertsPerMonth: 50,
       exportsPerMonth: 10,
       apiCallsPerMonth: 0
     }
@@ -95,22 +95,43 @@ export const PLANS: Record<string, SubscriptionPlan> = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    description: 'Unlimited AOIs, API access, advanced exports',
+    description: 'More AOIs, higher limits',
+    priceMonthly: 99,
+    priceYearly: 990,
+    currency: 'usd',
+    features: [
+      'Up to 25 AOIs',
+      '500 alerts per month',
+      '100 exports per month',
+      'Email support'
+    ],
+    limits: {
+      aois: 25,
+      alertsPerMonth: 500,
+      exportsPerMonth: 100,
+      apiCallsPerMonth: 0
+    }
+  },
+  team: {
+    id: 'team',
+    name: 'Team',
+    description: 'Team collaboration, API access, advanced exports',
     priceMonthly: 199,
     priceYearly: 1990,
     currency: 'usd',
     features: [
-      'Unlimited AOIs',
-      'Unlimited alerts',
-      'Unlimited exports',
+      'Up to 100 AOIs',
+      '5000 alerts per month',
+      '1000 exports per month',
       'API access',
       'Advanced analytics',
+      '5 team members',
       'Priority support'
     ],
     limits: {
-      aois: -1, // unlimited
-      alertsPerMonth: -1,
-      exportsPerMonth: -1,
+      aois: 100,
+      alertsPerMonth: 5000,
+      exportsPerMonth: 1000,
       apiCallsPerMonth: 10000
     }
   },
@@ -122,7 +143,9 @@ export const PLANS: Record<string, SubscriptionPlan> = {
     priceYearly: 0,
     currency: 'usd',
     features: [
-      'Everything in Pro',
+      'Everything in Team',
+      'Unlimited AOIs',
+      'Unlimited alerts',
       'Team collaboration',
       'SLA guarantee',
       'Dedicated support',
@@ -130,10 +153,10 @@ export const PLANS: Record<string, SubscriptionPlan> = {
       'On-premise option'
     ],
     limits: {
-      aois: -1,
-      alertsPerMonth: -1,
-      exportsPerMonth: -1,
-      apiCallsPerMonth: -1
+      aois: 1000,
+      alertsPerMonth: 50000,
+      exportsPerMonth: 10000,
+      apiCallsPerMonth: 100000
     }
   }
 };

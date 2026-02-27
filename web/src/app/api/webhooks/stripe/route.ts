@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
           const { error: updateError } = await supabase
             .from('workspaces')
             .update({
-              plan: planId || 'starter',
+              plan: planId || 'free',
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
               updated_at: new Date().toISOString(),

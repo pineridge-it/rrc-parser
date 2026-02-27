@@ -76,6 +76,38 @@ CREATE INDEX IF NOT EXISTS idx_permits_operator_name ON permits(operator_name);
 CREATE INDEX IF NOT EXISTS idx_permits_issued_date ON permits(issued_date);
 CREATE INDEX IF NOT EXISTS idx_permits_surface_location ON permits USING GIST(surface_location);
 
+-- Enable Row Level Security on permits_raw
+ALTER TABLE permits_raw ENABLE ROW LEVEL SECURITY;
+
+-- Enable Row Level Security on permits
+ALTER TABLE permits ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policy: Service role can manage permits_raw (ETL operations)
+CREATE POLICY "Service role can manage permits_raw"
+    ON permits_raw
+    FOR ALL
+    USING (auth.role() = 'service_role');
+
+-- RLS Policy: Service role can manage permits (ETL operations)
+CREATE POLICY "Service role can manage permits"
+    ON permits
+    FOR ALL
+    USING (auth.role() = 'service_role');
+
+-- RLS Policy: All authenticated users can read permits (public data)
+CREATE POLICY "Authenticated users can read permits"
+    ON permits
+    FOR SELECT
+    TO authenticated
+    USING (true);
+
+-- RLS Policy: All authenticated users can read permits_raw (metadata only)
+CREATE POLICY "Authenticated users can read permits_raw metadata"
+    ON permits_raw
+    FOR SELECT
+    TO authenticated
+    USING (true);
+
 -- Trigger to update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

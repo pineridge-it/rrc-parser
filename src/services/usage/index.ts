@@ -141,79 +141,68 @@ export class UsageService {
   }
 
   private async getWorkspacePlan(workspaceId: UUID): Promise<PlanType> {
-    try {
-      const { data, error } = await this.db
-        .from('workspaces')
-        .select('plan')
-        .eq('id', workspaceId)
-        .single();
+    const { data, error } = await this.db
+      .from('workspaces')
+      .select('plan')
+      .eq('id', workspaceId)
+      .single();
 
-      if (error) {
-        console.error('Failed to fetch workspace plan:', error);
+    if (error) {
+      if (error.code === 'PGRST116') {
         return 'free';
       }
+      console.error(`Failed to fetch workspace plan for ${workspaceId}:`, error.message);
+      throw new Error(`Failed to fetch workspace plan: ${error.message}`);
+    }
 
-      const planValue = data?.plan || 'free';
-      if (['free', 'pro', 'team', 'enterprise'].includes(planValue)) {
-        return planValue as PlanType;
-      }
-
-      return 'free';
-    } catch (error) {
-      console.error('Error in getWorkspacePlan:', error);
+    const planValue = data?.plan || 'free';
+    if (!['free', 'pro', 'team', 'enterprise'].includes(planValue)) {
+      console.warn(`Unknown plan value "${planValue}" for workspace ${workspaceId}, defaulting to free`);
       return 'free';
     }
+
+    return planValue as PlanType;
   }
 
   private async getAOICount(workspaceId: UUID): Promise<number> {
-    try {
-      const { count, error } = await this.db
-        .from('areas_of_interest')
-        .select('*', { count: 'exact', head: true })
-        .eq('workspace_id', workspaceId)
-        .is('deleted_at', null);
+    const { count, error } = await this.db
+      .from('areas_of_interest')
+      .select('*', { count: 'exact', head: true })
+      .eq('workspace_id', workspaceId)
+      .is('deleted_at', null);
 
-      if (error) {
-        console.error('Failed to count AOIs:', error);
-        return 0;
-      }
-
-      return count || 0;
-    } catch (error) {
-      console.error('Error in getAOICount:', error);
-      return 0;
+    if (error) {
+      console.error(`Failed to count AOIs for workspace ${workspaceId}:`, error.message);
+      throw new Error(`Failed to count AOIs: ${error.message}`);
     }
+
+    return count || 0;
   }
 
   private async getOrCreateCurrentPeriod(workspaceId: UUID): Promise<UsagePeriod> {
-    try {
-      const { data, error } = await this.db.rpc('get_or_create_usage_period', {
-        p_workspace_id: workspaceId,
-      });
+    const { data, error } = await this.db.rpc('get_or_create_usage_period', {
+      p_workspace_id: workspaceId,
+    });
 
-      if (error) {
-        console.error('Failed to get/create usage period:', error);
-        return this.getDefaultPeriod(workspaceId);
-      }
-
-      if (!data || data.length === 0) {
-        return this.getDefaultPeriod(workspaceId);
-      }
-
-      const period = Array.isArray(data) ? data[0] : data;
-
-      return {
-        workspaceId: period.workspace_id,
-        periodStart: new Date(period.period_start),
-        periodEnd: new Date(period.period_end),
-        alertsSent: period.alerts_sent || 0,
-        exportsCount: period.exports_count || 0,
-        apiCalls: period.api_calls || 0,
-      };
-    } catch (error) {
-      console.error('Error in getOrCreateCurrentPeriod:', error);
-      return this.getDefaultPeriod(workspaceId);
+    if (error) {
+      console.error(`Failed to get/create usage period for workspace ${workspaceId}:`, error.message);
+      throw new Error(`Failed to get or create usage period: ${error.message}`);
     }
+
+    if (!data || data.length === 0) {
+      throw new Error('Usage period RPC returned no data');
+    }
+
+    const period = Array.isArray(data) ? data[0] : data;
+
+    return {
+      workspaceId: period.workspace_id,
+      periodStart: new Date(period.period_start),
+      periodEnd: new Date(period.period_end),
+      alertsSent: period.alerts_sent || 0,
+      exportsCount: period.exports_count || 0,
+      apiCalls: period.api_calls || 0,
+    };
   }
 
   private getDefaultPeriod(workspaceId: UUID): UsagePeriod {
