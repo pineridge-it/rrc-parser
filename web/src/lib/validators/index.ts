@@ -309,6 +309,55 @@ export const customStatusUpdateSchema = z.object({
   sort_order: z.number().int().min(0).optional(),
 }).strict();
 
+export type CustomStatusUpdateInput = z.infer<typeof customStatusUpdateSchema>;
+
+/**
+ * Alert subscription create schema
+ */
+export const alertSubscriptionCreateSchema = z.object({
+  name: z.string().max(255).optional(),
+  trigger_type: z.enum(['permit_status_change', 'search_result_change']),
+  permit_api_number: z.string().max(50).optional(),
+  saved_search_id: z.string().regex(uuidRegex).optional(),
+  watched_statuses: z.array(z.string().max(50)).default([]),
+  notify_channels: z.array(z.enum(['email', 'in_app'])).min(1, 'At least one notification channel required'),
+}).strict().refine(
+  (data) => {
+    if (data.trigger_type === 'permit_status_change' && !data.permit_api_number) {
+      return false;
+    }
+    if (data.trigger_type === 'search_result_change' && !data.saved_search_id) {
+      return false;
+    }
+    return true;
+  },
+  { message: 'permit_api_number required for permit_status_change; saved_search_id required for search_result_change' }
+);
+
+/**
+ * Alert subscription update schema
+ */
+export const alertSubscriptionUpdateSchema = z.object({
+  name: z.string().max(255).optional(),
+  watched_statuses: z.array(z.string().max(50)).optional(),
+  notify_channels: z.array(z.enum(['email', 'in_app'])).min(1).optional(),
+  is_active: z.boolean().optional(),
+}).strict();
+
+/**
+ * Alert events query schema
+ */
+export const alertEventsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(50),
+  subscription_id: z.string().regex(uuidRegex).optional(),
+  notification_status: z.enum(['pending', 'sent', 'failed']).optional(),
+}).strict();
+
+export type AlertSubscriptionCreateInput = z.infer<typeof alertSubscriptionCreateSchema>;
+export type AlertSubscriptionUpdateInput = z.infer<typeof alertSubscriptionUpdateSchema>;
+export type AlertEventsQueryInput = z.infer<typeof alertEventsQuerySchema>;
+
 /**
  * API number parameter schema
  */
