@@ -205,23 +205,6 @@ export class UsageService {
     };
   }
 
-  private getDefaultPeriod(workspaceId: UUID): UsagePeriod {
-    const now = new Date();
-    const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-    return {
-      workspaceId: workspaceId.toString(),
-      periodStart,
-      periodEnd,
-      alertsSent: 0,
-      exportsCount: 0,
-      apiCalls: 0,
-    };
-  }
-
-
-
   async resetMonthlyUsage(): Promise<void> {
     try {
       // Rotate usage periods - move current period to history and create new period

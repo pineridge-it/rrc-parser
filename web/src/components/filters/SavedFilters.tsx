@@ -157,7 +157,7 @@ export function SavedFilters({
           </DialogHeader>
           <div className="py-4">
             <Input
-              placeholder="Filter name (e.g., "Texas Drilling Permits")"
+              placeholder='Filter name (e.g., "Texas Drilling Permits")'
               value={newFilterName}
               onChange={(e) => setNewFilterName(e.target.value)}
               onKeyDown={(e) => {

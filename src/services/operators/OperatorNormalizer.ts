@@ -273,7 +273,7 @@ export class OperatorNormalizer {
 
     // Combine and deduplicate results
     const results = new Map<string, SimilarOperator>();
-    
+
     (data || []).forEach((op: { operator_id: string; canonical_name: string; similarity: number }) => {
       results.set(op.operator_id, {
         operatorId: op.operator_id,
@@ -282,7 +282,7 @@ export class OperatorNormalizer {
       });
     });
 
-    (aliasData || []).forEach(async (alias: { operator_id: string; alias: string; similarity: number }) => {
+    for (const alias of (aliasData || [])) {
       const existing = results.get(alias.operator_id);
       if (!existing || alias.similarity > existing.similarity) {
         // Get the canonical name for this operator
@@ -295,7 +295,7 @@ export class OperatorNormalizer {
           });
         }
       }
-    });
+    }
 
     return Array.from(results.values())
       .sort((a, b) => b.similarity - a.similarity)
