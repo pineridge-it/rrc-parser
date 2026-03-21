@@ -266,6 +266,27 @@ export class EtlPipeline {
         this.logger.info('Step 5: Refresh - SKIPPED (supabase client not available)');
       }
 
+      // Step 6: Evaluate alerts (post-processing hook)
+      if (this.supabase && qaPassed && permitsUpserted > 0) {
+        this.logger.info('Step 6: Alerts - Evaluating permit status change alerts');
+        try {
+          const { data: alertCount, error: rpcError } = await this.supabase.rpc('evaluate_alerts');
+          if (rpcError) {
+            this.logger.warn(`Alert evaluation failed (non-critical): ${rpcError.message}`);
+          } else {
+            this.logger.info(`Alert evaluation complete - ${alertCount || 0} alert events generated`);
+          }
+        } catch (alertError) {
+          this.logger.warn(`Alert evaluation error (non-critical): ${alertError instanceof Error ? alertError.message : String(alertError)}`);
+        }
+      } else if (!qaPassed) {
+        this.logger.info('Step 6: Alerts - SKIPPED (QA gates failed)');
+      } else if (permitsUpserted === 0) {
+        this.logger.info('Step 6: Alerts - SKIPPED (no permits upserted)');
+      } else {
+        this.logger.info('Step 6: Alerts - SKIPPED (supabase client not available)');
+      }
+
     } catch (error) {
       const errorMsg = `ETL pipeline failed: ${error instanceof Error ? error.message : String(error)}`;
       errors.push(errorMsg);
