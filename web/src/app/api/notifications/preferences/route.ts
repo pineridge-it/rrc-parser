@@ -174,15 +174,14 @@ export async function GET(request: NextRequest) {
       .eq("user_id", user.id)
       .eq("workspace_id", workspaceId)
       .single();
-    
+
     if (error && error.code !== "PGRST116") { // PGRST116 = no rows returned
-      console.error("Error fetching notification preferences:", error);
       return NextResponse.json(
         { error: "Failed to fetch notification preferences" },
         { status: 500 }
       );
     }
-    
+
     // If no preferences found, return defaults
     if (!data) {
       const preferences: NotificationPreferences = {
@@ -192,10 +191,9 @@ export async function GET(request: NextRequest) {
       };
       return NextResponse.json(preferences);
     }
-    
+
     return NextResponse.json(rowToPreferences(data as NotificationPreferencesRow));
-  } catch (error) {
-    console.error("Error fetching notification preferences:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch notification preferences" },
       { status: 500 }
@@ -232,7 +230,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse and validate request body
-    let body: unknown;
+    let body: Record<string, unknown>;
     try {
       body = await request.json();
     } catch {
@@ -243,7 +241,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate workspace ID
-    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
+    const workspaceId = (body.workspaceId as string) || user.user_metadata?.default_workspace_id;
     if (!workspaceId) {
       return NextResponse.json(
         { error: "Workspace ID required" },
@@ -258,27 +256,20 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Validate preferences body using Zod schema
     const validation = validateBody(body, notificationPreferencesSchema);
     if (!validation.success) {
-      // Log validation failures for security monitoring
-      console.warn("Validation failed for notification preferences:", {
-        userId: user.id,
-        workspaceId,
-        errors: validation.errors,
-      });
-      
       return NextResponse.json(
         { error: "Validation failed", details: validation.errors },
         { status: 400 }
       );
     }
-    
+
     const validatedBody = validation.data;
     const supabase = await createClient();
     const now = new Date().toISOString();
-    
+
     // Prepare the database row using validated data
     const row = {
       user_id: user.id,
@@ -296,7 +287,7 @@ export async function POST(request: NextRequest) {
       push_enabled: validatedBody.pushEnabled ?? defaultPreferences.pushEnabled,
       updated_at: now,
     };
-    
+
     // Upsert the preferences
     const { data, error } = await supabase
       .from("notification_preferences")
@@ -305,18 +296,16 @@ export async function POST(request: NextRequest) {
       })
       .select()
       .single();
-    
+
     if (error) {
-      console.error("Error saving notification preferences:", error);
       return NextResponse.json(
         { error: "Failed to save notification preferences" },
         { status: 500 }
       );
     }
-    
+
     return NextResponse.json(rowToPreferences(data as NotificationPreferencesRow));
-  } catch (error) {
-    console.error("Error saving notification preferences:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to save notification preferences" },
       { status: 500 }
@@ -340,7 +329,7 @@ export async function PATCH(request: NextRequest) {
     }
     
     // Parse and validate request body
-    let body: unknown;
+    let body: Record<string, unknown>;
     try {
       body = await request.json();
     } catch {
@@ -349,16 +338,16 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // Validate workspace ID
-    const workspaceId = body.workspaceId || user.user_metadata?.default_workspace_id;
+    const workspaceId = (body.workspaceId as string) || user.user_metadata?.default_workspace_id;
     if (!workspaceId) {
       return NextResponse.json(
         { error: "Workspace ID required" },
         { status: 400 }
       );
     }
-    
+
     const workspaceValidation = validateWorkspaceId(workspaceId);
     if (!workspaceValidation.valid) {
       return NextResponse.json(
@@ -366,25 +355,19 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     // For PATCH, we use partial validation - only validate fields that are present
     // Create a partial schema by making all fields optional
     const partialPreferencesSchema = notificationPreferencesSchema.partial();
     const validation = validateBody(body, partialPreferencesSchema);
-    
+
     if (!validation.success) {
-      console.warn("Validation failed for PATCH notification preferences:", {
-        userId: user.id,
-        workspaceId,
-        errors: validation.errors,
-      });
-      
       return NextResponse.json(
         { error: "Validation failed", details: validation.errors },
         { status: 400 }
       );
     }
-    
+
     const validatedBody = validation.data;
     const supabase = await createClient();
     const now = new Date().toISOString();
@@ -444,16 +427,14 @@ export async function PATCH(request: NextRequest) {
       .single();
     
     if (error) {
-      console.error("Error updating notification preferences:", error);
       return NextResponse.json(
         { error: "Failed to update notification preferences" },
         { status: 500 }
       );
     }
-    
+
     return NextResponse.json(rowToPreferences(data as NotificationPreferencesRow));
-  } catch (error) {
-    console.error("Error updating notification preferences:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to update notification preferences" },
       { status: 500 }

@@ -90,7 +90,7 @@ export class AlertConfigService {
     } catch (error) {
       return {
         success: false,
-        errors: [{ field: 'general', message: 'Failed to create alert' }],
+        errors: [{ field: 'general', message: error instanceof Error ? error.message : 'Failed to create alert' }],
       };
     }
   }
@@ -138,7 +138,7 @@ export class AlertConfigService {
     } catch (error) {
       return {
         success: false,
-        errors: [{ field: 'general', message: 'Failed to update alert' }],
+        errors: [{ field: 'general', message: error instanceof Error ? error.message : 'Failed to update alert' }],
       };
     }
   }
@@ -332,7 +332,7 @@ export class AlertConfigService {
   /**
    * Map CleanPermit to PreviewPermit
    */
-  private mapToPreviewPermit(permit: CleanPermit): PreviewPermit {
+  private static mapToPreviewPermit(permit: CleanPermit): PreviewPermit {
     return {
       id: permit.id,
       permitNumber: permit.permitNumber,

@@ -24,22 +24,7 @@ interface PermitRecord {
   created_at: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface PermitVersionRecord {
-  id: string;
-  permit_id: string;
-  version_hash: string;
-  source_seen_at: string;
-  effective_at?: string;
-  status?: string;
-  permit_type?: string;
-  county?: string;
-  filed_date?: string;
-  attributes: Record<string, unknown>;
-}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface _PermitVersionRecord extends PermitVersionRecord {}
 
 export class PermitLoader {
   private logger: ILogger;
@@ -96,20 +81,70 @@ export class PermitLoader {
       errorDetails: []
     };
 
+    // Collect all permit numbers up front
+    const permitNumbers: string[] = [];
+    const permitByNumber = new Map<string, PermitData>();
     for (const permit of batch) {
-      try {
-        const permitNumber = this.getPermitNumber(permit);
-        if (!permitNumber) {
-          result.errors++;
-          result.errorDetails.push('Permit missing permit_number');
-          continue;
-        }
+      const num = this.getPermitNumber(permit);
+      if (num) {
+        permitNumbers.push(num);
+        permitByNumber.set(num, permit);
+      } else {
+        result.errors++;
+        result.errorDetails.push('Permit missing permit_number');
+      }
+    }
 
+    if (permitNumbers.length === 0) return result;
+
+    // Batch-fetch all existing permits in one query
+    const { data: existingRows, error: fetchError } = await this.supabase
+      .from('permits')
+      .select('id, permit_number, operator_id, created_at')
+      .in('permit_number', permitNumbers);
+
+    if (fetchError) {
+      this.logger.error(`Error batch-fetching permits: ${fetchError.message}`);
+      result.errors += permitNumbers.length;
+      result.errorDetails.push(`Batch fetch failed: ${fetchError.message}`);
+      return result;
+    }
+
+    const existingByNumber = new Map<string, PermitRecord>(
+      (existingRows ?? []).map((r: PermitRecord) => [r.permit_number, r])
+    );
+
+    // Batch-fetch the latest version hashes for existing permits
+    const existingIds = Array.from(existingByNumber.values()).map(r => r.id);
+    const latestHashByPermitId = new Map<string, string>();
+
+    if (existingIds.length > 0) {
+      const { data: versionRows, error: versionError } = await this.supabase
+        .from('permit_versions')
+        .select('permit_id, version_hash, source_seen_at')
+        .in('permit_id', existingIds)
+        .order('source_seen_at', { ascending: false });
+
+      if (versionError) {
+        this.logger.error(`Error batch-fetching permit versions: ${versionError.message}`);
+      } else {
+        for (const row of (versionRows ?? [])) {
+          if (!latestHashByPermitId.has(row.permit_id)) {
+            latestHashByPermitId.set(row.permit_id, row.version_hash);
+          }
+        }
+      }
+    }
+
+    for (const permitNumber of permitNumbers) {
+      const permit = permitByNumber.get(permitNumber)!;
+      try {
         const versionHash = this.computeVersionHash(permit);
-        const existingPermit = await this.findExistingPermit(permitNumber);
+        const existingPermit = existingByNumber.get(permitNumber);
 
         if (existingPermit) {
-          const changed = await this.hasPermitVersionChanged(existingPermit.id, versionHash);
+          const latestHash = latestHashByPermitId.get(existingPermit.id);
+          const changed = latestHash !== versionHash;
 
           if (changed) {
             await this.updatePermit(existingPermit.id, permit, versionHash);
@@ -134,8 +169,7 @@ export class PermitLoader {
         }
       } catch (error) {
         result.errors++;
-        const permitNum = this.getPermitNumber(permit);
-        const errorMsg = `Error loading permit ${permitNum}: ${error instanceof Error ? error.message : String(error)}`;
+        const errorMsg = `Error loading permit ${permitNumber}: ${error instanceof Error ? error.message : String(error)}`;
         result.errorDetails.push(errorMsg);
         this.logger.error(errorMsg);
       }
@@ -255,9 +289,10 @@ export class PermitLoader {
     }
 
     const permitId = permitData.id;
+    let versionId: string | null = null;
 
     if (this.config.enableVersionHistory) {
-      const { error: versionError } = await this.supabase
+      const { data: versionData, error: versionError } = await this.supabase
         .from('permit_versions')
         .insert({
           permit_id: permitId,
@@ -269,15 +304,19 @@ export class PermitLoader {
           county: permit.daroot?.county_code,
           filed_date: permit.dapermit?.received_date,
           attributes: this.buildPermitAttributes(permit),
-        });
+        })
+        .select('id')
+        .single();
 
       if (versionError) {
         this.logger.error(`Failed to insert permit version: ${versionError.message}`);
+      } else {
+        versionId = versionData?.id ?? null;
       }
     }
 
     if (this.config.enableChangeFeed) {
-      await this.createPermitChange(permitId, permitId, 'new', now);
+      await this.createPermitChange(permitId, versionId, 'new', now);
     }
 
     this.logger.debug(`Inserted permit ${permitNumber} with id ${permitId}`);
@@ -296,30 +335,38 @@ export class PermitLoader {
     const hash = versionHash || this.computeVersionHash(permit);
     const now = new Date().toISOString();
 
+    // Use INSERT ... ON CONFLICT to detect whether the row was newly created
     const { data: permitData, error: permitError } = await this.supabase
       .from('permits')
-      .upsert(
-        {
-          permit_number: permitNumber,
-          created_at: now,
-        },
-        {
-          onConflict: 'permit_number',
-          ignoreDuplicates: false,
-        }
-      )
-      .select('id, created_at')
+      .insert({ permit_number: permitNumber, created_at: now })
+      .select('id')
       .single();
 
-    if (permitError || !permitData) {
-      throw new Error(`Failed to upsert permit: ${permitError?.message || 'Unknown error'}`);
+    let permitId: string;
+    let wasInserted: boolean;
+
+    if (permitError) {
+      if (permitError.code === '23505') {
+        // Unique violation: row already existed (race condition)
+        const existing = await this.findExistingPermit(permitNumber);
+        if (!existing) {
+          throw new Error(`Race condition: permit ${permitNumber} vanished after conflict`);
+        }
+        permitId = existing.id;
+        wasInserted = false;
+      } else {
+        throw new Error(`Failed to insert permit: ${permitError.message}`);
+      }
+    } else {
+      if (!permitData) throw new Error(`Failed to insert permit: no data returned`);
+      permitId = permitData.id;
+      wasInserted = true;
     }
 
-    const permitId = permitData.id;
-    const wasInserted = permitData.created_at === now;
+    let versionId: string | null = null;
 
     if (this.config.enableVersionHistory) {
-      const { error: versionError } = await this.supabase
+      const { data: versionData, error: versionError } = await this.supabase
         .from('permit_versions')
         .insert({
           permit_id: permitId,
@@ -331,27 +378,32 @@ export class PermitLoader {
           county: permit.daroot?.county_code,
           filed_date: permit.dapermit?.received_date,
           attributes: this.buildPermitAttributes(permit),
-        });
+        })
+        .select('id')
+        .single();
 
       if (versionError) {
         this.logger.error(`Failed to insert permit version: ${versionError.message}`);
+      } else {
+        versionId = versionData?.id ?? null;
       }
     }
 
     if (this.config.enableChangeFeed) {
-      await this.createPermitChange(permitId, permitId, wasInserted ? 'new' : 'updated', now);
+      await this.createPermitChange(permitId, versionId, wasInserted ? 'new' : 'updated', now);
     }
 
-    this.logger.debug(`Upserted permit ${permitNumber} with id ${permitId} (inserted: ${wasInserted})`);
+    this.logger.debug(`Inserted permit ${permitNumber} with id ${permitId} (inserted: ${wasInserted})`);
     return { inserted: wasInserted, updated: !wasInserted };
   }
 
   async updatePermit(permitId: string, permit: PermitData, versionHash?: string): Promise<void> {
     const hash = versionHash || this.computeVersionHash(permit);
     const now = new Date().toISOString();
+    let versionId: string | null = null;
 
     if (this.config.enableVersionHistory) {
-      const { error: versionError } = await this.supabase
+      const { data: versionData, error: versionError } = await this.supabase
         .from('permit_versions')
         .insert({
           permit_id: permitId,
@@ -363,23 +415,24 @@ export class PermitLoader {
           county: permit.daroot?.county_code,
           filed_date: permit.dapermit?.received_date,
           attributes: this.buildPermitAttributes(permit),
-        });
+        })
+        .select('id')
+        .single();
 
       if (versionError) {
         throw new Error(`Failed to insert new permit version: ${versionError.message}`);
       }
+      versionId = versionData?.id ?? null;
     }
 
     if (this.config.enableChangeFeed) {
       const permitNumber = this.getPermitNumber(permit);
-      await this.createPermitChange(permitId, permitId, 'amended', now);
+      await this.createPermitChange(permitId, versionId, 'amended', now);
       this.logger.debug(`Updated permit ${permitNumber} (id: ${permitId})`);
     }
   }
 
-  private async createPermitChange(permitId: string, versionId: string, changeType: string, sourceSeenAt: string): Promise<void> {
-    // permit_changes table may not exist in all deployments
-    // This is a best-effort operation - failures are logged but not thrown
+  private async createPermitChange(permitId: string, versionId: string | null, changeType: string, sourceSeenAt: string): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('permit_changes')
@@ -392,11 +445,9 @@ export class PermitLoader {
         });
 
       if (error) {
-        // Only log at debug level since this table may not exist
         this.logger.debug(`Note: Could not create permit change record: ${error.message}`);
       }
     } catch (error) {
-      // Silently ignore - permit_changes is optional
       this.logger.debug('Note: permit_changes table not available for change tracking');
     }
   }

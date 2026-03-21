@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -63,18 +63,18 @@ export function PermitSearchResults({
     })
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string): React.CSSProperties => {
     switch (status.toLowerCase()) {
       case 'approved':
-        return 'bg-green-100 text-green-800'
+        return { color: 'var(--color-success)', background: 'color-mix(in srgb, var(--color-success) 12%, transparent)' }
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return { color: 'var(--color-warning)', background: 'color-mix(in srgb, var(--color-warning) 12%, transparent)' }
       case 'denied':
-        return 'bg-red-100 text-red-800'
+        return { color: 'var(--color-error)', background: 'color-mix(in srgb, var(--color-error) 12%, transparent)' }
       case 'amendment':
-        return 'bg-blue-100 text-blue-800'
+        return { color: 'var(--color-info)', background: 'color-mix(in srgb, var(--color-info) 12%, transparent)' }
       default:
-        return 'bg-gray-100 text-gray-800'
+        return { color: 'var(--color-text-secondary)', background: 'var(--color-surface-subtle)' }
     }
   }
 
@@ -88,7 +88,7 @@ export function PermitSearchResults({
             type="checkbox"
             checked={table.getIsAllRowsSelected()}
             onChange={table.getToggleAllRowsSelectedHandler()}
-            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            style={{ accentColor: 'var(--color-brand-primary)' }}
           />
         ),
         cell: ({ row }) => (
@@ -96,7 +96,7 @@ export function PermitSearchResults({
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={row.getToggleSelectedHandler()}
-            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            style={{ accentColor: 'var(--color-brand-primary)' }}
           />
         ),
         enableSorting: false,
@@ -107,10 +107,10 @@ export function PermitSearchResults({
         header: 'Permit',
         cell: ({ row }) => (
           <div>
-            <div className="text-sm font-medium text-indigo-600">
+            <div className="text-sm font-medium" style={{ color: 'var(--color-text-link)' }}>
               {row.original.permit_number}
             </div>
-            <div className="text-xs text-gray-500">{row.original.permit_type}</div>
+            <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{row.original.permit_type}</div>
           </div>
         ),
         enableSorting: true,
@@ -120,9 +120,9 @@ export function PermitSearchResults({
         header: 'Operator',
         cell: ({ row }) => (
           <div>
-            <div className="text-sm text-gray-900">{row.original.operator_name}</div>
+            <div className="text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.original.operator_name}</div>
             {row.original.operator_number && (
-              <div className="text-xs text-gray-500">#{row.original.operator_number}</div>
+              <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>#{row.original.operator_number}</div>
             )}
           </div>
         ),
@@ -133,9 +133,9 @@ export function PermitSearchResults({
         header: 'Lease / Well',
         cell: ({ row }) => (
           <div>
-            <div className="text-sm text-gray-900">{row.original.lease_name || 'N/A'}</div>
+            <div className="text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.original.lease_name || 'N/A'}</div>
             {row.original.well_number && (
-              <div className="text-xs text-gray-500">Well: {row.original.well_number}</div>
+              <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Well: {row.original.well_number}</div>
             )}
           </div>
         ),
@@ -145,7 +145,7 @@ export function PermitSearchResults({
         accessorKey: 'county',
         header: 'County',
         cell: ({ row }) => (
-          <div className="text-sm text-gray-900">{row.original.county}</div>
+          <div className="text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.original.county}</div>
         ),
         enableSorting: true,
       },
@@ -154,9 +154,14 @@ export function PermitSearchResults({
         header: 'Status',
         cell: ({ row }) => (
           <span
-            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-              row.original.status
-            )}`}
+            style={{
+              display: 'inline-flex',
+              padding: '2px 8px',
+              fontSize: '0.75rem',
+              fontWeight: '600',
+              borderRadius: '9999px',
+              ...getStatusStyle(row.original.status)
+            }}
           >
             {row.original.status}
           </span>
@@ -167,7 +172,7 @@ export function PermitSearchResults({
         accessorKey: 'filed_date',
         header: 'Filed Date',
         cell: ({ row }) => (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
             {formatDate(row.original.filed_date)}
           </div>
         ),
@@ -241,10 +246,10 @@ export function PermitSearchResults({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-12">
+      <div className="rounded-lg p-12" style={{ background: 'var(--color-surface-raised)' }}>
         <div className="flex flex-col items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="mt-4 text-sm text-gray-500">Loading permits...</p>
+          <div className="animate-spin rounded-full h-12 w-12" style={{ borderBottom: '2px solid var(--color-brand-primary)' }}></div>
+          <p className="mt-4 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Loading permits...</p>
         </div>
       </div>
     )
@@ -252,10 +257,11 @@ export function PermitSearchResults({
 
   if (permits.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-12">
+      <div className="rounded-lg p-12" style={{ background: 'var(--color-surface-raised)' }}>
         <div className="text-center">
           <svg
-            className="mx-auto h-12 w-12 text-gray-400"
+            className="mx-auto h-12 w-12"
+            style={{ color: 'var(--color-text-tertiary)' }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -267,8 +273,8 @@ export function PermitSearchResults({
               d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No permits found</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <h3 className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>No permits found</h3>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
             Try adjusting your filters to see more results.
           </p>
         </div>
@@ -277,16 +283,16 @@ export function PermitSearchResults({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="rounded-lg" style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border-default)' }}>
       {/* Results Header */}
-      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-border-default)' }}>
         <div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             Showing <span className="font-medium">{start}</span> to{' '}
             <span className="font-medium">{end}</span> of{' '}
             <span className="font-medium">{total}</span> results
             {selectedCount > 0 && (
-              <span className="ml-2 text-indigo-600">
+              <span className="ml-2" style={{ color: 'var(--color-brand-primary)' }}>
                 ({selectedCount} selected)
               </span>
             )}
@@ -296,16 +302,18 @@ export function PermitSearchResults({
           {/* Bulk Actions */}
           {selectedCount > 0 && (
             <div className="flex items-center space-x-2 mr-4">
-              <span className="text-sm text-gray-500">{selectedCount} selected</span>
+              <span className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>{selectedCount} selected</span>
               <button
                 onClick={handleBulkExport}
-                className="px-3 py-1.5 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100"
+                className="px-3 py-1.5 text-sm font-medium rounded-md"
+                style={{ color: 'var(--color-brand-primary)', background: 'color-mix(in srgb, var(--color-brand-primary) 8%, transparent)' }}
               >
                 Export
               </button>
               <button
                 onClick={handleBulkDelete}
-                className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100"
+                className="px-3 py-1.5 text-sm font-medium rounded-md"
+                style={{ color: 'var(--color-error)', background: 'color-mix(in srgb, var(--color-error) 8%, transparent)' }}
               >
                 Delete
               </button>
@@ -315,18 +323,21 @@ export function PermitSearchResults({
           <div className="relative">
             <button
               onClick={() => setShowColumnSettings(!showColumnSettings)}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md"
+              style={{ border: '1px solid var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'var(--color-surface-raised)' }}
             >
               <Settings2 className="w-4 h-4 mr-2" />
               Columns
             </button>
             {showColumnSettings && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+              <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10" style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border-default)' }}>
                 <div className="py-1">
                   {Object.entries(columnVisibility).map(([column, isVisible]) => (
                     <label
                       key={column}
-                      className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      className="flex items-center px-4 py-2 cursor-pointer"
+                      onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-subtle)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <input
                         type="checkbox"
@@ -337,9 +348,10 @@ export function PermitSearchResults({
                             [column]: e.target.checked,
                           }))
                         }
-                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2"
+                        className="rounded mr-2"
+                        style={{ accentColor: 'var(--color-brand-primary)' }}
                       />
-                      <span className="text-sm text-gray-700 capitalize">
+                      <span className="text-sm capitalize" style={{ color: 'var(--color-text-secondary)' }}>
                         {column.replace('_', ' ')}
                       </span>
                     </label>
@@ -353,23 +365,25 @@ export function PermitSearchResults({
 
       {/* Results Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50 sticky top-0 z-10">
+        <table className="min-w-full" style={{ borderCollapse: 'collapse' }}>
+          <thead className="sticky top-0 z-10" style={{ background: 'var(--color-surface-subtle)' }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider select-none"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider select-none"
                     style={{
+                      color: 'var(--color-text-tertiary)',
                       width: header.getSize(),
+                      borderBottom: '1px solid var(--color-border-default)',
                     }}
                   >
                     {header.isPlaceholder ? null : (
                       <div
                         className={`flex items-center ${
                           header.column.getCanSort()
-                            ? 'cursor-pointer hover:text-gray-700'
+                            ? 'cursor-pointer'
                             : ''
                         }`}
                         onClick={header.column.getToggleSortingHandler()}
@@ -396,7 +410,10 @@ export function PermitSearchResults({
                           <div
                             onMouseDown={header.getResizeHandler()}
                             onTouchStart={header.getResizeHandler()}
-                            className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-indigo-500"
+                            className="absolute right-0 top-0 h-full w-1 cursor-col-resize"
+                            style={{ background: 'var(--color-brand-primary)', opacity: 0 }}
+                            onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                            onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
                           />
                         )}
                       </div>
@@ -406,13 +423,17 @@ export function PermitSearchResults({
               </tr>
             ))}
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className={`hover:bg-gray-50 cursor-pointer transition-colors ${
-                  row.getIsSelected() ? 'bg-indigo-50' : ''
-                }`}
+                className="cursor-pointer transition-colors"
+                style={{
+                  background: row.getIsSelected() ? 'color-mix(in srgb, var(--color-brand-primary) 6%, transparent)' : undefined,
+                  borderBottom: '1px solid var(--color-border-default)',
+                }}
+                onMouseEnter={e => { if (!row.getIsSelected()) e.currentTarget.style.background = 'var(--color-surface-subtle)' }}
+                onMouseLeave={e => { if (!row.getIsSelected()) e.currentTarget.style.background = '' }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
@@ -427,11 +448,12 @@ export function PermitSearchResults({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div className="px-6 py-4 flex items-center justify-between" style={{ borderTop: '1px solid var(--color-border-default)' }}>
           <button
             onClick={() => onPageChange(page - 1)}
             disabled={page === 1}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ border: '1px solid var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'var(--color-surface-raised)' }}
           >
             Previous
           </button>
@@ -451,11 +473,16 @@ export function PermitSearchResults({
                 <button
                   key={pageNum}
                   onClick={() => onPageChange(pageNum)}
-                  className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md ${
-                    page === pageNum
-                      ? 'border-indigo-500 text-indigo-600 bg-indigo-50'
-                      : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
-                  }`}
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                  style={page === pageNum ? {
+                    border: '1px solid var(--color-brand-primary)',
+                    color: 'var(--color-brand-primary)',
+                    background: 'color-mix(in srgb, var(--color-brand-primary) 8%, transparent)',
+                  } : {
+                    border: '1px solid var(--color-border-default)',
+                    color: 'var(--color-text-secondary)',
+                    background: 'var(--color-surface-raised)',
+                  }}
                 >
                   {pageNum}
                 </button>
@@ -465,7 +492,8 @@ export function PermitSearchResults({
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={page === totalPages}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ border: '1px solid var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'var(--color-surface-raised)' }}
           >
             Next
           </button>

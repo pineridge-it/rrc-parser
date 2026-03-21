@@ -18,13 +18,14 @@ export function SavedSearches({ savedSearches, onLoad, onSave, loading }: SavedS
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="rounded-lg p-4" style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border-default)' }}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-gray-900">Saved Searches</h3>
+        <h3 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>Saved Searches</h3>
         <button
           onClick={handleSave}
           disabled={loading}
-          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded disabled:opacity-50"
+          style={{ color: 'var(--color-brand-primary)', background: 'color-mix(in srgb, var(--color-brand-primary) 10%, transparent)' }}
         >
           <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -34,7 +35,7 @@ export function SavedSearches({ savedSearches, onLoad, onSave, loading }: SavedS
       </div>
 
       {savedSearches.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-4">
+        <p className="text-sm text-center py-4" style={{ color: 'var(--color-text-tertiary)' }}>
           No saved searches yet. Apply filters and save your search.
         </p>
       ) : (
@@ -43,10 +44,13 @@ export function SavedSearches({ savedSearches, onLoad, onSave, loading }: SavedS
             <li key={search.id}>
               <button
                 onClick={() => onLoad(search.id)}
-                className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full text-left px-3 py-2 rounded-md text-sm focus:outline-none"
+                style={{ color: 'var(--color-text-secondary)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-subtle)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <div className="font-medium">{search.name}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                   {new Date(search.created_at).toLocaleDateString()}
                 </div>
               </button>

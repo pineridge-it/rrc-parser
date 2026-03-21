@@ -88,12 +88,12 @@ export async function GET(request: NextRequest) {
           hasMore: (count || 0) > offset + limit,
         },
       },
+      200,
       rateLimit
     );
   } catch (error) {
-    console.error('Runs API error:', error);
     return createApiErrorResponse(
-      error instanceof Error ? error.message : 'Internal server error',
+      error instanceof Error ? error : new Error('Internal server error'),
       500
     );
   }

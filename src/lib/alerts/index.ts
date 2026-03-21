@@ -54,17 +54,17 @@ function pointInAOI(
   aoi: AOI
 ): boolean {
   const geometry = aoi.geometry;
-  
+
   if (geometry.type === 'Polygon') {
-    // Handle buffer by expanding the check area
     if (aoi.bufferMiles && aoi.bufferMiles > 0) {
-      // Approximate: 1 degree ≈ 69 miles
-      const bufferDegrees = aoi.bufferMiles / 69;
-      
-      // Quick bounding box check first
+      // Latitude degrees: ~69 miles/degree (nearly constant)
+      // Longitude degrees vary with latitude: cos(lat) * 69 miles/degree
+      const latBufferDeg = aoi.bufferMiles / 69;
+      const lonBufferDeg = aoi.bufferMiles / (Math.cos((lat * Math.PI) / 180) * 69);
+
       let minLat = Infinity, maxLat = -Infinity;
       let minLon = Infinity, maxLon = -Infinity;
-      
+
       for (const ring of geometry.coordinates) {
         for (const coord of ring) {
           const x = (coord?.[0] as number) ?? 0;
@@ -75,18 +75,32 @@ function pointInAOI(
           maxLat = Math.max(maxLat, y);
         }
       }
-      
-      // Check if point is within buffered bounding box
-      if (lat < minLat - bufferDegrees || lat > maxLat + bufferDegrees ||
-          lon < minLon - bufferDegrees || lon > maxLon + bufferDegrees) {
+
+      // Early exit: point is outside the buffered bounding box
+      if (lat < minLat - latBufferDeg || lat > maxLat + latBufferDeg ||
+          lon < minLon - lonBufferDeg || lon > maxLon + lonBufferDeg) {
         return false;
       }
+
+      // If inside the polygon itself, definitely a match
+      if (pointInPolygon(lat, lon, geometry.coordinates as number[][][])) {
+        return true;
+      }
+
+      // Check if within buffer distance of the polygon boundary
+      // Build a naively expanded polygon for buffer approximation
+      const expandedCoords = (geometry.coordinates as number[][][]).map(ring =>
+        ring.map(coord => [
+          (coord[0] as number) + (lon >= (coord[0] as number) ? lonBufferDeg : -lonBufferDeg),
+          (coord[1] as number) + (lat >= (coord[1] as number) ? latBufferDeg : -latBufferDeg),
+        ])
+      );
+      return pointInPolygon(lat, lon, expandedCoords);
     }
-    
+
     return pointInPolygon(lat, lon, geometry.coordinates as number[][][]);
   }
-  
-  // MultiPolygon - check each polygon
+
   if (geometry.type === 'MultiPolygon') {
     for (const polygon of geometry.coordinates as number[][][][]) {
       if (pointInPolygon(lat, lon, polygon)) {
@@ -94,7 +108,7 @@ function pointInAOI(
       }
     }
   }
-  
+
   return false;
 }
 
@@ -104,14 +118,14 @@ function pointInAOI(
 export class AlertRulesEngine {
   private rules: AlertRule[] = [];
   private aois: Map<UUID, AOI> = new Map();
-  
+
   /**
    * Load rules into the engine
    */
   setRules(rules: AlertRule[]): void {
     this.rules = rules.filter(r => r.isActive);
   }
-  
+
   /**
    * Load AOIs into the engine
    */
@@ -121,21 +135,21 @@ export class AlertRulesEngine {
       this.aois.set(aoi.id, aoi);
     }
   }
-  
+
   /**
    * Get all active rules
    */
   getRules(): AlertRule[] {
     return [...this.rules];
   }
-  
+
   /**
    * Get rules for a specific workspace
    */
   getRulesForWorkspace(workspaceId: UUID): AlertRule[] {
     return this.rules.filter(r => r.workspaceId === workspaceId);
   }
-  
+
   /**
    * Check if permit matches AOI criteria
    */
@@ -150,7 +164,7 @@ export class AlertRulesEngine {
         permit.surfaceLon === null || permit.surfaceLon === undefined) {
       return false;
     }
-    
+
     // Check if permit is in any of the rule's AOIs
     for (const aoiId of rule.aoiIds) {
       const aoi = this.aois.get(aoiId);
@@ -158,10 +172,10 @@ export class AlertRulesEngine {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   /**
    * Check if permit matches filter criteria
    */
@@ -179,39 +193,39 @@ export class AlertRulesEngine {
       typeMatch: true,
       dateMatch: true,
     };
-    
+
     // Operator filter
     if (filters.operators && filters.operators.length > 0) {
       result.operatorMatch = permit.operatorId !== undefined &&
         filters.operators.includes(permit.operatorId);
     }
-    
+
     // County filter
     if (filters.counties && filters.counties.length > 0) {
       result.countyMatch = permit.county !== undefined &&
         filters.counties.includes(permit.county);
     }
-    
+
     // Status filter
     if (filters.statuses && filters.statuses.length > 0) {
       result.statusMatch = permit.status !== undefined &&
         filters.statuses.includes(permit.status);
     }
-    
+
     // Permit type filter
     if (filters.permitTypes && filters.permitTypes.length > 0) {
       result.typeMatch = permit.permitType !== undefined &&
         filters.permitTypes.includes(permit.permitType);
     }
-    
+
     // Date filter
     if (filters.filedAfter && permit.filedDate) {
       result.dateMatch = permit.filedDate >= filters.filedAfter;
     }
-    
+
     return result;
   }
-  
+
   /**
    * Check if permit matches operator watchlist
    */
@@ -219,24 +233,24 @@ export class AlertRulesEngine {
     if (!watchlist || watchlist.length === 0) {
       return false;
     }
-    
+
     return permit.operatorId !== undefined &&
       watchlist.includes(permit.operatorId);
   }
-  
+
   /**
    * Evaluate a single permit against all rules
    */
-  async evaluatePermit(permit: CleanPermit): Promise<MatchedRule[]> {
+  evaluatePermit(permit: CleanPermit): MatchedRule[] {
     const matches: MatchedRule[] = [];
-    
+
     for (const rule of this.rules) {
       const matchedCriteria: MatchedRule['matchedCriteria'] = {};
       let isMatch = false;
-      
+
       // Check AOI match
       matchedCriteria.aoiMatch = this.matchesAOI(permit, rule);
-      
+
       // Check filter matches
       const filterMatches = this.matchesFilters(permit, rule.filters);
       matchedCriteria.operatorMatch = filterMatches.operatorMatch;
@@ -244,13 +258,13 @@ export class AlertRulesEngine {
       matchedCriteria.statusMatch = filterMatches.statusMatch;
       matchedCriteria.typeMatch = filterMatches.typeMatch;
       matchedCriteria.dateMatch = filterMatches.dateMatch;
-      
+
       // Check watchlist match
       matchedCriteria.watchlistMatch = this.matchesWatchlist(
         permit,
         rule.operatorWatchlist
       );
-      
+
       // Determine if this is a match
       // Rule matches if:
       // 1. AOI matches (or no AOI filter)
@@ -294,7 +308,7 @@ export class AlertRulesEngine {
         // Catch-all rule: no filters at all means match everything
         isMatch = true;
       }
-      
+
       if (isMatch) {
         matches.push({
           rule,
@@ -304,26 +318,30 @@ export class AlertRulesEngine {
         });
       }
     }
-    
+
     return matches;
   }
-  
+
   /**
    * Evaluate a batch of permits against all rules
    */
   async evaluateBatch(permits: CleanPermit[]): Promise<BatchEvaluationResult> {
     const startTime = Date.now();
+
+    const allResults = await Promise.all(
+      permits.map(permit => Promise.resolve(this.evaluatePermit(permit)).then(permitMatches => ({ permit, permitMatches })))
+    );
+
     const matches = new Map<UUID, MatchedRule[]>();
     let totalMatches = 0;
-    
-    for (const permit of permits) {
-      const permitMatches = await this.evaluatePermit(permit);
+
+    for (const { permit, permitMatches } of allResults) {
       if (permitMatches.length > 0) {
         matches.set(permit.id, permitMatches);
         totalMatches += permitMatches.length;
       }
     }
-    
+
     return {
       matches,
       totalEvaluated: permits.length,

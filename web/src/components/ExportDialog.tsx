@@ -104,24 +104,27 @@ export function ExportDialog({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ background: 'rgba(0,0,0,0.5)' }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="export-dialog-title"
       onKeyDown={handleKeyDown}
     >
       <div
-        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4"
+        className="rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4 border"
+        style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}
         role="document"
       >
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6" style={{ borderBottom: '1px solid var(--color-border-default)' }}>
           <h2
             id="export-dialog-title"
-            className="text-xl font-semibold text-gray-900"
+            className="text-xl font-semibold"
+            style={{ color: 'var(--color-text-primary)' }}
           >
             Export Permits
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
             Configure your export settings and select the fields you want to include.
           </p>
         </div>
@@ -130,44 +133,49 @@ export function ExportDialog({
           {/* Format Selection */}
           <div>
             <fieldset>
-              <legend className="block text-sm font-medium text-gray-700 mb-3">
+              <legend className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
                 Export Format
               </legend>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {EXPORT_FORMATS.map((format) => (
-                  <label
-                    key={format.format}
-                    className={`flex items-start p-3 border rounded-lg cursor-pointer transition-colors ${
-                      selectedFormat === format.format
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="format"
-                      value={format.format}
-                      checked={selectedFormat === format.format}
-                      onChange={() => setSelectedFormat(format.format)}
-                      className="mt-1 mr-3 focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                      aria-describedby={`format-${format.format}-description`}
-                    />
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {format.format.toUpperCase()}
+                {EXPORT_FORMATS.map((format) => {
+                  const isSelected = selectedFormat === format.format
+                  return (
+                    <label
+                      key={format.format}
+                      className="flex items-start p-3 border-2 rounded-lg cursor-pointer transition-colors"
+                      style={{
+                        borderColor: isSelected ? 'var(--color-brand-primary)' : 'var(--color-border-default)',
+                        background: isSelected ? 'color-mix(in srgb, var(--color-brand-primary) 6%, transparent)' : 'transparent',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="format"
+                        value={format.format}
+                        checked={isSelected}
+                        onChange={() => setSelectedFormat(format.format)}
+                        className="mt-1 mr-3 h-4 w-4"
+                        style={{ accentColor: 'var(--color-brand-primary)' }}
+                        aria-describedby={`format-${format.format}-description`}
+                      />
+                      <div>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                          {format.format.toUpperCase()}
+                        </div>
+                        <div
+                          id={`format-${format.format}-description`}
+                          className="text-xs"
+                          style={{ color: 'var(--color-text-tertiary)' }}
+                        >
+                          {format.description}
+                        </div>
+                        <div className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                          Max: {format.maxRecords.toLocaleString()} records
+                        </div>
                       </div>
-                      <div
-                        id={`format-${format.format}-description`}
-                        className="text-xs text-gray-500"
-                      >
-                        {format.description}
-                      </div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        Max: {format.maxRecords.toLocaleString()} records
-                      </div>
-                    </div>
-                  </label>
-                ))}
+                    </label>
+                  )
+                })}
               </div>
             </fieldset>
           </div>
@@ -180,13 +188,15 @@ export function ExportDialog({
                 id="includeGeometry"
                 checked={includeGeometry}
                 onChange={(e) => setIncludeGeometry(e.target.checked)}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="h-4 w-4 rounded"
+                style={{ accentColor: 'var(--color-brand-primary)' }}
                 aria-describedby="include-geometry-description"
               />
               <label
                 htmlFor="includeGeometry"
-                className="ml-2 text-sm text-gray-700"
+                className="ml-2 text-sm"
                 id="include-geometry-description"
+                style={{ color: 'var(--color-text-secondary)' }}
               >
                 Include geometry data
               </label>
@@ -197,22 +207,25 @@ export function ExportDialog({
           <div>
             <div className="flex items-center justify-between mb-3">
               <label
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium"
                 id="fields-selection-label"
+                style={{ color: 'var(--color-text-secondary)' }}
               >
                 Fields to Export ({selectedFields.length} selected)
               </label>
               <div className="flex space-x-3">
                 <button
                   onClick={() => setSelectedFields(EXPORT_FIELDS.map(f => f.key))}
-                  className="text-xs text-blue-600 hover:text-blue-800 focus:outline-none focus:underline"
+                  className="text-xs focus:outline-none focus:underline"
+                  style={{ color: 'var(--color-text-link)' }}
                   aria-label="Select all fields"
                 >
                   Select All
                 </button>
                 <button
                   onClick={() => setSelectedFields([])}
-                  className="text-xs text-blue-600 hover:text-blue-800 focus:outline-none focus:underline"
+                  className="text-xs focus:outline-none focus:underline"
+                  style={{ color: 'var(--color-text-link)' }}
                   aria-label="Clear all fields"
                 >
                   Clear All
@@ -221,7 +234,8 @@ export function ExportDialog({
             </div>
 
             <div
-              className="space-y-3 border border-gray-200 rounded-lg p-4"
+              className="space-y-3 rounded-lg p-4 border"
+              style={{ borderColor: 'var(--color-border-default)' }}
               role="group"
               aria-labelledby="fields-selection-label"
             >
@@ -235,18 +249,20 @@ export function ExportDialog({
                 return (
                   <div
                     key={category.key}
-                    className="border-b border-gray-100 last:border-0 pb-3 last:pb-0"
+                    className="last:pb-0 pb-3 last:border-0"
+                    style={{ borderBottom: '1px solid var(--color-border-default)' }}
                   >
                     <div className="flex items-center justify-between">
                       <button
                         onClick={() => toggleCategory(category.key)}
-                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:underline"
+                        className="flex items-center text-sm font-medium focus:outline-none focus:underline"
+                        style={{ color: 'var(--color-text-secondary)' }}
                         aria-expanded={isExpanded}
                         aria-controls={`category-${category.key}-fields`}
                       >
                         <span className="mr-2" aria-hidden="true">{isExpanded ? '▼' : '▶'}</span>
                         {category.label}
-                        <span className="ml-2 text-xs text-gray-400">
+                        <span className="ml-2 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                           ({selectedCount}/{categoryFields.length})
                         </span>
                       </button>
@@ -254,7 +270,8 @@ export function ExportDialog({
                         type="checkbox"
                         checked={selectedCount === categoryFields.length}
                         onChange={() => handleCategoryToggle(category.key)}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        className="h-4 w-4 rounded"
+                        style={{ accentColor: 'var(--color-brand-primary)' }}
                         aria-label={`Select all fields in ${category.label} category`}
                       />
                     </div>
@@ -273,10 +290,11 @@ export function ExportDialog({
                               type="checkbox"
                               checked={selectedFields.includes(field.key)}
                               onChange={() => handleFieldToggle(field.key)}
-                              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="h-4 w-4 rounded"
+                              style={{ accentColor: 'var(--color-brand-primary)' }}
                               aria-label={`Select ${field.label} field`}
                             />
-                            <span className="ml-2 text-gray-700">{field.label}</span>
+                            <span className="ml-2" style={{ color: 'var(--color-text-secondary)' }}>{field.label}</span>
                           </label>
                         ))}
                       </div>
@@ -289,11 +307,12 @@ export function ExportDialog({
         </div>
 
         {/* Actions */}
-        <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <div className="p-6 flex justify-end space-x-3" style={{ borderTop: '1px solid var(--color-border-default)' }}>
           <button
             onClick={onClose}
             disabled={creating}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            className="px-4 py-2 text-sm font-medium border rounded-lg disabled:opacity-50 focus:outline-none transition-colors"
+            style={{ color: 'var(--color-text-secondary)', borderColor: 'var(--color-border-default)', background: 'transparent' }}
             aria-label="Cancel export"
           >
             Cancel
@@ -301,7 +320,8 @@ export function ExportDialog({
           <button
             onClick={handleExport}
             disabled={creating || selectedFields.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors"
+            style={{ background: 'var(--color-brand-primary)' }}
             aria-label={selectedFields.length === 0 ? "Select fields to enable export" : "Create export"}
           >
             {creating ? 'Creating...' : 'Create Export'}

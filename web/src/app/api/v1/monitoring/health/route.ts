@@ -216,11 +216,10 @@ export async function GET(request: NextRequest) {
     // Return 503 if unhealthy, 200 otherwise
     const statusCode = overallStatus === 'unhealthy' ? 503 : 200;
 
-    return createApiResponse(health, rateLimit, { status: statusCode });
+    return createApiResponse(health, statusCode, rateLimit);
   } catch (error) {
-    console.error('Health check API error:', error);
     return createApiErrorResponse(
-      error instanceof Error ? error.message : 'Internal server error',
+      error instanceof Error ? error : new Error('Internal server error'),
       500
     );
   }

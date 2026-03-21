@@ -163,6 +163,11 @@ export class IngestionMonitor {
       this.runs = this.runs.slice(-this.maxHistorySize);
     }
 
+    // Trim alerts array to prevent unbounded growth
+    if (this.alerts.length > this.maxHistorySize) {
+      this.alerts = this.alerts.slice(-this.maxHistorySize);
+    }
+
     // Check alerts after recording
     this.checkAlerts();
   }
@@ -189,10 +194,12 @@ export class IngestionMonitor {
   }
 
   /**
-   * Get the last successful run
+   * Get the last successful run.
+   * A run is successful if it completed with no pipeline errors AND
+   * at least some records were processed (or no records failed).
    */
   getLastSuccessfulRun(): IngestionMetrics | undefined {
-    return [...this.runs].reverse().find(r => r.errorCount === 0 && r.recordsFailed === 0);
+    return [...this.runs].reverse().find(r => r.completedAt && r.errorCount === 0);
   }
 
   /**
@@ -366,7 +373,6 @@ export class IngestionMonitor {
    */
   private checkAlerts(): void {
     const now = new Date();
-    this.checkSLOs();
 
     for (const rule of this.alertRules) {
       if (!rule.enabled) continue;

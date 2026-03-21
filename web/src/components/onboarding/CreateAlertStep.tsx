@@ -10,8 +10,6 @@ export default function CreateAlertStep() {
   const [alertType, setAlertType] = useState('new_permits')
 
   const handleContinue = () => {
-    // In a real implementation, this would create an actual alert
-    // For now, we'll just simulate it
     completeStep('create_alert')
   }
 
@@ -19,16 +17,37 @@ export default function CreateAlertStep() {
     skipStep('create_alert')
   }
 
+  const alertOptions = [
+    {
+      id: 'new_permits',
+      label: 'New Permits',
+      description: 'Notify me when new permits are filed in my area',
+      iconPath: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+    },
+    {
+      id: 'status_changes',
+      label: 'Status Changes',
+      description: 'Notify me when permit status changes (approved, denied, etc.)',
+      iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+    },
+    {
+      id: 'all',
+      label: 'All Activity',
+      description: 'Notify me about all new permits and status changes',
+      iconPath: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
+    },
+  ]
+
   return (
     <div className="max-w-2xl mx-auto p-6">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Set Up Your First Alert</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>Set Up Your First Alert</h1>
+        <p style={{ color: 'var(--color-text-secondary)' }}>
           Get notified when new permits are filed in your area of interest.
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="rounded-xl border p-6 mb-6" style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}>
         <div className="mb-6">
           <Input
             id="alert-name"
@@ -41,95 +60,55 @@ export default function CreateAlertStep() {
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
             What would you like to be alerted about?
           </label>
           <div className="space-y-3">
-            <button
-              type="button"
-              onClick={() => setAlertType('new_permits')}
-              className={`w-full p-4 border rounded-lg text-left ${
-                alertType === 'new_permits'
-                  ? 'border-indigo-500 ring-2 ring-indigo-200'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="bg-indigo-100 rounded-md p-2">
-                    <svg className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+            {alertOptions.map((option) => {
+              const isSelected = alertType === option.id
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setAlertType(option.id)}
+                  className="w-full p-4 border-2 rounded-lg text-left transition-all"
+                  style={{
+                    borderColor: isSelected ? 'var(--color-brand-primary)' : 'var(--color-border-default)',
+                    background: isSelected ? 'color-mix(in srgb, var(--color-brand-primary) 6%, transparent)' : 'transparent',
+                    outline: isSelected ? '2px solid color-mix(in srgb, var(--color-brand-primary) 30%, transparent)' : 'none',
+                    outlineOffset: '2px',
+                  }}
+                >
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="rounded-md p-2" style={{ background: 'color-mix(in srgb, var(--color-brand-primary) 12%, transparent)' }}>
+                        <svg className="h-5 w-5" style={{ color: 'var(--color-brand-primary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={option.iconPath} />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{option.label}</h3>
+                      <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{option.description}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-gray-900">New Permits</h3>
-                  <p className="text-xs text-gray-500">Notify me when new permits are filed in my area</p>
-                </div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAlertType('status_changes')}
-              className={`w-full p-4 border rounded-lg text-left ${
-                alertType === 'status_changes'
-                  ? 'border-indigo-500 ring-2 ring-indigo-200'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="bg-green-100 rounded-md p-2">
-                    <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-gray-900">Status Changes</h3>
-                  <p className="text-xs text-gray-500">Notify me when permit status changes (approved, denied, etc.)</p>
-                </div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAlertType('all')}
-              className={`w-full p-4 border rounded-lg text-left ${
-                alertType === 'all'
-                  ? 'border-indigo-500 ring-2 ring-indigo-200'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="bg-blue-100 rounded-md p-2">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-gray-900">All Activity</h3>
-                  <p className="text-xs text-gray-500">Notify me about all new permits and status changes</p>
-                </div>
-              </div>
-            </button>
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {state.firstAoiId && (
-          <div className="mb-6 p-4 bg-indigo-50 rounded-lg">
+          <div className="mb-6 p-4 rounded-lg" style={{ background: 'color-mix(in srgb, var(--color-brand-primary) 8%, transparent)', borderColor: 'color-mix(in srgb, var(--color-brand-primary) 20%, transparent)', border: '1px solid' }}>
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-5 w-5" style={{ color: 'var(--color-brand-primary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-indigo-800">Area of Interest</h3>
-                <div className="mt-2 text-sm text-indigo-700">
+                <h3 className="text-sm font-medium" style={{ color: 'var(--color-brand-primary)' }}>Area of Interest</h3>
+                <div className="mt-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   <p>This alert will monitor your area: {state.firstAoiId}</p>
                 </div>
               </div>
@@ -140,18 +119,16 @@ export default function CreateAlertStep() {
         <div className="flex justify-between">
           <button
             onClick={handleSkip}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-4 py-2 border text-sm font-medium rounded-lg focus:outline-none transition-colors"
+            style={{ borderColor: 'var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'transparent' }}
           >
             Skip for now
           </button>
           <button
             onClick={handleContinue}
             disabled={!alertName.trim()}
-            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-              alertName.trim()
-                ? 'bg-indigo-600 hover:bg-indigo-700'
-                : 'bg-indigo-400 cursor-not-allowed'
-            }`}
+            className="inline-flex items-center px-4 py-2 border-0 text-sm font-medium rounded-lg shadow-sm text-white transition-opacity focus:outline-none"
+            style={{ background: 'var(--color-brand-primary)', opacity: alertName.trim() ? 1 : 0.5, cursor: alertName.trim() ? 'pointer' : 'not-allowed' }}
           >
             Continue
           </button>

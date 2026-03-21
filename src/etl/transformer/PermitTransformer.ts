@@ -1,8 +1,42 @@
+import { createHash } from 'crypto';
 import { PermitData } from '../../types/permit';
 import { DaPermitRecord, DaRootRecord, GisSurfaceRecord, GisBottomholeRecord } from '../../types/permit';
 
+export interface NormalizedPermit {
+  source_id: string | undefined;
+  permit_number: string | undefined;
+  lease_name: string | undefined;
+  operator_name: string | undefined;
+  operator_number: string | undefined;
+  county_code: string | undefined;
+  district: string | undefined;
+  issue_date: string | undefined;
+  received_date: string | undefined;
+  amended_date: string | undefined;
+  extended_date: string | undefined;
+  spud_date: string | undefined;
+  well_number: string | undefined;
+  well_status: string | undefined;
+  total_depth: number | undefined;
+  application_type: string | undefined;
+  well_type: string | undefined;
+  horizontal_flag: string | undefined;
+  directional_flag: string | undefined;
+  sidetrack_flag: string | undefined;
+  surface_section: string | undefined;
+  surface_block: string | undefined;
+  surface_survey: string | undefined;
+  surface_abstract: string | undefined;
+  gis_surface_lat: number | undefined;
+  gis_surface_lon: number | undefined;
+  gis_bottomhole_lat: number | undefined;
+  gis_bottomhole_lon: number | undefined;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface TransformResult {
-  cleanPermit: any;
+  cleanPermit: NormalizedPermit | null;
   hash: string;
   isValid: boolean;
   errors: string[];
@@ -16,14 +50,14 @@ export class PermitTransformer {
    */
   transform(rawData: PermitData): TransformResult {
     const errors: string[] = [];
-    
+
     try {
       // Extract core permit information
       const permitRecord = rawData.dapermit;
       const rootRecord = rawData.daroot;
       const surfaceRecord = rawData.gis_surface;
       const bottomholeRecord = rawData.gis_bottomhole;
-      
+
       if (!permitRecord) {
         errors.push('Missing required dapermit record');
         return {
@@ -33,16 +67,16 @@ export class PermitTransformer {
           errors
         };
       }
-      
+
       // Normalize and validate permit data
       const cleanPermit = this.normalizePermitData(permitRecord, rootRecord, surfaceRecord, bottomholeRecord);
-      
+
       // Generate hash for idempotency check
       const hash = this.generateHash(cleanPermit);
-      
+
       // Validate transformed data
       const isValid = this.validateTransformedData(cleanPermit, errors);
-      
+
       return {
         cleanPermit,
         hash,
@@ -59,22 +93,22 @@ export class PermitTransformer {
       };
     }
   }
-  
+
   /**
    * Normalize permit data into clean format
    */
   private normalizePermitData(
-    permitRecord: DaPermitRecord, 
+    permitRecord: DaPermitRecord,
     rootRecord: DaRootRecord | null,
     surfaceRecord: GisSurfaceRecord | null,
     bottomholeRecord: GisBottomholeRecord | null
-  ): any {
-    // Combine data from permit and root records
+  ): NormalizedPermit {
+    // permitRecord fields take precedence over rootRecord fields with same names
     const combinedData = {
       ...rootRecord,
       ...permitRecord
     };
-    
+
     return {
       source_id: combinedData.permit_number,
       permit_number: combinedData.permit_number,
@@ -83,7 +117,7 @@ export class PermitTransformer {
       operator_number: combinedData.operator_number,
       county_code: combinedData.county_code,
       district: combinedData.district,
-      issue_date: combinedData.issued_date || combinedData.issue_date,
+      issue_date: combinedData.issued_date,
       received_date: combinedData.received_date,
       amended_date: combinedData.amended_date,
       extended_date: combinedData.extended_date,
@@ -108,38 +142,30 @@ export class PermitTransformer {
       updated_at: new Date().toISOString()
     };
   }
-  
+
   /**
    * Generate hash for idempotency checking
    */
-  private generateHash(data: any): string {
-    // Simple hash function for demo purposes
-    // In production, use a proper cryptographic hash
-    const str = JSON.stringify(data);
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash).toString(16);
+  private generateHash(data: NormalizedPermit): string {
+    const { created_at: _ca, updated_at: _ua, ...stable } = data;
+    return createHash('sha256').update(JSON.stringify(stable)).digest('hex');
   }
-  
+
   /**
    * Validate transformed data
    */
-  private validateTransformedData(data: any, errors: string[]): boolean {
+  private validateTransformedData(data: NormalizedPermit, errors: string[]): boolean {
     // Basic validation checks
     if (!data.source_id) {
       errors.push('Missing required field: source_id');
     }
-    
+
     if (!data.permit_number) {
       errors.push('Missing required field: permit_number');
     }
-    
+
     // Add more validation as needed
-    
+
     return errors.length === 0;
   }
 }

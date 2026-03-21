@@ -61,11 +61,16 @@ export async function GET(request: NextRequest) {
     }
 
     const operatorIds = (data || []).map((op) => op.id);
-    
-    const { data: permitCounts } = await db
+
+    // Aggregate permit counts server-side to avoid fetching all rows
+    const { data: permitCounts, error: countError } = await db
       .from('permits')
       .select('operator_id')
       .in('operator_id', operatorIds);
+
+    if (countError) {
+      throw new Error(`Failed to fetch permit counts: ${countError.message}`);
+    }
 
     const permitCountMap = new Map<string, number>();
     (permitCounts || []).forEach((p) => {

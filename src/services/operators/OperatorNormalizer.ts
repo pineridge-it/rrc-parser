@@ -322,7 +322,7 @@ export class OperatorNormalizer {
       .select('*')
       .eq('normalized_name', normalizedName)
       .eq('status', 'active')
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null;
     return data as OperatorRecord;
@@ -336,7 +336,7 @@ export class OperatorNormalizer {
       .from('operator_aliases')
       .select('*')
       .eq('normalized_alias', normalizedAlias)
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null;
     return data as AliasRecord;
@@ -350,7 +350,7 @@ export class OperatorNormalizer {
       .from('operators')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null;
     return data as OperatorRecord;
@@ -361,7 +361,7 @@ export class OperatorNormalizer {
    */
   private async createOperator(canonicalName: string, _rawName: string): Promise<OperatorRecord> {
     const normalizedName = canonicalName.toLowerCase();
-    
+
     const { data, error } = await this.db
       .from('operators')
       .insert({
@@ -383,12 +383,12 @@ export class OperatorNormalizer {
    * Create an alias for an operator
    */
   private async createAlias(
-    operatorId: string, 
-    alias: string, 
+    operatorId: string,
+    alias: string,
     confidence: number
   ): Promise<void> {
     const normalizedAlias = alias.toLowerCase();
-    
+
     const { error } = await this.db
       .from('operator_aliases')
       .upsert({
@@ -412,20 +412,24 @@ export class OperatorNormalizer {
    */
   private async updateAliasUsage(operatorId: string, alias: string): Promise<void> {
     const normalizedAlias = alias.toLowerCase();
-    
+
     const { error } = await this.db
       .from('operator_aliases')
       .update({
-        last_seen_at: new Date().toISOString(),
-        usage_count: this.db.rpc('increment_usage_count', { row_id: operatorId, alias_text: alias })
+        last_seen_at: new Date().toISOString()
       })
       .eq('operator_id', operatorId)
       .eq('normalized_alias', normalizedAlias);
 
     if (error) {
-      // Silently fail - this is just statistics
       console.error('Error updating alias usage:', error);
     }
+
+    // Increment usage count via RPC separately (fire-and-forget for stats)
+    this.db.rpc('increment_usage_count', { row_id: operatorId, alias_text: alias })
+      .then(({ error: rpcError }) => {
+        if (rpcError) console.error('Error incrementing usage count:', rpcError);
+      });
   }
 
   /**

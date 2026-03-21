@@ -74,22 +74,8 @@ export class RrcFetcher {
         }
       };
     } catch (error) {
-      const duration = Date.now() - startTime;
-      
-      // Return partial results if available
-      return {
-        permits: [],
-        totalCount: 0,
-        errorCount: 1,
-        warningCount: 0,
-        durationMs: duration,
-        metadata: {
-          sourceFile: filePath,
-          parserVersion: '1.0.0',
-          linesProcessed: 0,
-          recordsByType: {}
-        }
-      };
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch/parse file "${filePath}": ${message}`);
     }
   }
 
@@ -100,13 +86,13 @@ export class RrcFetcher {
     filePath: string,
     onProgress: (processed: number, total: number) => void
   ): Promise<RrcFetchResult> {
-    // Estimate total lines (will be refined during parsing)
-    const estimatedTotal = 1000;
+    let actualTotal = 0;
 
     const options: RrcParserOptions = {
       ...this.options,
       onProgress: (lineNumber) => {
-        onProgress(lineNumber, Math.max(lineNumber, estimatedTotal));
+        actualTotal = Math.max(actualTotal, lineNumber);
+        onProgress(lineNumber, actualTotal);
       }
     };
 
@@ -117,7 +103,7 @@ export class RrcFetcher {
     const duration = Date.now() - startTime;
 
     const permits = Object.values(parseResult.permits);
-    
+
     const recordsByType: Record<string, number> = {};
     parseResult.stats.recordsByType.forEach((count, type) => {
       recordsByType[type] = count;

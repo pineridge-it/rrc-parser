@@ -4,7 +4,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,126 +15,154 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [resetSent, setResetSent] = useState(false)
-  const { resetPassword, loading, error } = useAuth()
+  const { resetPassword, loading } = useAuth()
 
-  // Simple email validation
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
+  const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate email
     if (!validateEmail(email)) {
       setEmailError('Please enter a valid email address')
-      toast.error('Invalid Email', {
-        description: 'Please enter a valid email address',
-      })
       return
-    } else {
-      setEmailError('')
     }
+    setEmailError('')
 
     const { error } = await resetPassword(email)
 
     if (!error) {
       setResetSent(true)
-      toast.success('Password Reset Email Sent!', {
-        description: 'Check your email for a link to reset your password.',
-      })
     } else {
-      toast.error('Failed to Send Reset Email', {
+      toast.error('Failed to send reset email', {
         description: error.message || 'Please try again',
       })
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ background: 'var(--color-surface-subtle)' }}
+    >
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+            <div
+              className="h-9 w-9 rounded-xl flex items-center justify-center text-white font-bold text-base"
+              style={{ background: 'var(--color-brand-primary)' }}
+            >
+              R
+            </div>
+            <span
+              className="text-xl font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              RRC Alerts
+            </span>
+          </Link>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
             Reset your password
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              return to sign in
-            </Link>
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+            Enter your email and we'll send you a reset link
           </p>
         </div>
 
-        {resetSent ? (
-          <div className="rounded-md bg-green-50 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
-                  Password reset email sent!
-                </h3>
-                <div className="mt-2 text-sm text-green-700">
-                  <p>Check your email for a link to reset your password.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <Input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                label="Email address"
-                placeholder="your.email@example.com"
-                floatingLabel
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  // Clear error when user types
-                  if (emailError) setEmailError('')
-                }}
-                error={emailError}
-              />
-            </div>
-
-            {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">
-                      Error
-                    </h3>
-                    <div className="mt-2 text-sm text-red-700">
-                      <p>{error.message}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        <div
+          className="rounded-2xl border p-8 shadow-sm"
+          style={{
+            background: 'var(--color-surface-raised)',
+            borderColor: 'var(--color-border-default)',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {resetSent ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="text-center py-4"
               >
-                {loading ? (
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <svg className="animate-spin h-5 w-5 text-indigo-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </span>
-                ) : null}
-                Send Reset Link
-              </button>
-            </div>
-          </form>
-        )}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 220 }}
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'var(--color-success-subtle)' }}
+                >
+                  <CheckCircle className="h-7 w-7" style={{ color: 'var(--color-success)' }} />
+                </motion.div>
+                <h3
+                  className="text-base font-semibold mb-1"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  Check your inbox
+                </h3>
+                <p className="text-sm mb-6" style={{ color: 'var(--color-text-tertiary)' }}>
+                  We sent a password reset link to{' '}
+                  <strong style={{ color: 'var(--color-text-secondary)' }}>{email}</strong>
+                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setResetSent(false)}
+                >
+                  Send again
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-5"
+                onSubmit={handleSubmit}
+              >
+                <Input
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  label="Email address"
+                  placeholder="you@example.com"
+                  floatingLabel
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    if (emailError) setEmailError('')
+                  }}
+                  error={emailError}
+                />
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  loading={loading}
+                >
+                  Send reset link
+                </Button>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <p className="mt-6 text-center text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+          Remembered your password?{' '}
+          <Link
+            href="/login"
+            className="font-medium transition-colors"
+            style={{ color: 'var(--color-text-link)' }}
+          >
+            Back to sign in
+          </Link>
+        </p>
       </div>
     </div>
   )

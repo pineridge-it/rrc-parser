@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { Input } from '@/components/ui/input'
 import { PasswordStrengthIndicator } from '@/components/ui/password-strength'
+import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,32 +18,23 @@ export default function UpdatePasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [updateComplete, setUpdateComplete] = useState(false)
-  const { updatePassword, loading, error } = useAuth()
+  const { updatePassword, loading } = useAuth()
   const router = useRouter()
   const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current)
-      }
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current)
     }
   }, [])
 
   const validatePassword = () => {
     if (password.length < 8) {
       setPasswordError('Password must be at least 8 characters')
-      toast.error('Password Too Short', {
-        description: 'Password must be at least 8 characters',
-      })
       return false
     }
     if (password !== confirmPassword) {
       setPasswordError('Passwords do not match')
-      toast.error('Password Mismatch', {
-        description: 'Passwords do not match',
-      })
       return false
     }
     setPasswordError('')
@@ -55,120 +50,135 @@ export default function UpdatePasswordPage() {
 
     if (!error) {
       setUpdateComplete(true)
-      toast.success('Password Updated!', {
-        description: 'Your password has been successfully updated. Redirecting to login...',
+      toast.success('Password updated!', {
+        description: 'Your password has been successfully updated.',
       })
-      // Redirect to login after 3 seconds
-      redirectTimeoutRef.current = setTimeout(() => {
-        router.push('/login')
-      }, 3000)
+      redirectTimeoutRef.current = setTimeout(() => router.push('/login'), 3000)
     } else {
-      toast.error('Failed to Update Password', {
+      toast.error('Failed to update password', {
         description: error.message || 'Please try again',
       })
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Update your password
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your new password below.
+    <div
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ background: 'var(--color-surface-subtle)' }}
+    >
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+            <div
+              className="h-9 w-9 rounded-xl flex items-center justify-center text-white font-bold text-base"
+              style={{ background: 'var(--color-brand-primary)' }}
+            >
+              R
+            </div>
+            <span
+              className="text-xl font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              RRC Alerts
+            </span>
+          </Link>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Set a new password
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+            Your new password must be at least 8 characters
           </p>
         </div>
 
-        {updateComplete ? (
-          <div className="rounded-md bg-green-50 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
+        <div
+          className="rounded-2xl border p-8 shadow-sm"
+          style={{
+            background: 'var(--color-surface-raised)',
+            borderColor: 'var(--color-border-default)',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {updateComplete ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="text-center py-4"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 220 }}
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'var(--color-success-subtle)' }}
+                >
+                  <CheckCircle className="h-7 w-7" style={{ color: 'var(--color-success)' }} />
+                </motion.div>
+                <h3
+                  className="text-base font-semibold mb-1"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
                   Password updated!
                 </h3>
-                <div className="mt-2 text-sm text-green-700">
-                  <p>Your password has been successfully updated. Redirecting to login...</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Redirecting you to sign in…
+                </p>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-5"
+                onSubmit={handleSubmit}
+              >
+                <div className="space-y-2">
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    label="New password"
+                    placeholder="At least 8 characters"
+                    floatingLabel
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setPasswordError('') }}
+                  />
+                  <PasswordStrengthIndicator password={password} />
                 </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div className="space-y-2">
+
                 <Input
-                  id="password"
-                  name="password"
+                  id="confirm-password"
+                  name="confirmPassword"
                   type="password"
                   autoComplete="new-password"
                   required
-                  label="New Password"
-                  placeholder="Enter your new password"
+                  label="Confirm new password"
+                  placeholder="Re-enter your password"
                   floatingLabel
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    setPasswordError('')
-                  }}
+                  value={confirmPassword}
+                  onChange={(e) => { setConfirmPassword(e.target.value); setPasswordError('') }}
+                  error={passwordError}
                 />
 
-                <PasswordStrengthIndicator password={password} />
-              </div>
-
-              <Input
-                id="confirm-password"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                label="Confirm Password"
-                placeholder="Re-enter your new password"
-                floatingLabel
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value)
-                  setPasswordError('')
-                }}
-                error={passwordError}
-              />
-            </div>
-
-            {(error || passwordError) && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">
-                      Error
-                    </h3>
-                    <div className="mt-2 text-sm text-red-700">
-                      <p>{error?.message || passwordError}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  loading={loading}
+                >
+                  Update password
+                </Button>
+              </motion.form>
             )}
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <svg className="animate-spin h-5 w-5 text-indigo-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </span>
-                ) : null}
-                Update Password
-              </button>
-            </div>
-          </form>
-        )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )

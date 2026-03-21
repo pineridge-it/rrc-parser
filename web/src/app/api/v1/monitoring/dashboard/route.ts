@@ -111,9 +111,8 @@ export async function GET(request: NextRequest) {
       recentAlerts: activeAlerts,
     };
 
-    return createApiResponse(dashboardMetrics, rateLimit);
+    return createApiResponse(dashboardMetrics, 200, rateLimit);
   } catch (error) {
-    console.error('Dashboard API error:', error);
     return createApiErrorResponse(
       error instanceof Error ? error : new Error('Internal server error'),
       500

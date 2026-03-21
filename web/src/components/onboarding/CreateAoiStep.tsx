@@ -96,15 +96,16 @@ export default function CreateAoiStep() {
         {/* Demo Mode Banner */}
         <motion.div
           variants={itemVariants}
-          className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          className="mb-6 p-4 border rounded-lg"
+          style={{ background: 'color-mix(in srgb, var(--color-warning) 8%, transparent)', borderColor: 'color-mix(in srgb, var(--color-warning) 30%, transparent)' }}
         >
           <div className="flex items-start">
-            <Info className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <Info className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--color-warning)' }} />
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-amber-800">
+              <h3 className="text-sm font-medium" style={{ color: 'var(--color-warning)' }}>
                 Demo Mode
               </h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                 This is a demonstration of the AOI creation flow.
                 Areas created here are not persisted to the database.
                 Full map integration coming soon.
@@ -119,14 +120,15 @@ export default function CreateAoiStep() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", delay: 0.2 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
+            style={{ background: 'color-mix(in srgb, var(--color-brand-primary) 12%, transparent)' }}
           >
-            <MapPin className="h-8 w-8 text-indigo-600" />
+            <MapPin className="h-8 w-8" style={{ color: 'var(--color-brand-primary)' }} />
           </motion.div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
             Create Your First Area of Interest
           </h1>
-          <p className="text-gray-600">
+          <p style={{ color: 'var(--color-text-secondary)' }}>
             Define the geographic area you want to monitor for drilling permits.
           </p>
         </motion.div>
@@ -134,7 +136,8 @@ export default function CreateAoiStep() {
         {/* Main Form Card */}
         <motion.div
           variants={itemVariants}
-          className="bg-white rounded-lg shadow-md p-6 mb-6"
+          className="rounded-xl border p-6 mb-6"
+          style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}
         >
           {/* AOI Name Input */}
           <motion.div variants={itemVariants} className="mb-6">
@@ -150,7 +153,7 @@ export default function CreateAoiStep() {
 
           {/* Drawing Mode Selection */}
           <motion.div variants={itemVariants} className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
               How would you like to define your area?
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -159,37 +162,26 @@ export default function CreateAoiStep() {
                 onClick={() => setDrawingMode("draw")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`p-4 border-2 rounded-lg text-left transition-all ${
-                  drawingMode === "draw"
-                    ? "border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200"
-                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                }`}
+                className="p-4 border-2 rounded-lg text-left transition-all"
+                style={{
+                  borderColor: drawingMode === 'draw' ? 'var(--color-brand-primary)' : 'var(--color-border-default)',
+                  background: drawingMode === 'draw' ? 'color-mix(in srgb, var(--color-brand-primary) 6%, transparent)' : 'transparent',
+                }}
               >
                 <div className="flex items-center">
                   <motion.div
-                    animate={
-                      drawingMode === "draw"
-                        ? { rotate: [0, -10, 10, 0] }
-                        : {}
-                    }
+                    animate={drawingMode === "draw" ? { rotate: [0, -10, 10, 0] } : {}}
                     transition={{ duration: 0.5 }}
-                    className={`flex-shrink-0 rounded-md p-2 ${
-                      drawingMode === "draw" ? "bg-indigo-200" : "bg-indigo-100"
-                    }`}
+                    className="flex-shrink-0 rounded-md p-2"
+                    style={{ background: 'color-mix(in srgb, var(--color-brand-primary) 12%, transparent)' }}
                   >
-                    <Pencil
-                      className={`h-5 w-5 ${
-                        drawingMode === "draw"
-                          ? "text-indigo-700"
-                          : "text-indigo-600"
-                      }`}
-                    />
+                    <Pencil className="h-5 w-5" style={{ color: 'var(--color-brand-primary)' }} />
                   </motion.div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-gray-900">
+                    <h3 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
                       Draw on Map
                     </h3>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                       Draw a polygon directly on the map
                     </p>
                   </div>
@@ -201,37 +193,26 @@ export default function CreateAoiStep() {
                 onClick={() => setDrawingMode("county")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`p-4 border-2 rounded-lg text-left transition-all ${
-                  drawingMode === "county"
-                    ? "border-green-500 bg-green-50 ring-2 ring-green-200"
-                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                }`}
+                className="p-4 border-2 rounded-lg text-left transition-all"
+                style={{
+                  borderColor: drawingMode === 'county' ? 'var(--color-success)' : 'var(--color-border-default)',
+                  background: drawingMode === 'county' ? 'color-mix(in srgb, var(--color-success) 6%, transparent)' : 'transparent',
+                }}
               >
                 <div className="flex items-center">
                   <motion.div
-                    animate={
-                      drawingMode === "county"
-                        ? { scale: [1, 1.1, 1] }
-                        : {}
-                    }
+                    animate={drawingMode === "county" ? { scale: [1, 1.1, 1] } : {}}
                     transition={{ duration: 0.5 }}
-                    className={`flex-shrink-0 rounded-md p-2 ${
-                      drawingMode === "county" ? "bg-green-200" : "bg-green-100"
-                    }`}
+                    className="flex-shrink-0 rounded-md p-2"
+                    style={{ background: 'color-mix(in srgb, var(--color-success) 12%, transparent)' }}
                   >
-                    <Globe
-                      className={`h-5 w-5 ${
-                        drawingMode === "county"
-                          ? "text-green-700"
-                          : "text-green-600"
-                      }`}
-                    />
+                    <Globe className="h-5 w-5" style={{ color: 'var(--color-success)' }} />
                   </motion.div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-gray-900">
+                    <h3 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
                       Select County
                     </h3>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                       Choose from Texas counties
                     </p>
                   </div>
@@ -242,32 +223,33 @@ export default function CreateAoiStep() {
 
           {/* Popular Areas */}
           <motion.div variants={itemVariants} className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">
+            <h3 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Popular Areas
             </h3>
             <div className="flex flex-wrap gap-2">
-              {popularAreas.map((area, index) => (
-                <motion.button
-                  key={area}
-                  type="button"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 + index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setAoiName(area)}
-                  className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    aoiName === area
-                      ? "bg-indigo-600 text-white"
-                      : "bg-indigo-100 text-indigo-800 hover:bg-indigo-200"
-                  }`}
-                >
-                  {aoiName === area && (
-                    <Check className="h-3 w-3 mr-1" />
-                  )}
-                  {area}
-                </motion.button>
-              ))}
+              {popularAreas.map((area, index) => {
+                const isSelected = aoiName === area
+                return (
+                  <motion.button
+                    key={area}
+                    type="button"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.3 + index * 0.05 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setAoiName(area)}
+                    className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+                    style={{
+                      background: isSelected ? 'var(--color-brand-primary)' : 'color-mix(in srgb, var(--color-brand-primary) 10%, transparent)',
+                      color: isSelected ? '#fff' : 'var(--color-brand-primary)',
+                    }}
+                  >
+                    {isSelected && <Check className="h-3 w-3 mr-1" />}
+                    {area}
+                  </motion.button>
+                )
+              })}
             </div>
           </motion.div>
 
@@ -280,7 +262,8 @@ export default function CreateAoiStep() {
               onClick={handleSkip}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-4 py-2 border text-sm font-medium rounded-lg focus:outline-none transition-colors"
+              style={{ borderColor: 'var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'transparent' }}
             >
               <SkipForward className="h-4 w-4 mr-2" />
               Skip for now
@@ -291,11 +274,12 @@ export default function CreateAoiStep() {
               disabled={!aoiName.trim() || isCreating}
               whileHover={aoiName.trim() && !isCreating ? { scale: 1.02 } : {}}
               whileTap={aoiName.trim() && !isCreating ? { scale: 0.98 } : {}}
-              className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all ${
-                aoiName.trim() && !isCreating
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "bg-indigo-400 cursor-not-allowed"
-              }`}
+              className="inline-flex items-center px-6 py-2 border-0 text-sm font-medium rounded-lg shadow-sm text-white focus:outline-none transition-all"
+              style={{
+                background: 'var(--color-brand-primary)',
+                opacity: aoiName.trim() && !isCreating ? 1 : 0.5,
+                cursor: aoiName.trim() && !isCreating ? 'pointer' : 'not-allowed',
+              }}
             >
               {isCreating ? (
                 <>
@@ -324,7 +308,8 @@ export default function CreateAoiStep() {
         {/* Progress hint */}
         <motion.p
           variants={itemVariants}
-          className="text-center text-sm text-gray-500"
+          className="text-center text-sm"
+          style={{ color: 'var(--color-text-tertiary)' }}
         >
           Step 2 of 5 • You can always add more areas later
         </motion.p>
@@ -337,7 +322,8 @@ export default function CreateAoiStep() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            style={{ background: 'rgba(0,0,0,0.5)' }}
             onClick={cancelSkip}
           >
             <motion.div
@@ -345,17 +331,20 @@ export default function CreateAoiStep() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25 }}
-              className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full"
+              className="rounded-xl border shadow-xl p-6 max-w-md w-full"
+              style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
-                  <SkipForward className="h-6 w-6 text-yellow-600" />
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4"
+                  style={{ background: 'color-mix(in srgb, var(--color-warning) 12%, transparent)' }}
+                >
+                  <SkipForward className="h-6 w-6" style={{ color: 'var(--color-warning)' }} />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
                   Skip creating an area?
                 </h3>
-                <p className="text-sm text-gray-500 mb-6">
+                <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
                   You won't receive any alerts until you create at least one
                   area of interest. You can always add one later from your
                   dashboard.
@@ -363,13 +352,15 @@ export default function CreateAoiStep() {
                 <div className="flex justify-center space-x-3">
                   <button
                     onClick={cancelSkip}
-                    className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="px-4 py-2 border text-sm font-medium rounded-lg focus:outline-none transition-colors"
+                    style={{ borderColor: 'var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'transparent' }}
                   >
                     Go Back
                   </button>
                   <button
                     onClick={confirmSkip}
-                    className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                    className="px-4 py-2 border-0 text-sm font-medium rounded-lg text-white focus:outline-none"
+                    style={{ background: 'var(--color-warning)' }}
                   >
                     Skip Anyway
                   </button>

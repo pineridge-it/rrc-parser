@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, Loader2 } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,50 +26,37 @@ export default function SignupPage() {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [termsError, setTermsError] = useState('')
   const [signupComplete, setSignupComplete] = useState(false)
-  const { signUp, loading, error } = useAuth()
+  const { signUp, loading } = useAuth()
   const { resetOnboarding } = useOnboarding()
   const router = useRouter()
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Email validation with real-time feedback
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current)
+    }
+  }, [])
+
+  const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setEmail(value)
-    if (emailError) {
-      if (value && !validateEmail(value)) {
-        setEmailError('Please enter a valid email address')
-      } else {
-        setEmailError('')
-      }
-    }
+    if (emailError && (!value || validateEmail(value))) setEmailError('')
   }
 
   const handleEmailBlur = () => {
-    if (email && !validateEmail(email)) {
-      setEmailError('Please enter a valid email address')
-    }
+    if (email && !validateEmail(email)) setEmailError('Please enter a valid email address')
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setFullName(value)
-    if (nameError) {
-      if (value.length < 2) {
-        setNameError('Name must be at least 2 characters')
-      } else {
-        setNameError('')
-      }
-    }
+    if (nameError && value.length >= 2) setNameError('')
   }
 
   const handleNameBlur = () => {
-    if (fullName && fullName.length < 2) {
-      setNameError('Name must be at least 2 characters')
-    }
+    if (fullName && fullName.length < 2) setNameError('Name must be at least 2 characters')
   }
 
   const validatePassword = () => {
@@ -88,122 +75,125 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate all fields
     let hasError = false
 
     if (!fullName || fullName.length < 2) {
       setNameError('Name must be at least 2 characters')
       hasError = true
     }
-
     if (!validateEmail(email)) {
       setEmailError('Please enter a valid email address')
       hasError = true
     }
-
-    if (!validatePassword()) {
-      hasError = true
-    }
-
+    if (!validatePassword()) hasError = true
     if (!acceptTerms) {
       setTermsError('You must accept the Terms of Service and Privacy Policy')
       hasError = true
     }
 
     if (hasError) {
-      toast.error('Please fix the errors below', {
-        description: 'Some fields need your attention',
-      })
+      toast.error('Please fix the errors below')
       return
     }
 
-    const { error: signupError, data } = await signUp(email, password, fullName)
+    const { error, data } = await signUp(email, password, fullName)
 
-    if (!signupError && data?.user) {
-      // Reset onboarding state for new user
+    if (!error && data?.user) {
       resetOnboarding()
       setSignupComplete(true)
-      toast.success('Account created successfully!', {
-        description: 'Welcome to RRC. Redirecting to onboarding...',
-      })
-      // Redirect to onboarding flow after a brief delay
-      setTimeout(() => {
-        router.push('/onboarding')
-      }, 2000)
-    } else if (signupError) {
+      toast.success('Account created!', { description: 'Welcome to RRC Alerts.' })
+      redirectTimeoutRef.current = setTimeout(() => router.push('/onboarding'), 2000)
+    } else if (error) {
       toast.error('Failed to create account', {
-        description: signupError.message || 'Please try again',
+        description: error.message || 'Please try again',
       })
     }
   }
 
-  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  useEffect(() => {
-    return () => {
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current)
-      }
-    }
-  }, [])
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ background: 'var(--color-surface-subtle)' }}
+    >
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+            <div
+              className="h-9 w-9 rounded-xl flex items-center justify-center text-white font-bold text-base"
+              style={{ background: 'var(--color-brand-primary)' }}
+            >
+              R
+            </div>
+            <span
+              className="text-xl font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              RRC Alerts
+            </span>
+          </Link>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
             Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              sign in to existing account
-            </Link>
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+            Start tracking Texas drilling permits today
           </p>
         </div>
 
-        <AnimatePresence mode="wait">
-          {signupComplete ? (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="rounded-lg bg-green-50 p-6 text-center"
-            >
+        <div
+          className="rounded-2xl border p-8 shadow-sm"
+          style={{
+            background: 'var(--color-surface-raised)',
+            borderColor: 'var(--color-border-default)',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {signupComplete ? (
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-4"
+                key="success"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="text-center py-4"
               >
-                <CheckCircle className="h-8 w-8 text-green-600" />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 220 }}
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'var(--color-success-subtle)' }}
+                >
+                  <CheckCircle className="h-7 w-7" style={{ color: 'var(--color-success)' }} />
+                </motion.div>
+                <h3
+                  className="text-base font-semibold mb-1"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  Account created!
+                </h3>
+                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Redirecting you to onboarding…
+                </p>
               </motion.div>
-              <h3 className="text-lg font-medium text-green-900 mb-2">
-                Account created successfully!
-              </h3>
-              <p className="text-sm text-green-700">
-                Welcome to RRC. Redirecting you to onboarding...
-              </p>
-            </motion.div>
-          ) : (
-            <motion.form
-              key="form"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="mt-8 space-y-6"
-              onSubmit={handleSubmit}
-            >
-              <div className="space-y-4">
+            ) : (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-5"
+                onSubmit={handleSubmit}
+              >
                 <Input
                   id="full-name"
                   name="fullName"
                   type="text"
                   autoComplete="name"
                   required
-                  label="Full Name"
-                  placeholder="Enter your full name"
+                  label="Full name"
+                  placeholder="Jane Smith"
                   floatingLabel
                   value={fullName}
                   onChange={handleNameChange}
@@ -219,7 +209,7 @@ export default function SignupPage() {
                   autoComplete="email"
                   required
                   label="Email address"
-                  placeholder="your.email@example.com"
+                  placeholder="you@example.com"
                   floatingLabel
                   value={email}
                   onChange={handleEmailChange}
@@ -236,16 +226,12 @@ export default function SignupPage() {
                     autoComplete="new-password"
                     required
                     label="Password"
-                    placeholder="Enter your password"
+                    placeholder="At least 8 characters"
                     floatingLabel
                     value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                      setPasswordError('')
-                    }}
+                    onChange={(e) => { setPassword(e.target.value); setPasswordError('') }}
                     disabled={loading}
                   />
-
                   <PasswordStrengthIndicator password={password} />
                 </div>
 
@@ -255,20 +241,17 @@ export default function SignupPage() {
                   type="password"
                   autoComplete="new-password"
                   required
-                  label="Confirm Password"
+                  label="Confirm password"
                   placeholder="Re-enter your password"
                   floatingLabel
                   value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value)
-                    setPasswordError('')
-                  }}
+                  onChange={(e) => { setConfirmPassword(e.target.value); setPasswordError('') }}
                   error={passwordError}
                   disabled={loading}
                 />
 
-                <div className="space-y-2">
-                  <div className="flex items-start space-x-3">
+                <div>
+                  <label className="flex items-start gap-3 cursor-pointer select-none">
                     <Checkbox
                       id="terms"
                       checked={acceptTerms}
@@ -278,14 +261,15 @@ export default function SignupPage() {
                       }}
                       disabled={loading}
                     />
-                    <label
-                      htmlFor="terms"
-                      className="text-sm text-gray-600 leading-relaxed cursor-pointer"
+                    <span
+                      className="text-sm leading-relaxed"
+                      style={{ color: 'var(--color-text-secondary)' }}
                     >
                       I agree to the{' '}
                       <Link
                         href="/terms"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                        className="font-medium underline-offset-2 hover:underline"
+                        style={{ color: 'var(--color-text-link)' }}
                         target="_blank"
                       >
                         Terms of Service
@@ -293,56 +277,44 @@ export default function SignupPage() {
                       and{' '}
                       <Link
                         href="/privacy"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                        className="font-medium underline-offset-2 hover:underline"
+                        style={{ color: 'var(--color-text-link)' }}
                         target="_blank"
                       >
                         Privacy Policy
                       </Link>
-                    </label>
-                  </div>
+                    </span>
+                  </label>
                   {termsError && (
-                    <p className="text-sm text-red-600">{termsError}</p>
+                    <p className="mt-1.5 text-xs" style={{ color: 'var(--color-error)' }}>
+                      {termsError}
+                    </p>
                   )}
                 </div>
-              </div>
 
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-md bg-red-50 p-4"
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  loading={loading}
                 >
-                  <div className="flex">
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">
-                        Error
-                      </h3>
-                      <div className="mt-2 text-sm text-red-700">
-                        <p>{error.message}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+                  Create account
+                </Button>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  'Create Account'
-                )}
-              </Button>
-            </motion.form>
-          )}
-        </AnimatePresence>
+        <p className="mt-6 text-center text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+          Already have an account?{' '}
+          <Link
+            href="/login"
+            className="font-medium transition-colors"
+            style={{ color: 'var(--color-text-link)' }}
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   )

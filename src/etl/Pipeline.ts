@@ -65,9 +65,11 @@ export class EtlPipeline {
   private readonly loader: PermitLoader | null;
   private readonly enableLoader: boolean;
   private readonly supabase: SupabaseClient | null;
+  private readonly logger: ReturnType<typeof createLogger>;
 
   constructor(options: EtlPipelineOptions = {}) {
     this.config = options.config || new Config();
+    this.logger = createLogger({ service: 'etl-pipeline' });
     this.parserOptions = {
       enableCheckpoints: options.enableCheckpoints ?? true,
       checkpointPath: options.checkpointPath || './.checkpoints/etl-checkpoint.json',
@@ -87,8 +89,8 @@ export class EtlPipeline {
 
     if (this.enableLoader) {
       const supabaseClient = this.supabase || createDatabaseClient();
-      const logger = createLogger({ service: 'etl-loader' });
-      this.loader = new PermitLoader(supabaseClient, logger, options.loaderConfig);
+      const loaderLogger = createLogger({ service: 'etl-loader' });
+      this.loader = new PermitLoader(supabaseClient, loaderLogger, options.loaderConfig);
     } else {
       this.loader = null;
     }
@@ -136,22 +138,22 @@ export class EtlPipeline {
     const stopDurationTimer = this.metrics?.startDurationTimer();
 
     try {
-      console.log(`Starting ETL pipeline for ${inputPath}`);
+      this.logger.info(`Starting ETL pipeline for ${inputPath}`);
 
       // Step 1: Fetch (already done - we're reading from file)
-      console.log('Step 1: Fetch - Reading permit data from file');
+      this.logger.info('Step 1: Fetch - Reading permit data from file');
 
       // Step 2: Parse the data
-      console.log('Step 2: Parse - Processing permit data');
+      this.logger.info('Step 2: Parse - Processing permit data');
       const parser = new PermitParser(this.config, this.parserOptions);
       const parseResult: ParseResult = await parser.parseFile(inputPath);
 
       permitsProcessed = Object.keys(parseResult.permits).length;
-      console.log(`Parsed ${permitsProcessed} permits`);
+      this.logger.info(`Parsed ${permitsProcessed} permits`);
 
       // Step 3: Run QA Gates on parsed data
       if (this.qaRunner) {
-        console.log('Step 3: QA Gates - Running quality checks');
+        this.logger.info('Step 3: QA Gates - Running quality checks');
 
         // Convert permits to records for QA checks
         const records = Object.values(parseResult.permits).map((permit: PermitData) => {
@@ -200,18 +202,15 @@ export class EtlPipeline {
         qaPassed = qaResult.passed;
 
         // Log QA results
-        console.log(`QA Gate ${qaResult.passed ? 'PASSED' : 'FAILED'} (${qaResult.stage})`);
+        this.logger.info(`QA Gate ${qaResult.passed ? 'PASSED' : 'FAILED'} (${qaResult.stage})`);
         if (qaResult.warnings.length > 0) {
-          console.log(`  Warnings: ${qaResult.warnings.length}`);
-          qaResult.warnings.forEach(w => console.log(`    - ${w}`));
+          this.logger.warn(`QA warnings (${qaResult.warnings.length}): ${qaResult.warnings.join('; ')}`);
         }
         if (qaResult.errors.length > 0) {
-          console.log(`  Errors: ${qaResult.errors.length}`);
-          qaResult.errors.forEach(e => console.log(`    - ${e}`));
+          this.logger.error(`QA errors (${qaResult.errors.length}): ${qaResult.errors.join('; ')}`);
         }
         if (qaResult.criticalErrors.length > 0) {
-          console.log(`  CRITICAL: ${qaResult.criticalErrors.length}`);
-          qaResult.criticalErrors.forEach(e => console.log(`    - ${e}`));
+          this.logger.error(`QA critical errors (${qaResult.criticalErrors.length}): ${qaResult.criticalErrors.join('; ')}`);
         }
 
         // Add QA errors to pipeline errors if gate failed
@@ -222,7 +221,7 @@ export class EtlPipeline {
 
       // Step 4: Load permits to database
       if (this.loader && qaPassed) {
-        console.log('Step 4: Load - Upserting permits to database');
+        this.logger.info('Step 4: Load - Upserting permits to database');
         try {
           const permits = Object.values(parseResult.permits);
           const loadResult = await this.loader.loadPermits(permits);
@@ -234,25 +233,25 @@ export class EtlPipeline {
             errors.push(...loadResult.errorDetails);
           }
 
-          console.log(`Load complete - Inserted: ${loadResult.inserted}, Updated: ${loadResult.updated}, Skipped: ${loadResult.skipped}, Errors: ${loadResult.errors}`);
+          this.logger.info(`Load complete - Inserted: ${loadResult.inserted}, Updated: ${loadResult.updated}, Skipped: ${loadResult.skipped}, Errors: ${loadResult.errors}`);
         } catch (loadError) {
           const errorMsg = `Database load failed: ${loadError instanceof Error ? loadError.message : String(loadError)}`;
           errors.push(errorMsg);
-          console.error(errorMsg);
+          this.logger.error(errorMsg);
         }
       } else if (!qaPassed) {
-        console.log('Step 4: Load - SKIPPED (QA gates failed)');
+        this.logger.info('Step 4: Load - SKIPPED (QA gates failed)');
       } else {
-        console.log('Step 4: Load - SKIPPED (loader disabled)');
+        this.logger.info('Step 4: Load - SKIPPED (loader disabled)');
       }
 
     } catch (error) {
       const errorMsg = `ETL pipeline failed: ${error instanceof Error ? error.message : String(error)}`;
       errors.push(errorMsg);
-      console.error(errorMsg);
+      this.logger.error(errorMsg);
 
       if (error instanceof Error && error.stack) {
-        console.error(error.stack);
+        this.logger.error(error.stack);
       }
 
       // Record error in monitor with error handling
@@ -261,7 +260,7 @@ export class EtlPipeline {
           this.monitor.recordError(monitorRunId, error instanceof Error ? error : new Error(String(error)));
         } catch (monitorError) {
           // Log but don't throw - original error is more important
-          console.error('Failed to record error in monitor:', monitorError);
+          this.logger.error(`Failed to record error in monitor: ${monitorError instanceof Error ? monitorError.message : String(monitorError)}`);
         }
       }
     }
@@ -296,22 +295,26 @@ export class EtlPipeline {
 
     // Record run completion in monitor
     if (this.monitor && monitorRunId) {
-      this.monitor.recordRunComplete(monitorRunId, {
-        recordsProcessed: permitsProcessed,
-        recordsFailed: errors.length,
-        errorCount: errors.length,
-        qaPassed,
-        qaResults: qaResults ? {
-          warnings: qaResults.reduce((sum, r) => sum + r.warnings.length, 0),
-          errors: qaResults.reduce((sum, r) => sum + r.errors.length, 0),
-          criticalErrors: qaResults.reduce((sum, r) => sum + r.criticalErrors.length, 0)
-        } : undefined
-      });
+      try {
+        this.monitor.recordRunComplete(monitorRunId, {
+          recordsProcessed: permitsProcessed,
+          recordsFailed: errors.length,
+          errorCount: errors.length,
+          qaPassed,
+          qaResults: qaResults ? {
+            warnings: qaResults.reduce((sum, r) => sum + r.warnings.length, 0),
+            errors: qaResults.reduce((sum, r) => sum + r.errors.length, 0),
+            criticalErrors: qaResults.reduce((sum, r) => sum + r.criticalErrors.length, 0)
+          } : undefined
+        });
+      } catch (monitorError) {
+        this.logger.error(`Failed to record run completion in monitor: ${monitorError instanceof Error ? monitorError.message : String(monitorError)}`);
+      }
     }
 
     // Build monitoring summary for result
-    const monitoring = this.monitor ? {
-      runId: monitorRunId!,
+    const monitoring = (this.monitor && monitorRunId) ? {
+      runId: monitorRunId,
       sloStatus: this.monitor.checkSLOs().map(s => ({
         name: s.config.name,
         status: s.status,

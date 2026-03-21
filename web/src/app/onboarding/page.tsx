@@ -114,11 +114,12 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--color-surface-subtle)' }}>
       {/* Progress Bar */}
-      <div className="h-1 bg-gray-200">
+      <div className="h-1" style={{ background: 'var(--color-border-default)' }}>
         <motion.div
-          className="h-full bg-indigo-600"
+          className="h-full"
+          style={{ background: 'var(--color-brand-primary)' }}
           initial={{ width: 0 }}
           animate={{ width: `${progressPercentage}%` }}
           transition={{ duration: 0.5, ease: "easeOut" as const }}
@@ -126,11 +127,20 @@ export default function OnboardingPage() {
       </div>
 
       {/* Header */}
-      <div className="bg-white shadow-sm">
+      <div
+        className="shadow-sm"
+        style={{
+          background: 'var(--color-surface-default)',
+          borderBottom: '1px solid var(--color-border-default)',
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1
+                className="text-xl font-semibold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
                 Texas Drilling Permit Alerts
               </h1>
             </div>
@@ -146,22 +156,28 @@ export default function OnboardingPage() {
                         animate={{
                           backgroundColor:
                             status === "completed"
-                              ? "#10B981"
+                              ? "var(--color-success)"
                               : status === "current"
-                                ? "#4F46E5"
-                                : "#E5E7EB",
+                                ? "var(--color-brand-primary)"
+                                : "var(--color-border-strong)",
                           scale: status === "current" ? 1.1 : 1,
                         }}
                         className="w-2.5 h-2.5 rounded-full"
                       />
                       {index < ONBOARDING_STEPS.length - 1 && (
-                        <div className="w-4 h-0.5 bg-gray-200 mx-1" />
+                        <div
+                          className="w-4 h-0.5 mx-1"
+                          style={{ background: 'var(--color-border-default)' }}
+                        />
                       )}
                     </div>
                   );
                 })}
               </div>
-              <span className="text-sm text-gray-500">
+              <span
+                className="text-sm"
+                style={{ color: 'var(--color-text-tertiary)' }}
+              >
                 Step {state.currentStep + 1} of {ONBOARDING_STEPS.length}
               </span>
             </div>
@@ -176,26 +192,38 @@ export default function OnboardingPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="bg-indigo-50 border-b border-indigo-100"
+            style={{
+              background: 'color-mix(in srgb, var(--color-brand-primary) 8%, transparent)',
+              borderBottom: '1px solid color-mix(in srgb, var(--color-brand-primary) 15%, transparent)',
+            }}
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <RotateCcw className="h-5 w-5 text-indigo-600 mr-3" />
+                  <RotateCcw
+                    className="h-5 w-5 mr-3"
+                    style={{ color: 'var(--color-brand-primary)' }}
+                  />
                   <div>
-                    <p className="text-sm font-medium text-indigo-900">
-                      Welcome back! You have progress saved from your last
-                      session.
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      Welcome back! You have progress saved from your last session.
                     </p>
-                    <p className="text-xs text-indigo-700">
-                      You were on "{STEP_LABELS[state.currentStep]}"
+                    <p
+                      className="text-xs"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      You were on &ldquo;{STEP_LABELS[state.currentStep]}&rdquo;
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={handleRestart}
-                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    className="text-sm font-medium transition-colors"
+                    style={{ color: 'var(--color-text-link)' }}
                   >
                     Start Over
                   </button>
@@ -203,14 +231,16 @@ export default function OnboardingPage() {
                     onClick={handleResume}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="inline-flex items-center px-4 py-2 border-0 text-sm font-medium rounded-lg text-white transition-colors"
+                    style={{ background: 'var(--color-brand-primary)' }}
                   >
                     <Play className="h-4 w-4 mr-2" />
                     Resume
                   </motion.button>
                   <button
                     onClick={handleDismissResume}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="transition-colors"
+                    style={{ color: 'var(--color-text-tertiary)' }}
                   >
                     <X className="h-5 w-5" />
                   </button>

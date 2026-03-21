@@ -65,35 +65,34 @@ const itemVariants = {
 const getNotificationIcon = (type?: string) => {
   switch (type) {
     case "success":
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
+      return <CheckCircle className="h-5 w-5" style={{ color: 'var(--color-success)' }} />;
     case "warning":
     case "alert":
-      return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+      return <AlertTriangle className="h-5 w-5" style={{ color: 'var(--color-warning)' }} />;
     case "error":
-      return <AlertTriangle className="h-5 w-5 text-red-500" />;
+      return <AlertTriangle className="h-5 w-5" style={{ color: 'var(--color-error)' }} />;
     case "info":
     default:
-      return <Info className="h-5 w-5 text-blue-500" />;
+      return <Info className="h-5 w-5" style={{ color: 'var(--color-info)' }} />;
   }
 };
 
-// Get category badge color
-const getCategoryColor = (category?: string) => {
+// Get category badge inline styles
+const getCategoryStyles = (category?: string): React.CSSProperties => {
   switch (category) {
     case "permit":
-      return "bg-green-100 text-green-800";
+      return { background: 'var(--color-success-subtle)', color: 'var(--color-success)' };
     case "alert":
-      return "bg-red-100 text-red-800";
-    case "system":
-      return "bg-gray-100 text-gray-800";
+      return { background: 'var(--color-error-subtle)', color: 'var(--color-error)' };
     case "export":
-      return "bg-blue-100 text-blue-800";
+      return { background: 'var(--color-info-subtle)', color: 'var(--color-info)' };
     case "usage":
-      return "bg-purple-100 text-purple-800";
+      return { background: 'var(--color-warning-subtle)', color: 'var(--color-warning)' };
     case "account":
-      return "bg-orange-100 text-orange-800";
+      return { background: 'var(--color-warning-subtle)', color: 'var(--color-warning-hover)' };
+    case "system":
     default:
-      return "bg-gray-100 text-gray-800";
+      return { background: 'var(--color-surface-inset)', color: 'var(--color-text-secondary)' };
   }
 };
 
@@ -286,7 +285,7 @@ export default function NotificationsPage() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={clearNotifications}
-                    className="text-red-600"
+                    style={{ color: 'var(--color-error)' }}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Clear all
@@ -337,7 +336,7 @@ export default function NotificationsPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleDeleteSelected}
-                  className="text-red-600 hover:text-red-700"
+                  style={{ color: 'var(--color-error)' }}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Delete
@@ -498,10 +497,8 @@ export default function NotificationsPage() {
                               {notification.category && (
                                 <Badge
                                   variant="neutral"
-                                  className={cn(
-                                    "text-xs capitalize",
-                                    getCategoryColor(notification.category)
-                                  )}
+                                  className="text-xs capitalize"
+                                  style={getCategoryStyles(notification.category)}
                                 >
                                   {notification.category}
                                 </Badge>
@@ -575,7 +572,7 @@ export default function NotificationsPage() {
                                 onClick={() => {
                                   removeNotification(notification.id);
                                 }}
-                                className="text-red-600"
+                                style={{ color: 'var(--color-error)' }}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete

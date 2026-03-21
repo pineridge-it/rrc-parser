@@ -178,16 +178,16 @@ export function PermitSearchFilters({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 space-y-6">
+    <div className="rounded-lg p-6 space-y-6" style={{ background: 'var(--color-surface-raised)', border: '1px solid var(--color-border-default)' }}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-5 w-5 text-gray-500" />
-          <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+          <SlidersHorizontal className="h-5 w-5" style={{ color: 'var(--color-text-tertiary)' }} />
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Filters</h2>
         </div>
         <div className="flex items-center gap-2">
           {activeFilterCount > 0 && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: 'color-mix(in srgb, var(--color-brand-primary) 10%, transparent)', color: 'var(--color-brand-primary)' }}>
               {activeFilterCount} active
             </span>
           )}
@@ -204,10 +204,11 @@ export function PermitSearchFilters({
       {activeFilterChips.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Active Filters</span>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Active Filters</span>
             <button
               onClick={onReset}
-              className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+              className="text-sm flex items-center gap-1"
+              style={{ color: 'var(--color-text-link)' }}
             >
               <X className="h-3 w-3" />
               Clear all
@@ -229,17 +230,20 @@ export function PermitSearchFilters({
 
       {/* Text Search */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
           Search
         </label>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--color-text-tertiary)' }} />
           <input
             type="text"
             placeholder="Lease, well, API number..."
             value={filters.textSearch || ''}
             onChange={(e) => handleTextSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full pl-10 pr-4 py-2 rounded-md"
+            style={{ border: '1px solid var(--color-border-default)', background: 'var(--color-surface-default)', color: 'var(--color-text-primary)', outline: 'none' }}
+            onFocus={e => (e.currentTarget.style.outline = `2px solid var(--color-brand-primary)`)}
+            onBlur={e => (e.currentTarget.style.outline = 'none')}
           />
         </div>
       </div>
@@ -248,15 +252,16 @@ export function PermitSearchFilters({
       <div>
         <button
           onClick={() => toggleSection('counties')}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2 hover:text-gray-900"
+          className="flex items-center justify-between w-full text-sm font-medium mb-2"
+          style={{ color: 'var(--color-text-secondary)' }}
         >
           <span>
             Counties
             {filters.counties && filters.counties.length > 0 && (
-              <span className="ml-2 text-xs text-indigo-600">({filters.counties.length})</span>
+              <span className="ml-2 text-xs" style={{ color: 'var(--color-brand-primary)' }}>({filters.counties.length})</span>
             )}
           </span>
-          <span className="text-gray-400">
+          <span style={{ color: 'var(--color-text-tertiary)' }}>
             {expandedSections.has('counties') ? '−' : '+'}
           </span>
         </button>
@@ -267,14 +272,18 @@ export function PermitSearchFilters({
             placeholder="Search counties..."
             emptyMessage="No counties found"
             renderItem={(county) => (
-              <label className="flex items-center p-2 rounded hover:bg-gray-50 cursor-pointer">
+              <label className="flex items-center p-2 rounded cursor-pointer"
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-subtle)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
                 <input
                   type="checkbox"
                   checked={filters.counties?.includes(county.code) || false}
                   onChange={() => handleCountyToggle(county.code)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  className="h-4 w-4 rounded"
+                  style={{ accentColor: 'var(--color-brand-primary)' }}
                 />
-                <span className="ml-2 text-sm text-gray-700">{county.name}</span>
+                <span className="ml-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>{county.name}</span>
               </label>
             )}
           />
@@ -285,15 +294,16 @@ export function PermitSearchFilters({
       <div>
         <button
           onClick={() => toggleSection('status')}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2 hover:text-gray-900"
+          className="flex items-center justify-between w-full text-sm font-medium mb-2"
+          style={{ color: 'var(--color-text-secondary)' }}
         >
           <span>
             Status
             {filters.statuses && filters.statuses.length > 0 && (
-              <span className="ml-2 text-xs text-indigo-600">({filters.statuses.length})</span>
+              <span className="ml-2 text-xs" style={{ color: 'var(--color-brand-primary)' }}>({filters.statuses.length})</span>
             )}
           </span>
-          <span className="text-gray-400">
+          <span style={{ color: 'var(--color-text-tertiary)' }}>
             {expandedSections.has('status') ? '−' : '+'}
           </span>
         </button>
@@ -305,9 +315,10 @@ export function PermitSearchFilters({
                   type="checkbox"
                   checked={filters.statuses?.includes(status.value) || false}
                   onChange={() => handleStatusToggle(status.value)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  className="h-4 w-4 rounded"
+                  style={{ accentColor: 'var(--color-brand-primary)' }}
                 />
-                <span className="ml-2 text-sm text-gray-700">{status.label}</span>
+                <span className="ml-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>{status.label}</span>
               </label>
             ))}
           </div>
@@ -318,15 +329,16 @@ export function PermitSearchFilters({
       <div>
         <button
           onClick={() => toggleSection('permitType')}
-          className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2 hover:text-gray-900"
+          className="flex items-center justify-between w-full text-sm font-medium mb-2"
+          style={{ color: 'var(--color-text-secondary)' }}
         >
           <span>
             Permit Type
             {filters.permitTypes && filters.permitTypes.length > 0 && (
-              <span className="ml-2 text-xs text-indigo-600">({filters.permitTypes.length})</span>
+              <span className="ml-2 text-xs" style={{ color: 'var(--color-brand-primary)' }}>({filters.permitTypes.length})</span>
             )}
           </span>
-          <span className="text-gray-400">
+          <span style={{ color: 'var(--color-text-tertiary)' }}>
             {expandedSections.has('permitType') ? '−' : '+'}
           </span>
         </button>
@@ -338,9 +350,10 @@ export function PermitSearchFilters({
                   type="checkbox"
                   checked={filters.permitTypes?.includes(type.value) || false}
                   onChange={() => handlePermitTypeToggle(type.value)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  className="h-4 w-4 rounded"
+                  style={{ accentColor: 'var(--color-brand-primary)' }}
                 />
-                <span className="ml-2 text-sm text-gray-700">{type.label}</span>
+                <span className="ml-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>{type.label}</span>
               </label>
             ))}
           </div>
@@ -352,15 +365,16 @@ export function PermitSearchFilters({
         <div>
           <button
             onClick={() => toggleSection('operators')}
-            className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-2 hover:text-gray-900"
+            className="flex items-center justify-between w-full text-sm font-medium mb-2"
+            style={{ color: 'var(--color-text-secondary)' }}
           >
             <span>
               Operators
               {filters.operators && filters.operators.length > 0 && (
-                <span className="ml-2 text-xs text-indigo-600">({filters.operators.length})</span>
+                <span className="ml-2 text-xs" style={{ color: 'var(--color-brand-primary)' }}>({filters.operators.length})</span>
               )}
             </span>
-            <span className="text-gray-400">
+            <span style={{ color: 'var(--color-text-tertiary)' }}>
               {expandedSections.has('operators') ? '−' : '+'}
             </span>
           </button>
@@ -371,14 +385,18 @@ export function PermitSearchFilters({
               placeholder="Search operators..."
               emptyMessage="No operators found"
               renderItem={(operator) => (
-                <label className="flex items-center p-2 rounded hover:bg-gray-50 cursor-pointer">
+                <label className="flex items-center p-2 rounded cursor-pointer"
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-subtle)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
                   <input
                     type="checkbox"
                     checked={filters.operators?.includes(operator.id) || false}
                     onChange={() => handleOperatorToggle(operator.id)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded"
+                    style={{ accentColor: 'var(--color-brand-primary)' }}
                   />
-                  <span className="ml-2 text-sm text-gray-700">{operator.name}</span>
+                  <span className="ml-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>{operator.name}</span>
                 </label>
               )}
             />
@@ -388,7 +406,7 @@ export function PermitSearchFilters({
 
       {/* Filed Date Range */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
           Filed Date
         </label>
         <DateRangePicker
@@ -399,7 +417,7 @@ export function PermitSearchFilters({
 
       {/* Approved Date Range */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
           Approved Date
         </label>
         <DateRangePicker
@@ -409,16 +427,18 @@ export function PermitSearchFilters({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex space-x-3 pt-4" style={{ borderTop: '1px solid var(--color-border-default)' }}>
         <button
           onClick={onSearch}
-          className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 touch-target"
+          className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md touch-target"
+          style={{ color: '#fff', background: 'var(--color-brand-primary)' }}
         >
           Apply Filters
         </button>
         <button
           onClick={onReset}
-          className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 touch-target"
+          className="flex-1 inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded-md touch-target"
+          style={{ border: '1px solid var(--color-border-default)', color: 'var(--color-text-secondary)', background: 'var(--color-surface-raised)' }}
         >
           Reset
         </button>

@@ -34,17 +34,19 @@ export function UsageWarnings({ warnings, onUpgrade, className = '' }: UsageWarn
       {hardWarnings.map((warning, index) => (
         <div
           key={`hard-${index}`}
-          className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg"
+          className="flex items-start gap-3 p-4 rounded-lg"
+          style={{ background: 'var(--color-error-subtle)', border: '1px solid color-mix(in srgb, var(--color-error) 30%, transparent)' }}
           role="alert"
         >
-          <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+          <XCircle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--color-error)' }} />
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-red-900">Limit Reached</h4>
-            <p className="text-sm text-red-700 mt-1">{warning.message}</p>
+            <h4 className="font-medium" style={{ color: 'var(--color-error)' }}>Limit Reached</h4>
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>{warning.message}</p>
             {onUpgrade && (
               <button
                 onClick={onUpgrade}
-                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-red-700 hover:text-red-800 underline"
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium underline"
+                style={{ color: 'var(--color-error)' }}
               >
                 <TrendingUp className="w-4 h-4" />
                 Upgrade Plan
@@ -57,17 +59,19 @@ export function UsageWarnings({ warnings, onUpgrade, className = '' }: UsageWarn
       {softWarnings.map((warning, index) => (
         <div
           key={`soft-${index}`}
-          className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          className="flex items-start gap-3 p-4 rounded-lg"
+          style={{ background: 'color-mix(in srgb, var(--color-warning) 10%, transparent)', border: '1px solid color-mix(in srgb, var(--color-warning) 30%, transparent)' }}
           role="alert"
         >
-          <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: 'var(--color-warning)' }} />
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-amber-900">Approaching Limit</h4>
-            <p className="text-sm text-amber-700 mt-1">{warning.message}</p>
+            <h4 className="font-medium" style={{ color: 'var(--color-warning)' }}>Approaching Limit</h4>
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>{warning.message}</p>
             {onUpgrade && (
               <button
                 onClick={onUpgrade}
-                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-800 underline"
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium underline"
+                style={{ color: 'var(--color-warning)' }}
               >
                 <TrendingUp className="w-4 h-4" />
                 Consider Upgrading
@@ -93,23 +97,29 @@ export function UsageMeter({ current, limit, label, className = '' }: UsageMeter
   const isHardLimit = percentage >= 100;
 
   const barColor = isHardLimit
-    ? 'bg-red-500'
+    ? 'var(--color-error)'
     : isSoftLimit
-    ? 'bg-amber-500'
-    : 'bg-blue-500';
+    ? 'var(--color-warning)'
+    : 'var(--color-brand-primary)';
+
+  const textColor = isHardLimit
+    ? 'var(--color-error)'
+    : isSoftLimit
+    ? 'var(--color-warning)'
+    : 'var(--color-text-secondary)';
 
   return (
     <div className={`space-y-1 ${className}`}>
       <div className="flex justify-between text-sm">
-        <span className="font-medium text-gray-700">{label}</span>
-        <span className={`${isHardLimit ? 'text-red-600' : isSoftLimit ? 'text-amber-600' : 'text-gray-600'}`}>
+        <span className="font-medium" style={{ color: 'var(--color-text-secondary)' }}>{label}</span>
+        <span style={{ color: textColor }}>
           {current} / {limit} ({Math.round(percentage)}%)
         </span>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-inset)' }}>
         <div
-          className={`h-full ${barColor} transition-all duration-300`}
-          style={{ width: `${Math.min(percentage, 100)}%` }}
+          className="h-full transition-all duration-300"
+          style={{ width: `${Math.min(percentage, 100)}%`, background: barColor }}
         />
       </div>
     </div>
@@ -129,13 +139,14 @@ interface UsageDashboardProps {
 
 export function UsageDashboard({ usage, onUpgrade, className = '' }: UsageDashboardProps): React.ReactElement {
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+    <div className={`rounded-xl border p-6 ${className}`} style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Usage This Month</h3>
+        <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Usage This Month</h3>
         {onUpgrade && (
           <button
             onClick={onUpgrade}
-            className="text-sm font-medium text-blue-600 hover:text-blue-700"
+            className="text-sm font-medium"
+            style={{ color: 'var(--color-text-link)' }}
           >
             Upgrade Plan
           </button>

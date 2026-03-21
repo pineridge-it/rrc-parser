@@ -157,15 +157,16 @@ export default function CompletionStep() {
           <motion.div
             variants={floatingVariants}
             animate="animate"
-            className="absolute -top-2 -left-4 text-yellow-400"
+            className="absolute -top-2 -left-4"
+            style={{ color: 'var(--color-warning)' }}
           >
             <Sparkles className="h-6 w-6" />
           </motion.div>
           <motion.div
             variants={floatingVariants}
             animate="animate"
-            style={{ animationDelay: "1s" }}
-            className="absolute -top-1 -right-4 text-yellow-400"
+            style={{ animationDelay: "1s", color: 'var(--color-warning)' }}
+            className="absolute -top-1 -right-4"
           >
             <Sparkles className="h-5 w-5" />
           </motion.div>
@@ -186,10 +187,11 @@ export default function CompletionStep() {
                   repeat: Infinity,
                   ease: "easeInOut" as const,
                 }}
-                className="absolute inset-0 bg-green-400 rounded-full blur-xl"
+                className="absolute inset-0 rounded-full blur-xl"
+                style={{ background: 'var(--color-success)' }}
               />
-              <div className="relative bg-green-100 rounded-full p-6">
-                <CheckCircle className="h-16 w-16 text-green-600" />
+              <div className="relative rounded-full p-6" style={{ background: 'var(--color-success-subtle)' }}>
+                <CheckCircle className="h-16 w-16" style={{ color: 'var(--color-success)' }} />
               </div>
             </div>
           </motion.div>
@@ -199,21 +201,23 @@ export default function CompletionStep() {
             initial={{ scale: 0, rotate: -45 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.5, type: "spring" }}
-            className="absolute -bottom-2 -right-2 bg-purple-100 rounded-full p-2"
+            className="absolute -bottom-2 -right-2 rounded-full p-2"
+            style={{ background: 'color-mix(in srgb, var(--color-info) 15%, transparent)' }}
           >
-            <PartyPopper className="h-5 w-5 text-purple-600" />
+            <PartyPopper className="h-5 w-5" style={{ color: 'var(--color-info)' }} />
           </motion.div>
         </motion.div>
 
         {/* Success message */}
         <motion.h1
           variants={itemVariants}
-          className="text-3xl font-bold text-gray-900 mb-4"
+          className="text-3xl font-bold mb-4"
+          style={{ color: 'var(--color-text-primary)' }}
         >
           You're All Set!
         </motion.h1>
 
-        <motion.p variants={itemVariants} className="text-lg text-gray-600 mb-8">
+        <motion.p variants={itemVariants} className="text-lg mb-8" style={{ color: 'var(--color-text-secondary)' }}>
           Congratulations! You've successfully set up your Texas Drilling
           Permit Alerts account.
         </motion.p>
@@ -221,13 +225,15 @@ export default function CompletionStep() {
         {/* What's Next card */}
         <motion.div
           variants={itemVariants}
-          className="bg-white rounded-lg shadow-md p-6 mb-8"
+          className="rounded-xl border p-6 mb-8"
+          style={{ background: 'var(--color-surface-raised)', borderColor: 'var(--color-border-default)' }}
         >
           <motion.h3
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-lg font-medium text-gray-900 mb-4"
+            className="text-lg font-medium mb-4"
+            style={{ color: 'var(--color-text-primary)' }}
           >
             What's Next?
           </motion.h3>
@@ -246,7 +252,10 @@ export default function CompletionStep() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 + index * 0.1 }}
                   whileHover={{ x: 5 }}
-                  className="flex items-start p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-start p-2 rounded-lg transition-colors"
+                  style={{ ['--hover-bg' as string]: 'var(--color-surface-subtle)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-surface-subtle)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '')}
                 >
                   <motion.div
                     initial={{ scale: 0 }}
@@ -254,11 +263,11 @@ export default function CompletionStep() {
                     transition={{ delay: 0.8 + index * 0.1, type: "spring" }}
                     className="flex-shrink-0"
                   >
-                    <div className="bg-green-100 rounded-full p-1">
-                      <step.icon className="h-4 w-4 text-green-600" />
+                    <div className="rounded-full p-1" style={{ background: 'var(--color-success-subtle)' }}>
+                      <step.icon className="h-4 w-4" style={{ color: 'var(--color-success)' }} />
                     </div>
                   </motion.div>
-                  <p className="ml-3 text-gray-600 text-left">{step.text}</p>
+                  <p className="ml-3 text-left" style={{ color: 'var(--color-text-secondary)' }}>{step.text}</p>
                 </motion.li>
               ))}
             </AnimatePresence>
@@ -271,7 +280,8 @@ export default function CompletionStep() {
             onClick={handleGoToDashboard}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-8 py-4 border-0 text-lg font-medium rounded-xl shadow-lg"
+            style={{ background: 'var(--color-brand-primary)', color: '#fff' }}
           >
             Go to Dashboard
             <motion.div
@@ -290,7 +300,8 @@ export default function CompletionStep() {
         {/* Additional info */}
         <motion.p
           variants={itemVariants}
-          className="mt-6 text-sm text-gray-500"
+          className="mt-6 text-sm"
+          style={{ color: 'var(--color-text-tertiary)' }}
         >
           You can always return to onboarding from your profile settings
         </motion.p>

@@ -11,11 +11,10 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, CheckCircle } from 'lucide-react'
+import { CheckCircle, Mail } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-// Inner component that uses search params
 function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,13 +22,12 @@ function LoginForm() {
   const [magicLinkSent, setMagicLinkSent] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [rememberEmail, setRememberEmail] = useState(false)
-  const { signIn, sendMagicLink, loading, error } = useAuth()
+  const { signIn, sendMagicLink, loading } = useAuth()
   const { state } = useOnboarding()
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/dashboard'
 
-  // Load remembered email on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem('rrc.rememberedEmail')
     if (savedEmail) {
@@ -38,45 +36,27 @@ function LoginForm() {
     }
   }, [])
 
-  // Email validation with real-time feedback
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
+  const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setEmail(value)
-    if (emailError) {
-      if (value && !validateEmail(value)) {
-        setEmailError('Please enter a valid email address')
-      } else {
-        setEmailError('')
-      }
-    }
+    if (emailError && (!value || validateEmail(value))) setEmailError('')
   }
 
   const handleEmailBlur = () => {
-    if (email && !validateEmail(email)) {
-      setEmailError('Please enter a valid email address')
-    }
+    if (email && !validateEmail(email)) setEmailError('Please enter a valid email address')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate email
     if (!validateEmail(email)) {
       setEmailError('Please enter a valid email address')
-      toast.error('Invalid email', {
-        description: 'Please enter a valid email address',
-      })
       return
-    } else {
-      setEmailError('')
     }
+    setEmailError('')
 
-    // Handle remember email
     if (rememberEmail) {
       localStorage.setItem('rrc.rememberedEmail', email)
     } else {
@@ -84,99 +64,115 @@ function LoginForm() {
     }
 
     if (showMagicLink) {
-      const { error: magicLinkError } = await sendMagicLink(email)
-      if (!magicLinkError) {
+      const { error } = await sendMagicLink(email)
+      if (!error) {
         setMagicLinkSent(true)
-        toast.success('Magic link sent!', {
-          description: 'Check your email for a link to sign in.',
-        })
       } else {
         toast.error('Failed to send magic link', {
-          description: magicLinkError.message || 'Please try again',
+          description: error.message || 'Please try again',
         })
       }
     } else {
-      // Validate password
       if (!password) {
-        toast.error('Password required', {
-          description: 'Please enter your password',
-        })
+        toast.error('Password required', { description: 'Please enter your password' })
         return
       }
 
-      const { error: signInError } = await signIn(email, password)
-      if (!signInError) {
-        toast.success('Welcome back!', {
-          description: 'Signing you in...',
-        })
-        // Redirect to onboarding if not complete, otherwise go to dashboard
-        if (!state.isOnboardingComplete) {
-          router.push('/onboarding')
-        } else {
-          router.push(redirect)
-        }
+      const { error } = await signIn(email, password)
+      if (!error) {
+        toast.success('Welcome back!')
+        router.push(state.isOnboardingComplete ? redirect : '/onboarding')
       } else {
         toast.error('Sign in failed', {
-          description: signInError.message || 'Please check your credentials and try again',
+          description: error.message || 'Please check your credentials and try again',
         })
       }
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-              create a new account
-            </Link>
+    <div
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      style={{ background: 'var(--color-surface-subtle)' }}
+    >
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+            <div
+              className="h-9 w-9 rounded-xl flex items-center justify-center text-white font-bold text-base"
+              style={{ background: 'var(--color-brand-primary)' }}
+            >
+              R
+            </div>
+            <span
+              className="text-xl font-semibold"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              RRC Alerts
+            </span>
+          </Link>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Welcome back
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+            Sign in to your account to continue
           </p>
         </div>
 
-        <AnimatePresence mode="wait">
-          {magicLinkSent ? (
-            <motion.div
-              key="magic-link-success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="rounded-lg bg-green-50 p-6 text-center"
-            >
+        <div
+          className="rounded-2xl border p-8 shadow-sm"
+          style={{
+            background: 'var(--color-surface-raised)',
+            borderColor: 'var(--color-border-default)',
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {magicLinkSent ? (
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-4"
+                key="magic-link-success"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="text-center py-4"
               >
-                <CheckCircle className="h-8 w-8 text-green-600" />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 220 }}
+                  className="mx-auto flex h-14 w-14 items-center justify-center rounded-full mb-4"
+                  style={{ background: 'var(--color-success-subtle)' }}
+                >
+                  <CheckCircle className="h-7 w-7" style={{ color: 'var(--color-success)' }} />
+                </motion.div>
+                <h3
+                  className="text-base font-semibold mb-1"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  Check your inbox
+                </h3>
+                <p className="text-sm mb-6" style={{ color: 'var(--color-text-tertiary)' }}>
+                  We sent a sign-in link to <strong style={{ color: 'var(--color-text-secondary)' }}>{email}</strong>
+                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => { setMagicLinkSent(false); setShowMagicLink(false) }}
+                >
+                  Back to sign in
+                </Button>
               </motion.div>
-              <h3 className="text-lg font-medium text-green-900 mb-2">
-                Magic link sent!
-              </h3>
-              <p className="text-sm text-green-700 mb-4">
-                Check your email for a link to sign in.
-              </p>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setMagicLinkSent(false)
-                  setShowMagicLink(false)
-                }}
+            ) : (
+              <motion.form
+                key="login-form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="space-y-5"
               >
-                Back to sign in
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.form
-              key="login-form"
-              onSubmit={handleSubmit}
-            >
-              <div className="space-y-4">
                 <Input
                   id="email-address"
                   name="email"
@@ -184,7 +180,7 @@ function LoginForm() {
                   autoComplete="email"
                   required
                   label="Email address"
-                  placeholder="your.email@example.com"
+                  placeholder="you@example.com"
                   floatingLabel
                   value={email}
                   onChange={handleEmailChange}
@@ -193,126 +189,121 @@ function LoginForm() {
                   disabled={loading}
                 />
 
-                {!showMagicLink && (
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required={!showMagicLink}
-                    label="Password"
-                    placeholder="Enter your password"
-                    floatingLabel
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value)
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              </div>
+                <AnimatePresence>
+                  {!showMagicLink && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="current-password"
+                        required={!showMagicLink}
+                        label="Password"
+                        placeholder="Enter your password"
+                        floatingLabel
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-md bg-red-50 p-4"
-                >
-                  <div className="flex">
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">
-                        Error
-                      </h3>
-                      <div className="mt-2 text-sm text-red-700">
-                        <p>{error.message}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="magic-link"
-                    checked={showMagicLink}
-                    onCheckedChange={(checked) => {
-                      setShowMagicLink(checked as boolean)
-                      setPassword('')
-                    }}
-                    disabled={loading}
-                  />
+                <div className="flex items-center justify-between gap-4">
                   <label
-                    htmlFor="magic-link"
-                    className="text-sm text-gray-900 cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer select-none"
                   >
-                    Use magic link
+                    <Checkbox
+                      id="magic-link"
+                      checked={showMagicLink}
+                      onCheckedChange={(checked) => {
+                        setShowMagicLink(checked as boolean)
+                        setPassword('')
+                      }}
+                      disabled={loading}
+                    />
+                    <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                      Use magic link
+                    </span>
                   </label>
-                </div>
 
-                {!showMagicLink && (
-                  <div className="text-sm">
+                  {!showMagicLink && (
                     <Link
                       href="/forgot-password"
-                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                      className="text-sm font-medium transition-colors"
+                      style={{ color: 'var(--color-text-link)' }}
                     >
-                      Forgot your password?
+                      Forgot password?
                     </Link>
-                  </div>
-                )}
-              </div>
-
-              {!showMagicLink && (
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="remember"
-                    checked={rememberEmail}
-                    onCheckedChange={(checked) => setRememberEmail(checked as boolean)}
-                    disabled={loading}
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="text-sm text-gray-600 cursor-pointer"
-                  >
-                    Remember my email
-                  </label>
+                  )}
                 </div>
-              )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {showMagicLink ? 'Sending...' : 'Signing in...'}
-                  </>
-                ) : (
-                  showMagicLink ? 'Send Magic Link' : 'Sign in'
+                {!showMagicLink && (
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <Checkbox
+                      id="remember"
+                      checked={rememberEmail}
+                      onCheckedChange={(checked) => setRememberEmail(checked as boolean)}
+                      disabled={loading}
+                    />
+                    <span className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                      Remember my email
+                    </span>
+                  </label>
                 )}
-              </Button>
-            </motion.form>
-          )}
-        </AnimatePresence>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  loading={loading}
+                >
+                  {showMagicLink ? (
+                    <><Mail className="mr-2 h-4 w-4" />Send Magic Link</>
+                  ) : (
+                    'Sign in'
+                  )}
+                </Button>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <p className="mt-6 text-center text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+          Don't have an account?{' '}
+          <Link
+            href="/signup"
+            className="font-medium transition-colors"
+            style={{ color: 'var(--color-text-link)' }}
+          >
+            Create one for free
+          </Link>
+        </p>
       </div>
     </div>
   )
 }
 
-// Main page component with Suspense boundary
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-indigo-600" />
-          <p className="mt-2 text-gray-600">Loading...</p>
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ background: 'var(--color-surface-subtle)' }}
+        >
+          <div
+            className="h-8 w-8 rounded-full border-2 border-t-transparent animate-spin"
+            style={{ borderColor: 'var(--color-brand-primary)', borderTopColor: 'transparent' }}
+          />
         </div>
-      </div>
-    }>
+      }
+    >
       <LoginForm />
     </Suspense>
   )

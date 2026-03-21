@@ -167,7 +167,8 @@ export function NotificationBell({
             e.stopPropagation();
             onBatchSimilarNotifications(notifications.map(n => n.id));
           }}
-          className="absolute -bottom-2 -right-2 w-5 h-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center shadow-sm hover:bg-blue-600 transition-colors"
+          className="absolute -bottom-2 -right-2 w-5 h-5 rounded-full text-white text-xs flex items-center justify-center shadow-sm transition-colors"
+          style={{ background: 'var(--color-info)' }}
           aria-label="Batch similar notifications"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">

@@ -397,17 +397,6 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-
-/* Button ripple effect container */
-.btn-ripple {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-ripple::after {
-  content: '';
-  position: absolute;
-=======
   }
 
   .animate-shimmer {
@@ -418,17 +407,6 @@ body {
 
 /* ========================================
    BUTTON MICRO-INTERACTION UTILITIES
-   ======================================== */
-
-/* Button ripple effect container */
-.btn-ripple {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-ripple::after {
-  content: '';
-  position: absolute;
    ======================================== */
 
 /* Button ripple effect container */
@@ -550,90 +528,6 @@ button, .btn {
               box-shadow var(--duration-fast) var(--ease-out);
 }
 
-/* ========================================
-   ANIMATION UTILITY CLASSES
-   ======================================== */
-
-.animate-fade-in {
-  animation: fadeIn var(--duration-normal) var(--ease-out);
-}
-
-.animate-slide-up {
-  animation: slideUp var(--duration-normal) var(--ease-out);
-}
-
-.animate-scale-in {
-  animation: scaleIn var(--duration-fast) var(--ease-out);
-}
-
-.animate-pulse {
-  animation: pulse var(--duration-slow) var(--ease-in-out) infinite;
-}
-
-.animate-spin {
-  animation: spin var(--duration-slow) linear infinite;
-}
-
-.animate-bounce {
-  animation: bounce var(--duration-slow) var(--ease-spring) infinite;
-}
-
-.animate-shake {
-  animation: shake 0.4s var(--ease-out);
-}
-
-.animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-subtle) 25%,
-    var(--color-surface-raised) 50%,
-    var(--color-surface-subtle) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer var(--duration-slower) infinite;
-}
-
-/* ========================================
-   TOUCH TARGET UTILITIES
-   ======================================== */
-.touch-target {
-  min-width: var(--touch-target-min);
-  min-height: var(--touch-target-min);
-}
-
-.touch-target-comfortable {
-  min-width: var(--touch-target-comfortable);
-  min-height: var(--touch-target-comfortable);
-}
-
-/* ========================================
-   REDUCED MOTION
-   ======================================== */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .animate-shimmer {
-    animation: none;
-    background: var(--color-surface-subtle);
-  }
-
-  .btn-ripple::after,
-  .btn-press:active,
-  .btn-lift:hover,
-  .btn-loading-dots span,
-  .btn-success,
-  .btn-error-shake {
-    animation: none;
-    transform: none;
-  }
-// ... existing code ...
 
 /* ========================================
    FORM FIELD MICRO-INTERACTIONS

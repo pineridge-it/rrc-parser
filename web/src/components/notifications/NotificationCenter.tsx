@@ -233,71 +233,65 @@ export default function NotificationCenter({
   // Get icon based on notification type
   const getIcon = (iconType?: string, notificationType?: string) => {
     const type = notificationType || iconType || 'default'
-
     const iconClasses = "h-5 w-5"
-    const containerClasses = "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+    const containerBase = "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
 
-    switch (type) {
-      case 'permit':
-      case 'success':
-        return (
-          <div className={`${containerClasses} bg-green-100`}>
-            <svg className={`${iconClasses} text-green-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        )
-      case 'alert':
-      case 'warning':
-        return (
-          <div className={`${containerClasses} bg-yellow-100`}>
-            <svg className={`${iconClasses} text-yellow-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-        )
-      case 'error':
-        return (
-          <div className={`${containerClasses} bg-red-100`}>
-            <svg className={`${iconClasses} text-red-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        )
-      case 'system':
-        return (
-          <div className={`${containerClasses} bg-gray-100`}>
-            <svg className={`${iconClasses} text-gray-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-        )
-      case 'export':
-        return (
-          <div className={`${containerClasses} bg-blue-100`}>
-            <svg className={`${iconClasses} text-blue-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-        )
-      case 'usage':
-        return (
-          <div className={`${containerClasses} bg-purple-100`}>
-            <svg className={`${iconClasses} text-purple-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-        )
-      default:
-        return (
-          <div className={`${containerClasses} bg-gray-100`}>
-            <svg className={`${iconClasses} text-gray-600`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        )
+    const configs: Record<string, { bg: string; color: string; path: string }> = {
+      permit: {
+        bg: 'color-mix(in srgb, var(--color-success) 12%, transparent)',
+        color: 'var(--color-success)',
+        path: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+      },
+      success: {
+        bg: 'color-mix(in srgb, var(--color-success) 12%, transparent)',
+        color: 'var(--color-success)',
+        path: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+      },
+      alert: {
+        bg: 'color-mix(in srgb, var(--color-warning) 12%, transparent)',
+        color: 'var(--color-warning)',
+        path: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+      },
+      warning: {
+        bg: 'color-mix(in srgb, var(--color-warning) 12%, transparent)',
+        color: 'var(--color-warning)',
+        path: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+      },
+      error: {
+        bg: 'color-mix(in srgb, var(--color-error) 12%, transparent)',
+        color: 'var(--color-error)',
+        path: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+      },
+      system: {
+        bg: 'var(--color-surface-subtle)',
+        color: 'var(--color-text-secondary)',
+        path: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+      },
+      export: {
+        bg: 'color-mix(in srgb, var(--color-info) 12%, transparent)',
+        color: 'var(--color-info)',
+        path: 'M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+      },
+      usage: {
+        bg: 'color-mix(in srgb, var(--color-brand-primary) 12%, transparent)',
+        color: 'var(--color-brand-primary)',
+        path: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+      },
     }
+
+    const cfg = configs[type] ?? {
+      bg: 'var(--color-surface-subtle)',
+      color: 'var(--color-text-secondary)',
+      path: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+    }
+
+    return (
+      <div className={containerBase} style={{ background: cfg.bg }}>
+        <svg className={iconClasses} style={{ color: cfg.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={cfg.path} />
+        </svg>
+      </div>
+    )
   }
 
   // Get category label
@@ -315,12 +309,12 @@ export default function NotificationCenter({
     }
   }
 
-  // Get priority class
-  const getPriorityClass = (priority?: string) => {
+  // Get priority border style
+  const getPriorityStyle = (priority?: string): React.CSSProperties => {
     switch (priority) {
-      case 'high': return 'border-l-4 border-l-yellow-500'
-      case 'critical': return 'border-l-4 border-l-red-500'
-      default: return ''
+      case 'high': return { borderLeft: '4px solid var(--color-warning)' }
+      case 'critical': return { borderLeft: '4px solid var(--color-error)' }
+      default: return {}
     }
   }
 
@@ -507,11 +501,13 @@ export default function NotificationCenter({
                         onClick={() => handleNotificationClick(notification)}
                         className={cn(
                           "px-4 py-3 hover:bg-[var(--color-surface-subtle)] cursor-pointer transition-colors",
-                          getPriorityClass(notification.priority),
                           !notification.isRead && !notification.isSnoozed && 'bg-[var(--color-brand-primary)]/5',
                           selectedIds.has(notification.id) && 'bg-[var(--color-brand-primary)]/10',
-                          notification.isBatched && 'bg-[var(--color-surface-raised)] border-l-4 border-l-blue-500'
                         )}
+                        style={{
+                          ...getPriorityStyle(notification.priority),
+                          ...(notification.isBatched ? { background: 'var(--color-surface-raised)', borderLeft: '4px solid var(--color-info)' } : {}),
+                        }}
                       >
                         <div className="flex items-start gap-3">
                           {/* Checkbox in bulk mode */}
@@ -609,7 +605,7 @@ export default function NotificationCenter({
                                       )}
                                       <DropdownMenuItem
                                         onClick={(e) => handleRemoveNotification?.(notification.id, e)}
-                                        className="text-red-600"
+                                        style={{ color: 'var(--color-error)' }}
                                       >
                                         <Trash2 className="h-4 w-4 mr-2" />
                                         Delete
