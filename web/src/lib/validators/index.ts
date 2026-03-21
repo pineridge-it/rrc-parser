@@ -359,6 +359,24 @@ export type AlertSubscriptionUpdateInput = z.infer<typeof alertSubscriptionUpdat
 export type AlertEventsQueryInput = z.infer<typeof alertEventsQuerySchema>;
 
 /**
+ * Digest preferences update schema
+ */
+export const digestPreferencesUpdateSchema = z.object({
+  digest_enabled: z.boolean().optional(),
+  digest_frequency: z.enum(['daily', 'weekly', 'off']).optional(),
+  digest_day_of_week: z.number().int().min(0).max(6).optional(),
+  digest_hour_utc: z.number().int().min(0).max(23).optional(),
+  include_saved_searches: z.boolean().optional(),
+  include_status_changes: z.boolean().optional(),
+  include_new_operators: z.boolean().optional(),
+}).strict().refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'At least one field must be provided for update' }
+);
+
+export type DigestPreferencesUpdateInput = z.infer<typeof digestPreferencesUpdateSchema>;
+
+/**
  * API number parameter schema
  */
 export const apiNumberSchema = z.string().min(1).max(50);
