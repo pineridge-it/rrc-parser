@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const queryParams: Record<string, string | undefined> = {
       page: url.searchParams.get('page') || '1',
       pageSize: url.searchParams.get('pageSize') || '50',
-      search: url.searchParams.get('search') || undefined,
+      search: url.searchParams.get('search') || url.searchParams.get('q') || undefined,
     };
 
     // Remove undefined values
@@ -41,13 +41,14 @@ export async function GET(request: NextRequest) {
 
     const { page, pageSize, search } = validation.data;
 
+    // Use operator_stats_summary materialized view for fast queries
     let query = db
-      .from('operators')
-      .select('id, canonical_name', { count: 'exact' })
-      .order('canonical_name', { ascending: true });
+      .from('operator_stats_summary')
+      .select('operator_name, total_permits, active_since, last_filing_date, approval_rate_pct, approved_count, denied_count, pending_count', { count: 'exact' })
+      .order('total_permits', { ascending: false });
 
     if (search) {
-      query = query.ilike('canonical_name', `%${search}%`);
+      query = query.ilike('operator_name', `%${search}%`);
     }
 
     const from = (page - 1) * pageSize;
@@ -60,28 +61,16 @@ export async function GET(request: NextRequest) {
       throw new Error(`Database query failed: ${error.message}`);
     }
 
-    const operatorIds = (data || []).map((op) => op.id);
-
-    // Aggregate permit counts server-side to avoid fetching all rows
-    const { data: permitCounts, error: countError } = await db
-      .from('permits')
-      .select('operator_id')
-      .in('operator_id', operatorIds);
-
-    if (countError) {
-      throw new Error(`Failed to fetch permit counts: ${countError.message}`);
-    }
-
-    const permitCountMap = new Map<string, number>();
-    (permitCounts || []).forEach((p) => {
-      const id = p.operator_id;
-      permitCountMap.set(id, (permitCountMap.get(id) || 0) + 1);
-    });
-
-    const operators: OperatorApiResponse[] = (data || []).map((operator) => ({
-      id: operator.id,
-      canonicalName: operator.canonical_name,
-      permitCount: permitCountMap.get(operator.id) || 0,
+    const operators: OperatorApiResponse[] = (data || []).map((op) => ({
+      id: op.operator_name,
+      canonicalName: op.operator_name,
+      permitCount: op.total_permits || 0,
+      activeSince: op.active_since,
+      lastFilingDate: op.last_filing_date,
+      approvalRate: op.approval_rate_pct,
+      approvedCount: op.approved_count,
+      deniedCount: op.denied_count,
+      pendingCount: op.pending_count,
     }));
 
     return createApiResponse(

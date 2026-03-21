@@ -53,9 +53,15 @@ export interface PermitApiResponse {
 }
 
 export interface OperatorApiResponse {
-  id: UUID;
+  id: UUID | string;
   canonicalName: string;
   permitCount?: number;
+  activeSince?: string | null;
+  lastFilingDate?: string | null;
+  approvalRate?: number | null;
+  approvedCount?: number;
+  deniedCount?: number;
+  pendingCount?: number;
 }
 
 export interface AoiApiResponse {

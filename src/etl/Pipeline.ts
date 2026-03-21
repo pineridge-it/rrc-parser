@@ -245,6 +245,27 @@ export class EtlPipeline {
         this.logger.info('Step 4: Load - SKIPPED (loader disabled)');
       }
 
+      // Step 5: Refresh operator stats materialized views
+      if (this.supabase && qaPassed && permitsUpserted > 0) {
+        this.logger.info('Step 5: Refresh - Updating operator stats materialized views');
+        try {
+          const { error: rpcError } = await this.supabase.rpc('refresh_operator_stats_views');
+          if (rpcError) {
+            this.logger.warn(`Operator stats refresh failed (non-critical): ${rpcError.message}`);
+          } else {
+            this.logger.info('Operator stats materialized views refreshed successfully');
+          }
+        } catch (refreshError) {
+          this.logger.warn(`Operator stats refresh error (non-critical): ${refreshError instanceof Error ? refreshError.message : String(refreshError)}`);
+        }
+      } else if (!qaPassed) {
+        this.logger.info('Step 5: Refresh - SKIPPED (QA gates failed)');
+      } else if (permitsUpserted === 0) {
+        this.logger.info('Step 5: Refresh - SKIPPED (no permits upserted)');
+      } else {
+        this.logger.info('Step 5: Refresh - SKIPPED (supabase client not available)');
+      }
+
     } catch (error) {
       const errorMsg = `ETL pipeline failed: ${error instanceof Error ? error.message : String(error)}`;
       errors.push(errorMsg);
