@@ -316,9 +316,13 @@ export type CustomStatusUpdateInput = z.infer<typeof customStatusUpdateSchema>;
  */
 export const alertSubscriptionCreateSchema = z.object({
   name: z.string().max(255).optional(),
-  trigger_type: z.enum(['permit_status_change', 'search_result_change']),
+  trigger_type: z.enum(['permit_status_change', 'search_result_change', 'operator_activity']),
   permit_api_number: z.string().max(50).optional(),
   saved_search_id: z.string().regex(uuidRegex).optional(),
+  operator_name: z.string().max(255).optional(),
+  county_filter: z.string().max(100).optional(),
+  formation_filter: z.string().max(100).optional(),
+  min_depth_filter: z.number().int().min(0).optional(),
   watched_statuses: z.array(z.string().max(50)).default([]),
   notify_channels: z.array(z.enum(['email', 'in_app'])).min(1, 'At least one notification channel required'),
 }).strict().refine(
@@ -329,9 +333,12 @@ export const alertSubscriptionCreateSchema = z.object({
     if (data.trigger_type === 'search_result_change' && !data.saved_search_id) {
       return false;
     }
+    if (data.trigger_type === 'operator_activity' && !data.operator_name) {
+      return false;
+    }
     return true;
   },
-  { message: 'permit_api_number required for permit_status_change; saved_search_id required for search_result_change' }
+  { message: 'permit_api_number required for permit_status_change; saved_search_id required for search_result_change; operator_name required for operator_activity' }
 );
 
 /**
@@ -339,6 +346,10 @@ export const alertSubscriptionCreateSchema = z.object({
  */
 export const alertSubscriptionUpdateSchema = z.object({
   name: z.string().max(255).optional(),
+  operator_name: z.string().max(255).optional(),
+  county_filter: z.string().max(100).optional(),
+  formation_filter: z.string().max(100).optional(),
+  min_depth_filter: z.number().int().min(0).optional(),
   watched_statuses: z.array(z.string().max(50)).optional(),
   notify_channels: z.array(z.enum(['email', 'in_app'])).min(1).optional(),
   is_active: z.boolean().optional(),

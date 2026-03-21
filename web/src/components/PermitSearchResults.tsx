@@ -31,6 +31,8 @@ type ColumnVisibility = {
   county: boolean
   status: boolean
   filed_date: boolean
+  annotation_tags: boolean
+  annotation_custom_status: boolean
 }
 
 export function PermitSearchResults({
@@ -49,6 +51,8 @@ export function PermitSearchResults({
     county: true,
     status: true,
     filed_date: true,
+    annotation_tags: false,
+    annotation_custom_status: false,
   })
   const [showColumnSettings, setShowColumnSettings] = useState(false)
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set())
@@ -99,25 +103,95 @@ export function PermitSearchResults({
             style={{ accentColor: 'var(--color-brand-primary)' }}
           />
         ),
-        enableSorting: false,
         size: 40,
+        enableResizing: false,
       },
       {
         accessorKey: 'permit_number',
-        header: 'Permit',
-        cell: ({ row }) => (
-          <div>
-            <div className="text-sm font-medium" style={{ color: 'var(--color-text-link)' }}>
-              {row.original.permit_number}
-            </div>
-            <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{row.original.permit_type}</div>
-          </div>
-        ),
-        enableSorting: true,
+        header: 'Permit #',
+        cell: ({ getValue }) => <div className="font-medium">{getValue<string>()}</div>,
+        size: 120,
       },
       {
         accessorKey: 'operator_name',
         header: 'Operator',
+        cell: ({ getValue }) => <div>{getValue<string>() || 'N/A'}</div>,
+        size: 150,
+      },
+      {
+        accessorKey: 'lease_name',
+        header: 'Lease Name',
+        cell: ({ getValue }) => <div>{getValue<string>() || 'N/A'}</div>,
+        size: 150,
+      },
+      {
+        accessorKey: 'county',
+        header: 'County',
+        cell: ({ getValue }) => <div>{getValue<string>() || 'N/A'}</div>,
+        size: 120,
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ getValue }) => {
+          const status = getValue<string>()
+          return (
+            <span
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+              style={getStatusStyle(status)}
+            >
+              {status || 'N/A'}
+            </span>
+          )
+        },
+        size: 100,
+      },
+      {
+        accessorKey: 'filed_date',
+        header: 'Filed Date',
+        cell: ({ getValue }) => <div>{formatDate(getValue<string>())}</div>,
+        size: 120,
+      },
+      // Annotation columns (hidden by default)
+      {
+        accessorKey: 'annotation_tags',
+        header: 'Tags',
+        cell: ({ getValue }) => {
+          const tags = getValue<string[]>() || []
+          return (
+            <div className="flex flex-wrap gap-1">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )
+        },
+        size: 150,
+        enableHiding: true,
+      },
+      {
+        accessorKey: 'annotation_custom_status',
+        header: 'Custom Status',
+        cell: ({ getValue }) => {
+          const status = getValue<string>()
+          if (!status) return null
+          return (
+            <span
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+              style={{ color: 'var(--color-text-primary)', background: 'var(--color-surface-subtle)' }}
+            >
+              {status}
+            </span>
+          )
+        },
+        size: 120,
+        enableHiding: true,
+      },
         cell: ({ row }) => (
           <div>
             <div className="text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.original.operator_name}</div>

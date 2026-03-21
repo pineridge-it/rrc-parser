@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import WatchOperatorButton from "./WatchOperatorButton";
 
 interface OperatorStats {
   operator: {
@@ -50,6 +51,8 @@ interface OperatorStats {
 interface Props {
   initialData: OperatorStats;
   operatorName: string;
+  workspaceId: string;
+  userId: string;
 }
 
 const periodOptions = [

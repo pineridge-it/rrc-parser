@@ -404,6 +404,118 @@ export function PermitSearchFilters({
         </div>
       )}
 
+      {/* My Annotations Section */}
+      <div className="border-t border-gray-200 pt-6">
+        <button
+          type="button"
+          className="flex items-center justify-between w-full text-left"
+          onClick={() => toggleSection('annotations')}
+        >
+          <span className="text-sm font-medium text-gray-900">My Annotations</span>
+          <SlidersHorizontal className="h-4 w-4 text-gray-400" />
+        </button>
+
+        {(expandedSections.has('annotations') || hasActiveAnnotationFilters) && (
+          <div className="mt-4 space-y-6">
+            {/* Tags */}
+            {filterOptions?.tags && filterOptions.tags.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                  Tags
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {filterOptions.tags.map((tag) => {
+                    const isSelected = filters.annotationTags?.includes(tag.tag_name);
+                    return (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => handleAnnotationTagToggle(tag.tag_name)}
+                        className={cn(
+                          'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+                          isSelected
+                            ? 'bg-indigo-100 text-indigo-800'
+                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        )}
+                      >
+                        {tag.tag_name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Custom Status */}
+            {filterOptions?.customStatuses && filterOptions.customStatuses.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                  Custom Status
+                </label>
+                <FilterChipGroup
+                  options={filterOptions.customStatuses.map(status => ({
+                    value: status.status_name,
+                    label: status.status_name
+                  }))}
+                  selectedValues={filters.annotationStatus || []}
+                  onToggle={handleAnnotationStatusToggle}
+                />
+              </div>
+            )}
+
+            {/* Assignee */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                Assignee
+              </label>
+              <select
+                value={filters.assignee || ''}
+                onChange={(e) => handleAssigneeChange(e.target.value || undefined)}
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              >
+                <option value="">Any assignee</option>
+                <option value="me">Assigned to me</option>
+                {filterOptions?.workspaceMembers?.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name || member.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Has Notes */}
+            <div className="flex items-center">
+              <input
+                id="has-notes"
+                name="has-notes"
+                type="checkbox"
+                checked={filters.hasNotes === true}
+                onChange={handleHasNotesToggle}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <label htmlFor="has-notes" className="ml-2 block text-sm text-gray-900">
+                Has Notes
+              </label>
+            </div>
+
+            {/* Annotated */}
+            <div className="flex items-center">
+              <input
+                id="annotated"
+                name="annotated"
+                type="checkbox"
+                checked={filters.annotated === true}
+                onChange={handleAnnotatedToggle}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <label htmlFor="annotated" className="ml-2 block text-sm text-gray-900">
+                Annotated
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Filed Date Range */}
       <div>
         <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
