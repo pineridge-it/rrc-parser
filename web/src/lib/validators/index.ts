@@ -262,3 +262,61 @@ export function logValidationFailure(
   // Log to console for now (could be sent to security monitoring service)
   console.warn('[VALIDATION_FAILURE]', JSON.stringify(logEntry));
 }
+
+/**
+ * Annotation upsert schema
+ */
+export const annotationUpsertSchema = z.object({
+  notes: z.string().max(10000, 'Notes cannot exceed 10,000 characters').optional(),
+  tags: z.array(z.string().max(50, 'Tag names cannot exceed 50 characters')).max(20, 'Cannot have more than 20 tags').optional(),
+  custom_status: z.string().max(100).nullable().optional(),
+  assignee_user_id: z.string().regex(uuidRegex, 'Invalid user ID format').nullable().optional(),
+}).strict();
+
+/**
+ * Bulk annotation update schema
+ */
+export const bulkAnnotationSchema = z.object({
+  permit_api_numbers: z.array(z.string().max(50)).min(1).max(100, 'Cannot update more than 100 permits at once'),
+  tags: z.array(z.string().max(50)).max(20).optional(),
+  custom_status: z.string().max(100).nullable().optional(),
+  assignee_user_id: z.string().regex(uuidRegex).nullable().optional(),
+}).strict();
+
+/**
+ * Tag definition schema
+ */
+export const tagDefinitionSchema = z.object({
+  tag_name: z.string().min(1).max(50, 'Tag name cannot exceed 50 characters'),
+  color_hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color must be a valid hex color').default('#6B7280'),
+}).strict();
+
+/**
+ * Custom status schema
+ */
+export const customStatusSchema = z.object({
+  status_name: z.string().min(1).max(100),
+  color_hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Color must be a valid hex color').default('#6B7280'),
+  sort_order: z.number().int().min(0).optional(),
+}).strict();
+
+/**
+ * Custom status update schema
+ */
+export const customStatusUpdateSchema = z.object({
+  status_name: z.string().min(1).max(100).optional(),
+  color_hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  sort_order: z.number().int().min(0).optional(),
+}).strict();
+
+/**
+ * API number parameter schema
+ */
+export const apiNumberSchema = z.string().min(1).max(50);
+
+// Export types
+export type AnnotationUpsertInput = z.infer<typeof annotationUpsertSchema>;
+export type BulkAnnotationInput = z.infer<typeof bulkAnnotationSchema>;
+export type TagDefinitionInput = z.infer<typeof tagDefinitionSchema>;
+export type CustomStatusInput = z.infer<typeof customStatusSchema>;
+export type CustomStatusUpdateInput = z.infer<typeof customStatusUpdateSchema>;
