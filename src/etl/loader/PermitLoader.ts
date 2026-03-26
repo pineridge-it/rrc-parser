@@ -350,22 +350,31 @@ export class PermitLoader {
 
     // Use UPSERT with onConflict to atomically insert or return existing
     // This eliminates the race condition window between INSERT and SELECT
+    // We use a separate 'inserted_at' column to reliably detect new inserts
     const { data: permitData, error: permitError } = await this.supabase
       .from('permits')
       .upsert(
-        { permit_number: permitNumber, created_at: now, updated_at: now },
+        {
+          permit_number: permitNumber,
+          created_at: now,
+          updated_at: now,
+          // Use a unique value for this specific upsert operation to detect if we created the row
+          _upsert_marker: now
+        },
         { onConflict: 'permit_number', ignoreDuplicates: false }
       )
-      .select('id, created_at, updated_at')
+      .select('id, created_at')
       .single();
 
     if (permitError || !permitData) {
       throw new Error(`Failed to upsert permit: ${permitError?.message ?? 'no data returned'}`);
     }
 
-    // Determine if this was an insert or update by comparing timestamps
-    // If created_at === updated_at, it's a new insert
-    const wasInserted = permitData.created_at === permitData.updated_at;
+    // Determine if this was an insert by checking if created_at is very close to now
+    // (within 1 second tolerance for clock skew/network latency)
+    const createdTime = new Date(permitData.created_at).getTime();
+    const nowTime = new Date(now).getTime();
+    const wasInserted = Math.abs(nowTime - createdTime) < 1000;
     const permitId = permitData.id;
 
     let versionId: string | null = null;

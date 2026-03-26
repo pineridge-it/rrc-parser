@@ -64,9 +64,10 @@ export class AlertDetectionService {
 
     if (failures.length > 0) {
       console.warn(`${failures.length} subscriptions failed processing`);
-      failures.forEach((f, i) => {
-        const reason = f.status === 'rejected' ? f.reason : 'unknown';
-        console.error(`  Subscription ${subscriptions[i]?.id}:`, reason);
+      results.forEach((result, i) => {
+        if (result.status === 'rejected') {
+          console.error(`  Subscription ${subscriptions[i]?.id}:`, result.reason);
+        }
       });
     }
 

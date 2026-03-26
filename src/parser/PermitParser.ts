@@ -565,6 +565,12 @@ export class PermitParser {
       }
 
       return new Promise<ParseResult>((resolve, reject) => {
+        // Set up timeout to prevent hanging on malformed or extremely large files
+        const timeoutId = setTimeout(() => {
+          fileStream.destroy();
+          reject(new Error(`Parse timeout: File parsing exceeded ${PARSE_TIMEOUT_MS}ms`));
+        }, PARSE_TIMEOUT_MS);
+
         const fileStream = fs.createReadStream(resolvedPath, {
           encoding: this.config.settings.encoding as BufferEncoding,
           highWaterMark: 64 * 1024 // 64KB buffer for efficient streaming
@@ -677,13 +683,18 @@ export class PermitParser {
               }
             };
 
+            clearTimeout(timeoutId); // Clear timeout on successful completion
             resolve(result);
           } catch (err) {
+            clearTimeout(timeoutId); // Clear timeout on error
             reject(err);
           }
         });
 
-        fileStream.on('error', reject);
+        fileStream.on('error', (err) => {
+          clearTimeout(timeoutId); // Clear timeout on stream error
+          reject(err);
+        });
       });
     });
   }

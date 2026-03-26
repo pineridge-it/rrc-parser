@@ -1,19 +1,13 @@
 import { NextRequest } from 'next/server';
 import {
   authenticateApiRequest,
-  createApiResponse,
-  createApiErrorResponse,
   createValidationErrorResponse,
+  createApiErrorResponse,
 } from '../../../../../src/middleware/api-auth';
-import { createDatabaseClient } from '../../../../../src/lib/database';
-import {
-  digestPreferencesSchema,
-  validateBody,
-} from '@/lib/validators';
 
 export async function GET(request: NextRequest) {
   try {
-    const { auth, rateLimit } = await authenticateApiRequest(request);
+    const { rateLimit } = await authenticateApiRequest(request);
     
     // API key authentication doesn't provide user context
     // Digest preferences are user-specific, so this endpoint requires user authentication
@@ -28,7 +22,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { auth, rateLimit } = await authenticateApiRequest(request);
+    const { rateLimit } = await authenticateApiRequest(request);
     
     // API key authentication doesn't provide user context
     // Digest preferences are user-specific, so this endpoint requires user authentication

@@ -80,14 +80,18 @@ export class ValueChecks {
           // Skip non-date values and empty strings
           if (value == null || value === '') continue;
 
-          // Handle Date objects directly
+          // Handle Date objects directly with strict validation
           let date: Date;
           if (value instanceof Date) {
+            // Validate the Date object is not Invalid Date
+            if (isNaN(value.getTime())) continue;
             date = value;
           } else if (typeof value === 'number') {
             // Validate timestamp is within reasonable range (1900-2100)
             if (value < -2208988800000 || value > 4102444800000) continue;
             date = new Date(value);
+            // Validate the constructed date is valid
+            if (isNaN(date.getTime())) continue;
           } else {
             // For strings, use strict parsing
             const strValue = String(value).trim();
@@ -99,6 +103,7 @@ export class ValueChecks {
             date = new Date(strValue);
           }
 
+          // Final validation: ensure the date is valid
           if (isNaN(date.getTime())) continue;
 
           if (date > maxFuture) {
