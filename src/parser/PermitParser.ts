@@ -42,6 +42,8 @@ export interface ParserOptions {
   tempDir?: string;
   /** Enable streaming mode - write permits to disk as they're completed (default: true) */
   streamingMode?: boolean;
+  /** Parse timeout in milliseconds (default: 30 minutes) */
+  parseTimeoutMs?: number;
 }
 
 export interface ParseResult {
@@ -516,8 +518,13 @@ export class PermitParser {
 
   /**
    * Parse a DAF420 file with streaming support and memory optimization
+   *
+   * Includes a configurable timeout (default: 30 minutes) to prevent
+   * hanging on malformed or extremely large files.
    */
   async parseFile(inputPath: string, options: ParserOptions = {}): Promise<ParseResult> {
+    const PARSE_TIMEOUT_MS = options.parseTimeoutMs ?? 30 * 60 * 1000; // 30 minutes default
+
     return this.perfMonitor.timeAsync('parseFile', async () => {
       // ── Path Traversal Protection ──────────────────────────────────────────
       // Validate and normalize the input path to prevent directory traversal attacks

@@ -114,8 +114,11 @@ export class DigestService {
     const htmlBody = this.generateDigestHtml(digest);
     const textBody = this.generateDigestText(digest);
 
-    // TODO: Get user email from user service
-    const userEmail = 'user@example.com';
+    // Get user email from preferences service - NEVER use hardcoded emails
+    const userEmail = await this.preferencesService.getUserEmail(digest.userId);
+    if (!userEmail) {
+      throw new Error(`User ${digest.userId} has no email address configured`);
+    }
 
     await this.emailService.sendRawEmail({
       to: { email: userEmail },

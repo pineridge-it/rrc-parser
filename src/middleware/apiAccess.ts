@@ -14,23 +14,35 @@ import { asUUID, UUID } from '../types/common';
 export function apiAccessControl(limitsEnforcer: LimitsEnforcer) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const workspaceId = req.headers['x-workspace-id'] as string;
-      
-      if (!workspaceId) {
+      const workspaceId = req.headers['x-workspace-id'];
+
+      // Validate header exists and is a string
+      if (!workspaceId || typeof workspaceId !== 'string') {
         res.status(400).json({
           error: 'Missing workspace ID',
-          message: 'X-Workspace-Id header is required',
+          message: 'X-Workspace-Id header is required and must be a string',
+        });
+        return;
+      }
+
+      // Validate UUID format before conversion
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(workspaceId.trim())) {
+        res.status(400).json({
+          error: 'Invalid workspace ID format',
+          message: 'X-Workspace-Id must be a valid UUID'
         });
         return;
       }
 
       let validatedWorkspaceId: UUID;
       try {
-        validatedWorkspaceId = asUUID(workspaceId);
-      } catch (error) {
+        validatedWorkspaceId = asUUID(workspaceId.trim());
+      } catch {
+        // Should not happen due to regex validation, but handle defensively
         res.status(400).json({
           error: 'Invalid workspace ID format',
-          message: `Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: 'X-Workspace-Id must be a valid UUID'
         });
         return;
       }
@@ -76,23 +88,35 @@ export function requireResourceLimit(
 ) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const workspaceId = req.headers['x-workspace-id'] as string;
-      
-      if (!workspaceId) {
+      const workspaceId = req.headers['x-workspace-id'];
+
+      // Validate header exists and is a string
+      if (!workspaceId || typeof workspaceId !== 'string') {
         res.status(400).json({
           error: 'Missing workspace ID',
-          message: 'X-Workspace-Id header is required',
+          message: 'X-Workspace-Id header is required and must be a string',
+        });
+        return;
+      }
+
+      // Validate UUID format before conversion
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(workspaceId.trim())) {
+        res.status(400).json({
+          error: 'Invalid workspace ID format',
+          message: 'X-Workspace-Id must be a valid UUID'
         });
         return;
       }
 
       let validatedWorkspaceId: UUID;
       try {
-        validatedWorkspaceId = asUUID(workspaceId);
-      } catch (error) {
+        validatedWorkspaceId = asUUID(workspaceId.trim());
+      } catch {
+        // Should not happen due to regex validation, but handle defensively
         res.status(400).json({
           error: 'Invalid workspace ID format',
-          message: `Invalid workspace ID format: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: 'X-Workspace-Id must be a valid UUID'
         });
         return;
       }

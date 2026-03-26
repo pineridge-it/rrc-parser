@@ -15,7 +15,7 @@ interface AlertEvent {
 interface AlertSubscription {
   id: string;
   workspace_id: string;
-  user_id: string;
+  user_id: string | null; // Nullable for API key created subscriptions
   name: string;
   trigger_type: string;
   permit_api_number: string | null;
@@ -104,13 +104,21 @@ export class AlertNotificationService {
         return;
       }
       
-      // Get user and workspace info
-      const user = await this.getUser(subscription.user_id);
+      // Get workspace info (always required)
       const workspace = await this.getWorkspace(subscription.workspace_id);
-      
-      if (!user || !workspace) {
-        console.warn(`User or workspace not found for event ${event.id}`);
+      if (!workspace) {
+        console.warn(`Workspace not found for event ${event.id}`);
         return;
+      }
+      
+      // Get user info if available (API key created subscriptions may not have user_id)
+      let user: User | null = null;
+      if (subscription.user_id) {
+        user = await this.getUser(subscription.user_id);
+        if (!user) {
+          console.warn(`User not found for event ${event.id}, subscription ${subscription.id}`);
+          // Continue without user - workspace notifications will be used
+        }
       }
       
       // Get permit details
@@ -175,19 +183,11 @@ export class AlertNotificationService {
    */
   private async getUser(userId: string): Promise<User | null> {
     try {
-      const { data, error } = await this.db
+      const { data } = await this.db
         .from('users')
         .select('id, email, phone, first_name, last_name')
         .eq('id', userId)
-        .single();
-      
-      if (error) {
-        if (error.code === 'PGRST116') {
-          // No rows returned
-          return null;
-        }
-        throw new Error(`Failed to fetch user: ${error.message}`);
-      }
+        .maybeSingle();
       
       return data;
     } catch (error) {
@@ -255,17 +255,29 @@ export class AlertNotificationService {
     channel: string,
     event: AlertEvent,
     subscription: AlertSubscription,
-    user: User,
+    user: User | null,
     workspace: Workspace,
     permit: any
   ): Promise<void> {
     try {
       switch (channel) {
         case 'email':
+          if (!user?.email) {
+            console.warn(`No email available for notification event ${event.id}`);
+            return;
+          }
           await this.sendEmailNotification(event, subscription, user, workspace, permit);
           break;
         case 'sms':
+          if (!user?.phone) {
+            console.warn(`No phone available for SMS notification event ${event.id}`);
+            return;
+          }
           await this.sendSmsNotification(event, subscription, user, workspace, permit);
+          break;
+        case 'in_app':
+          // In-app notifications don't require user email/phone
+          await this.sendInAppNotification(event, subscription, workspace, permit);
           break;
         default:
           console.warn(`Unsupported notification channel: ${channel}`);
@@ -274,6 +286,20 @@ export class AlertNotificationService {
       console.error(`Error sending ${channel} notification for event ${event.id}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Send in-app notification
+   */
+  private async sendInAppNotification(
+    event: AlertEvent,
+    _subscription: AlertSubscription,
+    _workspace: Workspace,
+    _permit: any
+  ): Promise<void> {
+    // In-app notifications would be stored in a notifications table
+    // and displayed in the dashboard
+    console.log(`In-app notification created for alert event ${event.id}`);
   }
 
   /**

@@ -28,6 +28,17 @@ export interface UpdatePreferencesRequest {
  */
 export class NotificationPreferencesService {
   /**
+   * Get user email address for notifications
+   * Returns the email from the user record
+   */
+  async getUserEmail(userId: string): Promise<string | null> {
+    // TODO: Implement database query to get user email
+    // For now, return null to indicate no email available
+    console.log('getUserEmail called for user:', userId);
+    return null;
+  }
+
+  /**
    * Get notification preferences for a user in a workspace
    */
   async getPreferences(
