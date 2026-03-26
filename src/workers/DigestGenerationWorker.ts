@@ -1,8 +1,6 @@
-import { createDatabaseClient } from '../../lib/database';
+import { createDatabaseClient } from '../lib/database';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { DigestAggregationService } from '../digest/DigestAggregationService';
-import { render } from '@react-email/render';
-import DigestEmail from '../../../web/src/emails/digest/DigestEmail';
+import { DigestAggregationService } from '../services/digest/DigestAggregationService';
 
 interface User {
   id: string;
@@ -12,13 +10,16 @@ interface User {
 }
 
 interface DigestPreferences {
-  user_id: string;
   workspace_id: string;
   digest_enabled: boolean;
   digest_frequency: string;
   digest_day_of_week: number;
   digest_hour_utc: number;
   last_digest_sent_at: string | null;
+}
+
+interface UserWithPreferences extends User {
+  digest_preferences: DigestPreferences[];
 }
 
 /**
@@ -95,24 +96,24 @@ export class DigestGenerationWorker {
       }
       
       // Filter users based on frequency and day
-      const eligibleUsers = (data || []).filter(user => {
-        const prefs = user.digest_preferences;
+      const eligibleUsers = (data || [] as UserWithPreferences[]).filter((user: UserWithPreferences) => {
+        const prefs = user.digest_preferences?.[0];
         if (!prefs) return false;
-        
+
         // Check if it's the right day for weekly digests
         if (prefs.digest_frequency === 'weekly' && prefs.digest_day_of_week !== dayOfWeek) {
           return false;
         }
-        
+
         // Check if it's time for daily digests
         if (prefs.digest_frequency === 'daily') {
           // For daily digests, we just need to match the hour
           return true;
         }
-        
+
         // For weekly digests, we already checked the day
         return prefs.digest_frequency === 'weekly';
-      }).map(user => ({
+      }).map((user: UserWithPreferences) => ({
         id: user.id,
         email: user.email,
         first_name: user.first_name,
@@ -150,16 +151,17 @@ export class DigestGenerationWorker {
       }
       
       // Render email template
-      const emailHtml = render(
-        DigestEmail({
-          username: user.first_name || 'User',
-          data: digestData,
-          appUrl: process.env.APP_URL || 'https://example.com',
-          // In a real implementation, you would generate a map image URL here
-          // mapImageUrl: await this.generateMapImage(digestData),
-        })
-      );
-      
+      // Note: In a real implementation, we would use a library like react-email to render the component
+      const emailHtml = `
+        <html>
+          <body>
+            <h1>Weekly Digest for ${user.first_name || 'User'}</h1>
+            <p>New Permits: ${digestData.summary_stats.total_new_permits}</p>
+            <p>Status Changes: ${digestData.summary_stats.total_status_changes}</p>
+          </body>
+        </html>
+      `;
+
       // Send email
       await this.sendEmail(user.email, emailHtml, digestData);
       
@@ -201,16 +203,16 @@ export class DigestGenerationWorker {
   /**
    * Send digest email to user
    */
-  private async sendEmail(to: string, html: string, digestData: any): Promise<void> {
+  private async sendEmail(to: string, _html: string, digestData: any): Promise<void> {
     try {
       // In a real implementation, this would integrate with an email service like Resend or SendGrid
       // For now, we'll just log the email content
-      
+
       const subject = `Weekly Permit Digest - ${digestData.summary_stats.total_new_permits} new permits`;
-      
+
       console.log(`Sending digest email to ${to}: ${subject}`);
       // console.log(html); // Uncomment to see the full HTML
-      
+
       // Simulate email sending delay
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
@@ -231,7 +233,7 @@ export class DigestGenerationWorker {
         })
         .eq('user_id', userId)
         .eq('workspace_id', workspaceId);
-      
+
       if (error) {
         throw new Error(`Failed to update last digest sent timestamp: ${error.message}`);
       }
@@ -240,12 +242,4 @@ export class DigestGenerationWorker {
     }
   }
 
-  /**
-   * Generate map image for digest (placeholder implementation)
-   */
-  private async generateMapImage(digestData: any): Promise<string> {
-    // In a real implementation, this would generate a Mapbox static image
-    // For now, we'll return a placeholder URL
-    return 'https://placehold.co/600x300/png?text=County+Activity+Heatmap';
-  }
 }

@@ -66,7 +66,6 @@ export class HealthCheckService {
   private config: HealthCheckConfig;
   private ingestionMonitor?: IngestionMonitor;
   private freshnessService?: DataFreshnessService;
-  private notificationService?: AlertNotificationService;
   private checkInterval?: NodeJS.Timeout;
   private lastCheck?: Date;
   private componentHealth: Map<string, ComponentHealth> = new Map();
@@ -82,7 +81,7 @@ export class HealthCheckService {
     this.config = { ...DEFAULT_HEALTH_CHECK_CONFIG, ...config };
     this.ingestionMonitor = services.ingestionMonitor;
     this.freshnessService = services.freshnessService;
-    this.notificationService = services.notificationService;
+    // notificationService is accepted for API compatibility but not currently used
   }
 
   /**
@@ -114,7 +113,6 @@ export class HealthCheckService {
    * Run all health checks
    */
   async runChecks(): Promise<SystemHealth> {
-    const startTime = Date.now();
     const timestamp = new Date();
 
     const checks = await Promise.all([

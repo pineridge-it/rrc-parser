@@ -10,7 +10,7 @@ import {
 } from '../../types/export';
 import { UsageService } from '../usage';
 import { v4 as uuidv4 } from 'uuid';
-import { asUUID } from '../../types/common';
+import { asUUID, UUID } from '../../types/common';
 
 /**
  * Export service configuration
@@ -63,7 +63,7 @@ export class ExportService {
   async createExport(request: ExportRequest): Promise<ExportJob> {
     // Check usage limits if enforcement is enabled
     if (this.config.enforceUsageLimits) {
-      let workspaceId: string;
+      let workspaceId: UUID;
       try {
         workspaceId = asUUID(request.workspaceId);
       } catch (error) {

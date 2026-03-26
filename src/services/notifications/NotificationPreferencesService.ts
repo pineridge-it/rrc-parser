@@ -202,40 +202,38 @@ export class NotificationPreferencesService {
     workspaceId: string
   ): NotificationPreferences {
     const DEFAULT_TIMEZONE = 'America/New_York';
-    let validatedUserId: string;
-    let validatedWorkspaceId: string;
 
     try {
-      validatedUserId = asUUID(userId);
-      validatedWorkspaceId = asUUID(workspaceId);
+      const validatedUserId = asUUID(userId);
+      const validatedWorkspaceId = asUUID(workspaceId);
+
+      return {
+        userId: validatedUserId as any, // Type assertion needed because we've validated it
+        workspaceId: validatedWorkspaceId as any,
+        quietHours: {
+          enabled: false,
+          startTime: '22:00',
+          endTime: '08:00',
+          timezone: DEFAULT_TIMEZONE,
+        },
+        digest: {
+          frequency: 'immediate',
+          dailyTime: '09:00',
+          weeklyDay: 1, // Monday
+          weeklyTime: '09:00',
+          timezone: DEFAULT_TIMEZONE,
+        },
+        emailEnabled: true,
+        pushEnabled: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
     } catch (error) {
       if (error instanceof ValidationError) {
         throw new Error(`Invalid UUID format in request: ${error.message}`);
       }
       throw error;
     }
-
-    return {
-      userId: validatedUserId as any, // Type assertion needed because we've validated it
-      workspaceId: validatedWorkspaceId as any,
-      quietHours: {
-        enabled: false,
-        startTime: '22:00',
-        endTime: '08:00',
-        timezone: 'America/New_York',
-      },
-      digest: {
-        frequency: 'immediate',
-        dailyTime: '09:00',
-        weeklyDay: 1, // Monday
-        weeklyTime: '09:00',
-        timezone: 'America/New_York',
-      },
-      emailEnabled: true,
-      pushEnabled: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
   }
 
   /**

@@ -323,15 +323,18 @@ export class DigestAggregationService {
       }
       
       // Transform to StatusChange format
-      const statusChanges = (events || []).map(event => ({
-        api_number: event.permit_api_number,
-        old_status: event.old_status,
-        new_status: event.new_status,
-        filed_date: event.detected_at,
-        operator_name: event.permit?.operator_name || '',
-        lease_name: event.permit?.lease_name || '',
-        county: event.permit?.county || '',
-      }));
+      const statusChanges = (events || []).map(event => {
+        const permit = Array.isArray(event.permit) ? event.permit[0] : event.permit;
+        return {
+          api_number: event.permit_api_number,
+          old_status: event.old_status,
+          new_status: event.new_status,
+          filed_date: event.detected_at,
+          operator_name: permit?.operator_name || '',
+          lease_name: permit?.lease_name || '',
+          county: permit?.county || '',
+        };
+      });
       
       return statusChanges;
     } catch (error) {
@@ -368,15 +371,18 @@ export class DigestAggregationService {
       }
       
       // Transform to StatusChange format
-      const topMovers = (events || []).map(event => ({
-        api_number: event.permit_api_number,
-        old_status: event.old_status,
-        new_status: event.new_status,
-        filed_date: event.detected_at,
-        operator_name: event.permit?.operator_name || '',
-        lease_name: event.permit?.lease_name || '',
-        county: event.permit?.county || '',
-      }));
+      const topMovers = (events || []).map(event => {
+        const permit = Array.isArray(event.permit) ? event.permit[0] : event.permit;
+        return {
+          api_number: event.permit_api_number,
+          old_status: event.old_status,
+          new_status: event.new_status,
+          filed_date: event.detected_at,
+          operator_name: permit?.operator_name || '',
+          lease_name: permit?.lease_name || '',
+          county: permit?.county || '',
+        };
+      });
       
       return topMovers;
     } catch (error) {

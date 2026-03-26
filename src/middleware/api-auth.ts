@@ -154,7 +154,7 @@ export async function authenticateApiRequest(
     throw new ApiAuthError('API key not found', 401, 'INVALID_API_KEY');
   }
 
-  let apiKeyId: string;
+  let apiKeyId: UUID;
   try {
     apiKeyId = asUUID(apiKeyData.id);
   } catch (error) {

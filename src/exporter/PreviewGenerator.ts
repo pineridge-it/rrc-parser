@@ -50,7 +50,9 @@ export class PreviewGenerator {
 
   private extractColumns(data: Record<string, unknown>[]): string[] {
     if (data.length === 0) return [];
-    return Object.keys(data[0]);
+    const firstRecord = data[0];
+    if (!firstRecord) return [];
+    return Object.keys(firstRecord);
   }
 
   private generateWarnings(
@@ -124,7 +126,7 @@ export class PreviewGenerator {
     }
 
     for (let i = 0; i < Math.min(data.length, 100); i++) {
-      const row = data[i];
+      const row = data[i]!;
       for (const col of columns) {
         const val = row[col];
         if (typeof val === 'object' && val !== null && !Array.isArray(val)) {

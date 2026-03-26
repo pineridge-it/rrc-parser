@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Feature, FeatureCollection, Geometry } from 'geojson';
-import * as shp from 'shpjs';
+import shp from 'shpjs';
 import * as togeojson from '@tmcw/togeojson';
 import { DOMParser } from 'xmldom';
 

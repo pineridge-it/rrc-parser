@@ -91,7 +91,7 @@ export class ExportValidator {
 
         default:
           warnings.push({
-            type: 'unknown_format',
+            type: 'invalid_format',
             message: `Unknown format '${format}' - basic validation only`
           });
       }
@@ -143,25 +143,25 @@ export class ExportValidator {
   private looksLikeUTF8(buffer: Buffer): boolean {
     let i = 0;
     while (i < buffer.length) {
-      const byte = buffer[i];
-      
+      const byte = buffer[i]!;
+
       if (byte < 0x80) {
         i++;
         continue;
       }
-      
+
       let seqLength: number;
       if ((byte & 0xE0) === 0xC0) seqLength = 2;
       else if ((byte & 0xF0) === 0xE0) seqLength = 3;
       else if ((byte & 0xF8) === 0xF0) seqLength = 4;
       else return false;
-      
+
       if (i + seqLength > buffer.length) return false;
-      
+
       for (let j = 1; j < seqLength; j++) {
-        if ((buffer[i + j] & 0xC0) !== 0x80) return false;
+        if ((buffer[i + j]! & 0xC0) !== 0x80) return false;
       }
-      
+
       i += seqLength;
     }
     return true;
@@ -221,13 +221,14 @@ export class ExportValidator {
     };
   }
 
-  private countFields(line: string, delimiter: string): number {
+  private countFields(line: string | undefined, delimiter: string): number {
+    if (!line) return 0;
     let count = 1;
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         if (inQuotes && line[i + 1] === '"') {
           i++;
@@ -238,7 +239,7 @@ export class ExportValidator {
         count++;
       }
     }
-    
+
     return count;
   }
 
@@ -254,7 +255,7 @@ export class ExportValidator {
     try {
       data = JSON.parse(content);
     } catch {
-      errors.push({ type: 'invalid_format', message: 'Invalid JSON format' });
+      errors.push({ type: 'invalid_type', message: 'Invalid JSON format' });
       return { valid: false, recordCount: 0, errors, warnings };
     }
 

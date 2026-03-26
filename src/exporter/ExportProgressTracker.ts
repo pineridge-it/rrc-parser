@@ -179,7 +179,7 @@ export class ExportProgressTracker {
     return () => {
       const frame = frames[index];
       index = (index + 1) % frames.length;
-      return frame;
+      return frame ?? '';
     };
   }
 }

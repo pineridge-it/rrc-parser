@@ -29,7 +29,7 @@ export class FlagSuggester {
 
     const prefixMatches = this.knownFlags.filter(flag => flag.startsWith(input));
     if (prefixMatches.length === 1) {
-      return prefixMatches[0];
+      return prefixMatches[0] ?? null;
     }
 
     let bestMatch: string | null = null;

@@ -220,7 +220,7 @@ export class AlertConfigService {
     });
 
     const isTruncated = permits.length > limit;
-    const samplePermits = permits.slice(0, limit).map(this.mapToPreviewPermit);
+    const samplePermits: PreviewPermit[] = permits.slice(0, limit).map(AlertConfigService.mapToPreviewPermit);
 
     return {
       totalCount: total,

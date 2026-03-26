@@ -1,6 +1,5 @@
 import { createDatabaseClient } from '../../lib/database';
 import { EmailService } from '../email/EmailService';
-import { WeeklyDigestEmail } from '../../../web/src/emails/weekly-digest';
 
 interface UserDigestPreference {
   user_id: string;
@@ -203,25 +202,18 @@ export class DigestWorkerService {
     // For now, we'll use a placeholder
     const userEmail = 'user@example.com';
     
-    // Create the email component with the digest data
-    const emailComponent = WeeklyDigestEmail({
-      userName: 'User',
-      periodStart: new Date(digestData.period_start),
-      periodEnd: new Date(digestData.period_end),
-      savedSearches: digestData.saved_searches,
-      statusChanges: digestData.status_changes,
-      topMovers: digestData.top_movers,
-      newOperators: digestData.new_operators,
-      summary: digestData.summary,
-      workspaceName: 'Workspace',
-      digestUrl: 'https://app.example.com/digest',
-      preferencesUrl: 'https://app.example.com/settings/digest',
-      unsubscribeUrl: 'https://app.example.com/unsubscribe'
-    });
-    
-    // Convert the React component to HTML
+    // Create the email HTML content
     // Note: In a real implementation, we would use a library like react-email to render the component
-    const htmlContent = '<html><body>Digest email content would go here</body></html>';
+    const htmlContent = `
+      <html>
+        <body>
+          <h1>Weekly Digest</h1>
+          <p>Period: ${digestData.period_start} to ${digestData.period_end}</p>
+          <p>New Permits: ${digestData.summary.total_new_permits}</p>
+          <p>Status Changes: ${digestData.summary.total_status_changes}</p>
+        </body>
+      </html>
+    `;
     
     // Send the email
     await this.emailService.sendRawEmail({

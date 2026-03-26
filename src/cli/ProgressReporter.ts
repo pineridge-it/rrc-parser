@@ -199,7 +199,7 @@ export class RichProgressReporter {
    * Build rich multi-line progress output
    */
   private buildRichOutput(
-    currentLine: number,
+    _currentLine: number,
     progress: number,
     linesPerSec: number,
     stats: ParseStats

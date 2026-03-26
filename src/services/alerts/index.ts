@@ -3,7 +3,7 @@
  */
 
 import { LimitsEnforcer } from '../limits';
-import { asUUID, UUID } from '../../types/common';
+import { asUUID } from '../../types/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createDatabaseClient } from '../../lib/database';
 import { createLogger } from '../logger';

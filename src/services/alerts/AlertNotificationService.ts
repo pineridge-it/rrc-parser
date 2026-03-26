@@ -326,11 +326,12 @@ export class AlertNotificationService {
    */
   private async sendSmsNotification(
     event: AlertEvent,
-    subscription: AlertSubscription,
+    _subscription: AlertSubscription,
     user: User,
     workspace: Workspace,
     permit: any
   ): Promise<void> {
+    // _subscription is accepted for API consistency but SMS content doesn't use subscription details
     // In a real implementation, this would integrate with an SMS service like Twilio
     // For now, we'll just log the SMS content
     

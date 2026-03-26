@@ -277,6 +277,42 @@ class StreamingPermitStorage {
   }
 
   /**
+   * Iterate over all permits without loading them all into memory at once
+   * This method is more memory-efficient for large datasets
+   * @param callback - Function to call for each permit
+   */
+  async forEachPermit(callback: (permitNum: string, permitData: PermitData) => Promise<void> | void): Promise<void> {
+    // Process in-memory permits first
+    for (const [permitNum, permit] of this.permits.entries()) {
+      await callback(permitNum, permit.toObject());
+    }
+
+    // Process current batch
+    for (const [permitNum, data] of this.batch.entries()) {
+      await callback(permitNum, data);
+    }
+
+    // Process flushed batches from disk one at a time
+    try {
+      const files = await fs.promises.readdir(this.tempDir);
+      const batchFiles = files.filter(f => f.endsWith('.json.gz')).sort();
+
+      for (const file of batchFiles) {
+        const filePath = path.join(this.tempDir, file);
+        const compressed = await fs.promises.readFile(filePath);
+        const decompressed = await gunzip(compressed);
+        const permits = JSON.parse(decompressed.toString());
+
+        for (const [permitNum, permitData] of Object.entries(permits)) {
+          await callback(permitNum, permitData as PermitData);
+        }
+      }
+    } catch (error) {
+      console.error('Error processing batches from disk:', error);
+    }
+  }
+
+  /**
    * Synchronous version for backward compatibility
    * @deprecated Use getAllPermitsAsync instead for better performance
    */

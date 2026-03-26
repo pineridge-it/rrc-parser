@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import {
   ExportFormat,
   ExportOptions,
-  ExportResult,
   ExportWarning,
   ProgressCallback,
   DEFAULT_EXPORT_OPTIONS
@@ -88,7 +87,17 @@ export class FormatConverter {
     const delimiter = options.delimiter ?? ',';
     const includeHeaders = options.includeHeaders ?? true;
 
-    const columns = Object.keys(data[0]);
+    const firstRecord = data[0];
+    if (!firstRecord) {
+      return {
+        success: false,
+        outputPath,
+        recordCount: 0,
+        warnings: [],
+        error: 'No data to export'
+      };
+    }
+    const columns = Object.keys(firstRecord);
     const rows: string[] = [];
 
     if (includeHeaders) {

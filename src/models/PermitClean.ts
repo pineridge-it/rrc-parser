@@ -433,10 +433,10 @@ export class PermitCleanRecord implements PermitClean {
     
     // Build geometry point if coordinates provided
     let location: GeometryPoint | null = null;
-    if (input.surface_lon !== null && input.surface_lat !== null) {
+    if (input.surface_lon != null && input.surface_lat != null) {
       location = {
         type: 'Point',
-        coordinates: [input.surface_lon, input.surface_lat],
+        coordinates: [input.surface_lon as number, input.surface_lat as number],
         crs: {
           type: 'name',
           properties: {
@@ -485,7 +485,7 @@ export class PermitCleanRecord implements PermitClean {
    */
   static parseGeometryString(geomString: string): { lat: number; lon: number } | null {
     const match = geomString.match(/POINT\s*\(\s*([\d.-]+)\s+([\d.-]+)\s*\)/i);
-    if (match) {
+    if (match && match[1] && match[2]) {
       return {
         lon: parseFloat(match[1]),
         lat: parseFloat(match[2])

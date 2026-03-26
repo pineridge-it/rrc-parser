@@ -56,6 +56,40 @@ export class CSVExporter {
   }
   
   /**
+   * Export permits to CSV file using streaming to reduce memory usage
+   * @param permitIterator - Async iterator function that yields [permitNum, permitData] tuples
+   * @param outputPath - Output CSV file path
+   */
+  async exportStreaming(
+    permitIterator: () => AsyncIterable<[string, PermitData]>,
+    outputPath: string
+  ): Promise<void> {
+    const fieldnames: Array<keyof CSVRow> = [
+      'permit_number', 'lease_name', 'operator_name', 'operator_number',
+      'county_code', 'county_name', 'district',
+      'issue_date', 'received_date', 'amended_date', 'extended_date', 'spud_date',
+      'well_number', 'well_status', 'total_depth', 'application_type', 'app_type_desc',
+      'horizontal_flag', 'directional_flag', 'sidetrack_flag',
+      'surface_section', 'surface_block', 'surface_survey', 'surface_abstract',
+      'gis_surface_lat', 'gis_surface_lon',
+      'gis_bottomhole_lat', 'gis_bottomhole_lon',
+      'field_count', 'field_numbers', 'lease_count', 'survey_count',
+      'restriction_count', 'remark_count', 'address'
+    ];
+    
+    const csvWriter = createObjectCsvWriter({
+      path: outputPath,
+      header: fieldnames.map(name => ({ id: name, title: name }))
+    });
+    
+    // Process permits one by one to reduce memory usage
+    for await (const [permitNum, data] of permitIterator()) {
+      const row = this.buildRow(permitNum, data);
+      await csvWriter.writeRecords([row]);
+    }
+  }
+  
+  /**
    * Build a CSV row from permit data
    * @param permitNum - The permit number
    * @param data - The permit data

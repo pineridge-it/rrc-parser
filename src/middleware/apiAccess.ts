@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { LimitsEnforcer, ApiAccessDeniedError } from '../services/limits';
-import { asUUID } from '../types/common';
+import { asUUID, UUID } from '../types/common';
 
 /**
  * Middleware to check API access permissions
@@ -24,7 +24,7 @@ export function apiAccessControl(limitsEnforcer: LimitsEnforcer) {
         return;
       }
 
-      let validatedWorkspaceId: string;
+      let validatedWorkspaceId: UUID;
       try {
         validatedWorkspaceId = asUUID(workspaceId);
       } catch (error) {
@@ -86,7 +86,7 @@ export function requireResourceLimit(
         return;
       }
 
-      let validatedWorkspaceId: string;
+      let validatedWorkspaceId: UUID;
       try {
         validatedWorkspaceId = asUUID(workspaceId);
       } catch (error) {
