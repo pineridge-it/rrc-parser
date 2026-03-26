@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         workspace_id: auth.workspaceId,
         tag_name,
         color_hex,
-        created_by: auth.userId,
+        created_by: auth.apiKeyId, // Track which API key made the change
       })
       .select()
       .single();

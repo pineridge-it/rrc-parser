@@ -48,7 +48,9 @@ export async function GET(request: NextRequest) {
       .order('total_permits', { ascending: false });
 
     if (search) {
-      query = query.ilike('operator_name', `%${search}%`);
+      // Escape special SQL LIKE characters to prevent injection
+      const escapedSearch = search.replace(/[%_]/g, '\\$&');
+      query = query.ilike('operator_name', `%${escapedSearch}%`);
     }
 
     const from = (page - 1) * pageSize;

@@ -76,6 +76,7 @@ class StreamingPermitStorage {
   private tempDir: string;
   private bufferSize: number;
   private flushedPermits: Set<string> = new Set();
+  private logger: ILogger;
 
   // Batched storage properties
   private batch: Map<string, PermitData> = new Map();
@@ -83,10 +84,11 @@ class StreamingPermitStorage {
   private batchNumber: number = 0;
   private pendingFlush: Promise<void> | null = null;
 
-  constructor(tempDir: string, bufferSize: number) {
+  constructor(tempDir: string, bufferSize: number, logger?: ILogger) {
     this.tempDir = tempDir;
     this.bufferSize = bufferSize;
     this.batchSize = Math.max(1000, Math.floor(bufferSize * 2)); // Batch size based on buffer
+    this.logger = logger || new ConsoleLogger(false);
 
     // Ensure temp directory exists
     if (!fs.existsSync(tempDir)) {
@@ -156,8 +158,11 @@ class StreamingPermitStorage {
 
         // Flush batch if it reaches batch size
         if (this.batch.size >= this.batchSize) {
+          // Fire-and-forget with proper error tracking - errors are logged but don't block parsing
           this.flushBatchAsync().catch(err => {
-            console.error('Failed to flush batch:', err);
+            // Use logger instead of console for consistent error handling
+            // This is non-critical: batch will be retried on next flush or finalization
+            this.logger.error(`Non-critical batch flush failure: ${err instanceof Error ? err.message : String(err)}`);
           });
         }
       }
@@ -474,6 +479,8 @@ export class PermitParser {
   // Checkpoint tracking
   private checkpointCount: number = 0;
   private lastCheckpointLine: number = 0;
+  // Track pending checkpoint saves to ensure they're completed before moving on
+  private pendingCheckpointSave: Promise<void> | null = null;
 
   constructor(config?: Config, options: ParserOptions = {}) {
     this.config = config || new Config();
@@ -491,7 +498,7 @@ export class PermitParser {
     this.tempDir = options.tempDir || path.join(process.cwd(), '.parser_temp', Date.now().toString());
 
     // Initialize streaming storage
-    this.permitStorage = new StreamingPermitStorage(this.tempDir, this.memoryBufferSize);
+    this.permitStorage = new StreamingPermitStorage(this.tempDir, this.memoryBufferSize, this.logger);
 
     // Initialize checkpoint manager if enabled
     if (options.enableCheckpoints !== false) {
@@ -512,12 +519,33 @@ export class PermitParser {
    */
   async parseFile(inputPath: string, options: ParserOptions = {}): Promise<ParseResult> {
     return this.perfMonitor.timeAsync('parseFile', async () => {
+      // ── Path Traversal Protection ──────────────────────────────────────────
+      // Validate and normalize the input path to prevent directory traversal attacks
+      if (typeof inputPath !== 'string' || inputPath.trim() === '') {
+        throw new TypeError('inputPath must be a non-empty string');
+      }
+
+      const resolvedPath = path.resolve(inputPath);
+
+      // Reject paths containing traversal sequences
+      if (inputPath.includes('..') || resolvedPath.includes('..')) {
+        throw new Error(`Path traversal detected in input path: ${inputPath}`);
+      }
+
+      // Verify file exists and is readable before processing
+      try {
+        await fs.promises.access(resolvedPath, fs.constants.R_OK);
+      } catch (err) {
+        throw new Error(`Input file is not accessible: ${resolvedPath}`);
+      }
+      // ── End Path Traversal Protection ──────────────────────────────────────
+
       let resumedFromCheckpoint = false;
       let startLine = 1;
 
       // Attempt to resume from checkpoint
       if (this.checkpointManager && (options.resumeFromCheckpoint ?? true)) {
-        const checkpoint = await this.checkpointManager.loadCheckpoint(inputPath);
+        const checkpoint = await this.checkpointManager.loadCheckpoint(resolvedPath);
 
         if (checkpoint) {
           this.logger.info('Resuming parsing from checkpoint...');
@@ -530,7 +558,7 @@ export class PermitParser {
       }
 
       return new Promise<ParseResult>((resolve, reject) => {
-        const fileStream = fs.createReadStream(inputPath, {
+        const fileStream = fs.createReadStream(resolvedPath, {
           encoding: this.config.settings.encoding as BufferEncoding,
           highWaterMark: 64 * 1024 // 64KB buffer for efficient streaming
         });
@@ -558,10 +586,12 @@ export class PermitParser {
               });
 
               // Periodic checkpoint save
+              // Track the promise so we can await it during cleanup if needed
               if (this.checkpointManager &&
                   this.checkpointManager.shouldSaveCheckpoint(lineNumber)) {
-                this.saveCheckpointAsync(lineNumber, inputPath).catch(err => {
-                  this.logger.warn(`Checkpoint save failed: ${err.message}`);
+                this.pendingCheckpointSave = this.saveCheckpointAsync(lineNumber, resolvedPath);
+                this.pendingCheckpointSave.catch(err => {
+                  this.logger.warn(`Checkpoint save failed: ${err instanceof Error ? err.message : String(err)}`);
                 });
               }
 
@@ -600,9 +630,20 @@ export class PermitParser {
           try {
             this.finalizeParsing();
 
+            // Wait for any pending checkpoint save to complete before final checkpoint
+            if (this.pendingCheckpointSave) {
+              try {
+                await this.pendingCheckpointSave;
+              } catch (err) {
+                // Log but don't fail - checkpoint save failure is non-critical
+                this.logger.warn(`Pending checkpoint save failed: ${err instanceof Error ? err.message : String(err)}`);
+              }
+              this.pendingCheckpointSave = null;
+            }
+
             // Final checkpoint save before clearing
             if (this.checkpointManager && this.lastCheckpointLine < lineNumber) {
-              await this.saveCheckpointAsync(lineNumber, inputPath);
+              await this.saveCheckpointAsync(lineNumber, resolvedPath);
             }
 
             // Clear checkpoints on successful completion

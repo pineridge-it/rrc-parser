@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       .from('permit_alert_subscriptions')
       .insert({
         workspace_id: auth.workspaceId,
-        user_id: auth.userId,
+        user_id: null, // API key authentication - no specific user context
         name: validation.data.name,
         trigger_type: validation.data.trigger_type,
         permit_api_number: validation.data.permit_api_number,

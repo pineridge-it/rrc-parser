@@ -81,12 +81,19 @@ export class PermitLoader {
       errorDetails: []
     };
 
-    // Collect all permit numbers up front
+    // Collect all permit numbers up front with validation
     const permitNumbers: string[] = [];
     const permitByNumber = new Map<string, PermitData>();
     for (const permit of batch) {
       const num = this.getPermitNumber(permit);
       if (num) {
+        // Validate permit number format to prevent injection attacks
+        // Permit numbers should be alphanumeric with hyphens only
+        if (!/^[A-Z0-9\-]+$/i.test(num)) {
+          result.errors++;
+          result.errorDetails.push(`Invalid permit_number format: ${num.substring(0, 50)}`);
+          continue;
+        }
         permitNumbers.push(num);
         permitByNumber.set(num, permit);
       } else {
@@ -137,7 +144,13 @@ export class PermitLoader {
     }
 
     for (const permitNumber of permitNumbers) {
-      const permit = permitByNumber.get(permitNumber)!;
+      const permit = permitByNumber.get(permitNumber);
+      // Safety check: permit should always exist at this point
+      if (!permit) {
+        result.errors++;
+        result.errorDetails.push(`Internal error: permit ${permitNumber} not found in batch map`);
+        continue;
+      }
       try {
         const versionHash = this.computeVersionHash(permit);
         const existingPermit = existingByNumber.get(permitNumber);
@@ -335,33 +348,25 @@ export class PermitLoader {
     const hash = versionHash || this.computeVersionHash(permit);
     const now = new Date().toISOString();
 
-    // Use INSERT ... ON CONFLICT to detect whether the row was newly created
+    // Use UPSERT with onConflict to atomically insert or return existing
+    // This eliminates the race condition window between INSERT and SELECT
     const { data: permitData, error: permitError } = await this.supabase
       .from('permits')
-      .insert({ permit_number: permitNumber, created_at: now })
-      .select('id')
+      .upsert(
+        { permit_number: permitNumber, created_at: now, updated_at: now },
+        { onConflict: 'permit_number', ignoreDuplicates: false }
+      )
+      .select('id, created_at, updated_at')
       .single();
 
-    let permitId: string;
-    let wasInserted: boolean;
-
-    if (permitError) {
-      if (permitError.code === '23505') {
-        // Unique violation: row already existed (race condition)
-        const existing = await this.findExistingPermit(permitNumber);
-        if (!existing) {
-          throw new Error(`Race condition: permit ${permitNumber} vanished after conflict`);
-        }
-        permitId = existing.id;
-        wasInserted = false;
-      } else {
-        throw new Error(`Failed to insert permit: ${permitError.message}`);
-      }
-    } else {
-      if (!permitData) throw new Error(`Failed to insert permit: no data returned`);
-      permitId = permitData.id;
-      wasInserted = true;
+    if (permitError || !permitData) {
+      throw new Error(`Failed to upsert permit: ${permitError?.message ?? 'no data returned'}`);
     }
+
+    // Determine if this was an insert or update by comparing timestamps
+    // If created_at === updated_at, it's a new insert
+    const wasInserted = permitData.created_at === permitData.updated_at;
+    const permitId = permitData.id;
 
     let versionId: string | null = null;
 
@@ -393,7 +398,7 @@ export class PermitLoader {
       await this.createPermitChange(permitId, versionId, wasInserted ? 'new' : 'updated', now);
     }
 
-    this.logger.debug(`Inserted permit ${permitNumber} with id ${permitId} (inserted: ${wasInserted})`);
+    this.logger.debug(`Upserted permit ${permitNumber} with id ${permitId} (inserted: ${wasInserted})`);
     return { inserted: wasInserted, updated: !wasInserted };
   }
 

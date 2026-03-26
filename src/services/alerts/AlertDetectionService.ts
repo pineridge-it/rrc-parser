@@ -37,23 +37,41 @@ export class AlertDetectionService {
   }
 
   /**
-   * Detect permit status changes and create alert events
+   * Detect permit status changes and create alert events.
+   *
+   * Uses Promise.allSettled to process all subscriptions in parallel while
+   * ensuring that one subscription failure doesn't stop others from processing.
+   * Returns a summary of processed vs failed subscriptions for monitoring.
    */
-  async detectStatusChanges(): Promise<void> {
+  async detectStatusChanges(): Promise<{ processed: number; errors: number }> {
+    let subscriptions: AlertSubscription[];
     try {
-      // Get all active alert subscriptions
-      const subscriptions = await this.getActiveSubscriptions();
-      
-      // For each subscription, check for status changes
-      for (const subscription of subscriptions) {
-        await this.processSubscription(subscription);
-      }
-      
-      console.log(`Processed ${subscriptions.length} alert subscriptions`);
+      subscriptions = await this.getActiveSubscriptions();
     } catch (error) {
-      console.error('Error detecting status changes:', error);
-      throw error;
+      console.error('Fatal: could not retrieve active subscriptions:', error);
+      throw error; // Cannot proceed without subscription list
     }
+
+    console.log(`Processing ${subscriptions.length} alert subscriptions`);
+
+    // Process all subscriptions in parallel with proper error isolation
+    const results = await Promise.allSettled(
+      subscriptions.map(sub => this.processSubscription(sub))
+    );
+
+    const failures = results.filter(r => r.status === 'rejected');
+    const successes = results.filter(r => r.status === 'fulfilled');
+
+    if (failures.length > 0) {
+      console.warn(`${failures.length} subscriptions failed processing`);
+      failures.forEach((f, i) => {
+        const reason = f.status === 'rejected' ? f.reason : 'unknown';
+        console.error(`  Subscription ${subscriptions[i]?.id}:`, reason);
+      });
+    }
+
+    console.log(`Alert detection complete: ${successes.length} succeeded, ${failures.length} failed`);
+    return { processed: successes.length, errors: failures.length };
   }
 
   /**
@@ -79,13 +97,16 @@ export class AlertDetectionService {
   }
 
   /**
-   * Process a single alert subscription
+   * Process a single alert subscription.
+   *
+   * Errors are re-thrown so that Promise.allSettled can track them properly.
+   * The caller (detectStatusChanges) handles aggregation of failures.
    */
   private async processSubscription(subscription: AlertSubscription): Promise<void> {
     try {
       // Get permits to monitor based on subscription type
       let permits: PermitStatusChange[] = [];
-      
+
       if (subscription.permit_api_number) {
         // Monitor specific permit
         const permit = await this.getPermitByApiNumber(subscription.permit_api_number);
@@ -96,13 +117,15 @@ export class AlertDetectionService {
         // Monitor permits from saved search
         permits = await this.getPermitsFromSavedSearch(subscription.saved_search_id);
       }
-      
+
       // Check each permit for status changes
       for (const permit of permits) {
         await this.checkPermitStatusChange(subscription, permit);
       }
     } catch (error) {
+      // Log for observability, then re-throw so Promise.allSettled can track
       console.error(`Error processing subscription ${subscription.id}:`, error);
+      throw error;
     }
   }
 

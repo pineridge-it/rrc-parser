@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       tags,
       custom_status,
       assignee_user_id,
-      created_by: auth.userId,
+      created_by: auth.apiKeyId, // Track which API key made the change
       updated_at: new Date().toISOString(),
     }));
 

@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       name: aoi.name,
       geometry: aoi.geometry,
       aoi_type: 'imported',
-      created_by: auth.userId,
+      created_by: auth.apiKeyId, // Track which API key made the change
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }));

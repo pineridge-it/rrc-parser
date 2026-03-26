@@ -117,7 +117,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (q) {
-      query = query.or(`permit_number.ilike.%${q}%,lease_name.ilike.%${q}%,well_number.ilike.%${q}%,api_number.ilike.%${q}%`);
+      // Escape special SQL LIKE characters to prevent injection
+      // % and _ are SQL wildcards that could be abused
+      const escapedQ = q.replace(/[%_]/g, '\\$&');
+      query = query.or(`permit_number.ilike.%${escapedQ}%,lease_name.ilike.%${escapedQ}%,well_number.ilike.%${escapedQ}%,api_number.ilike.%${escapedQ}%`);
     }
 
     if (aoiId) {

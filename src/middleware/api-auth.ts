@@ -23,8 +23,18 @@ export class ApiAuthError extends Error {
   }
 }
 
+/**
+ * Hash an API key using HMAC-SHA256 with a pepper (server-side secret).
+ *
+ * SECURITY NOTE: We use HMAC instead of plain SHA256 to prevent rainbow table
+ * attacks. The pepper (server-side secret) adds defense in depth even if the
+ * database is compromised. For production, consider using bcrypt or Argon2.
+ */
 function hashApiKey(apiKey: string): string {
-  return crypto.createHash('sha256').update(apiKey).digest('hex');
+  // Use HMAC with a pepper from environment variable
+  // Falls back to a default only in development (should be set in production)
+  const pepper = process.env.API_KEY_PEPPER || 'dev-pepper-change-in-production';
+  return crypto.createHmac('sha256', pepper).update(apiKey).digest('hex');
 }
 
 export async function validateApiKey(apiKey: string): Promise<ApiKeyAuth | null> {
@@ -42,15 +52,19 @@ export async function validateApiKey(apiKey: string): Promise<ApiKeyAuth | null>
     return null;
   }
 
+  let workspaceId: UUID;
+  try {
+    workspaceId = asUUID(data.workspace_id);
+  } catch {
+    // Corrupt data in database - log internally but don't expose details
+    console.error(`API key ${data.id} has invalid workspace_id format`);
+    return null;
+  }
+
   return {
-    workspaceId: (() => {
-      try {
-        return asUUID(data.workspace_id);
-      } catch (error) {
-        throw new Error(`Invalid workspace ID format in API key data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
-    })(),
-    apiKey,
+    workspaceId,
+    // Never return the raw API key - it's a security risk
+    apiKey: '[REDACTED]',
     keyHash,
     scopes: data.scopes || [],
     rateLimit: {
@@ -99,15 +113,23 @@ async function logApiRequest(
   endpoint: string,
   method: string
 ): Promise<void> {
-  const db = createDatabaseClient();
-  
-  await db.from('api_usage_log').insert({
-    workspace_id: workspaceId,
-    api_key_id: apiKeyId,
-    endpoint,
-    method,
-    timestamp: new Date().toISOString(),
-  });
+  // Usage logging is best-effort - a failure must NOT block the request
+  try {
+    const db = createDatabaseClient();
+    const { error } = await db.from('api_usage_log').insert({
+      workspace_id: workspaceId,
+      api_key_id: apiKeyId,
+      endpoint,
+      method,
+      timestamp: new Date().toISOString(),
+    });
+    if (error) {
+      // Log for ops visibility but don't surface to caller
+      console.warn('Failed to log API request (non-fatal):', error.message);
+    }
+  } catch (err) {
+    console.warn('Failed to log API request (non-fatal):', err);
+  }
 }
 
 export async function authenticateApiRequest(
@@ -157,8 +179,10 @@ export async function authenticateApiRequest(
   let apiKeyId: UUID;
   try {
     apiKeyId = asUUID(apiKeyData.id);
-  } catch (error) {
-    throw new ApiAuthError(`Invalid API key ID format: ${error instanceof Error ? error.message : 'Unknown error'}`, 500, 'INTERNAL_ERROR');
+  } catch {
+    // Corrupt data - log internally but return generic error to client
+    console.error(`Database corruption: API key has invalid ID format`);
+    throw new ApiAuthError('Internal server error', 500, 'INTERNAL_ERROR');
   }
 
   const rateLimit = await checkRateLimit(keyAuth.workspaceId, apiKeyId);

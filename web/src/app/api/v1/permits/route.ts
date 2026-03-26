@@ -54,7 +54,9 @@ export async function GET(request: NextRequest) {
     }
 
     if (operator) {
-      query = query.ilike('operator_name', `%${operator}%`);
+      // Escape special SQL LIKE characters to prevent injection
+      const escapedOperator = operator.replace(/[%_]/g, '\\$&');
+      query = query.ilike('operator_name', `%${escapedOperator}%`);
     }
 
     if (status) {
