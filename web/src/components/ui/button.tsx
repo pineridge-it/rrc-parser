@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Button Component
+ * 
+ * A versatile button component with multiple variants, sizes, and states.
+ * Features include ripple effects, loading/success/error states, and animations.
+ * 
+ * @example
+ * // Basic usage
+ * <Button>Click me</Button>
+ * 
+ * @example
+ * // With variant and size
+ * <Button variant="secondary" size="lg">Large Secondary</Button>
+ * 
+ * @example
+ * // With loading state
+ * <Button state="loading" loadingText="Saving...">Save</Button>
+ * 
+ * @example
+ * // With icons
+ * <Button leftIcon={<PlusIcon />}>Add Item</Button>
+ * 
+ * @module components/ui/button
+ */
+
 "use client";
 
 import * as React from "react";
@@ -7,7 +32,25 @@ import { Loader2, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Button variants using class-variance-authority
+/**
+ * Button variants using class-variance-authority.
+ * 
+ * Available variants:
+ * - `primary`: Gradient background with brand colors, for main actions
+ * - `secondary`: Subtle background with border, for secondary actions
+ * - `outline`: Transparent with border, for tertiary actions
+ * - `destructive`: Red background, for dangerous actions
+ * - `ghost`: No background, for subtle actions
+ * - `link`: Text-only with underline on hover
+ * 
+ * Available sizes:
+ * - `sm`: Small (32px height)
+ * - `md`: Medium (40px height, default)
+ * - `lg`: Large (48px height)
+ * - `icon`: Square icon button (40px)
+ * - `icon-sm`: Small icon button (32px)
+ * - `icon-lg`: Large icon button (48px)
+ */
 const buttonVariants = cva(
   // Base styles with enhanced transitions
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium " +
@@ -82,10 +125,31 @@ const buttonVariants = cva(
   }
 );
 
-// Button state types
+/**
+ * Represents the current state of the button.
+ * - `idle`: Default interactive state
+ * - `loading`: Shows spinner and disables interaction
+ * - `success`: Shows checkmark with green color
+ * - `error`: Shows X icon with shake animation
+ */
 export type ButtonState = "idle" | "loading" | "success" | "error";
 
-// Extended button props
+/**
+ * Props for the Button component.
+ * 
+ * @extends React.ButtonHTMLAttributes<HTMLButtonElement>
+ * 
+ * @property {boolean} asChild - When true, renders the child element instead of a button element
+ * @property {ButtonState} state - Current state of the button (idle, loading, success, error)
+ * @property {string} loadingText - Text to display when in loading state
+ * @property {string} successText - Text to display when in success state (default: "Success!")
+ * @property {string} errorText - Text to display when in error state (default: "Error")
+ * @property {React.ReactNode} leftIcon - Icon to display on the left side of the button text
+ * @property {React.ReactNode} rightIcon - Icon to display on the right side of the button text
+ * @property {boolean} enableRipple - Whether to enable ripple effect on click (default: true)
+ * @property {"primary" | "secondary" | "outline" | "destructive" | "ghost" | "link"} variant - Visual style variant
+ * @property {"sm" | "md" | "lg" | "icon" | "icon-sm" | "icon-lg"} size - Size of the button
+ */
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
@@ -96,7 +160,7 @@ export interface ButtonProps
   errorText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  enableRipple?: boolean; // Optional ripple effect
+  enableRipple?: boolean;
 }
 
 // Ripple effect component

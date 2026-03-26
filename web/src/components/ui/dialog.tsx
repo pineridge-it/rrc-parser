@@ -1,10 +1,41 @@
+/**
+ * @fileoverview Dialog Component
+ * 
+ * A modal dialog component built with React primitives.
+ * Features include focus trapping, escape key handling, and body scroll lock.
+ * 
+ * @example
+ * <Dialog>
+ *   <DialogTrigger asChild>
+ *     <Button>Open Dialog</Button>
+ *   </DialogTrigger>
+ *   <DialogContent>
+ *     <DialogHeader>
+ *       <DialogTitle>Dialog Title</DialogTitle>
+ *       <DialogDescription>Dialog description text</DialogDescription>
+ *     </DialogHeader>
+ *     <p>Dialog content goes here</p>
+ *     <DialogFooter>
+ *       <DialogClose asChild>
+ *         <Button variant="secondary">Close</Button>
+ *       </DialogClose>
+ *     </DialogFooter>
+ *   </DialogContent>
+ * </Dialog>
+ * 
+ * @module components/ui/dialog
+ */
+
 "use client";
 
 import * as React from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Dialog Context
+/**
+ * Dialog context providing open state and setter.
+ * @internal
+ */
 interface DialogContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;

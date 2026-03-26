@@ -1,3 +1,33 @@
+/**
+ * @fileoverview Input Component
+ * 
+ * A versatile input component with multiple variants, states, and features.
+ * Supports labels, validation states, floating labels, icons, and animations.
+ * 
+ * @example
+ * // Basic usage
+ * <Input placeholder="Enter text" />
+ * 
+ * @example
+ * // With label and validation
+ * <Input
+ *   label="Email"
+ *   type="email"
+ *   error="Invalid email address"
+ *   clearable
+ * />
+ * 
+ * @example
+ * // With floating label and icon
+ * <Input
+ *   floatingLabel
+ *   label="Search"
+ *   leftIcon={<SearchIcon />}
+ * />
+ * 
+ * @module components/ui/input
+ */
+
 "use client";
 
 import * as React from "react";
@@ -12,7 +42,20 @@ import {
 } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Input variants
+/**
+ * Input variants using class-variance-authority.
+ * 
+ * Available variants:
+ * - `default`: Standard border with focus color
+ * - `error`: Red border for error state
+ * - `success`: Green border for success state
+ * - `animated`: Underline animation on focus
+ * 
+ * Available sizes:
+ * - `sm`: Small (32px height)
+ * - `md`: Medium (40px height, default)
+ * - `lg`: Large (48px height)
+ */
 const inputVariants = cva(
   "flex w-full rounded-md border bg-transparent px-3 py-2 text-sm transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[var(--color-text-placeholder)] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
   {
