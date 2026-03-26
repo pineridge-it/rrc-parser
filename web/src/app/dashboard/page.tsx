@@ -11,6 +11,11 @@ import {
   PermitStatusChart,
   ActivityTrendChart,
 } from "@/components/charts";
+import {
+  TopOperators,
+  CountyActivityMap,
+  QuickActions,
+} from "@/components/dashboard";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -134,11 +139,11 @@ function StatCard({ title, value, change, changeLabel, icon, iconBg, trend = "ne
 
 function DashboardLoading() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <SkeletonCard key={i} />
-        ))}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SkeletonCard className="h-[300px]" />
@@ -206,6 +211,10 @@ export default function DashboardPage() {
           Monitor your drilling permits and alerts
         </p>
       </header>
+
+      <div className="mb-6">
+        <QuickActions />
+      </div>
 
       <AnimatePresence mode="wait">
         {loading ? (
@@ -296,6 +305,30 @@ export default function DashboardPage() {
                 <ActivityTrendChart data={dashboardData?.chartData?.activityTrends || []} />
               </div>
             </DashboardSection>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <DashboardSection
+                title="Top Operators"
+                description="Most active operators this week"
+                action={
+                  <Link
+                    href="/operators"
+                    className="text-xs font-medium text-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary-hover)] transition-colors"
+                  >
+                    View all
+                  </Link>
+                }
+              >
+                <TopOperators operators={dashboardData?.topOperators || []} />
+              </DashboardSection>
+
+              <DashboardSection
+                title="County Activity"
+                description="Permit filings by county"
+              >
+                <CountyActivityMap counties={dashboardData?.countyActivity || []} />
+              </DashboardSection>
+            </div>
 
             <DashboardSection
               title="Recent Alerts"

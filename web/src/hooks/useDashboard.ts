@@ -3,6 +3,22 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 
+export interface OperatorStats {
+  id: string
+  name: string
+  permitCount: number
+  recentCount: number
+  trend: 'up' | 'down' | 'neutral'
+  primaryCounty: string
+}
+
+export interface CountyActivity {
+  name: string
+  permitCount: number
+  recentCount: number
+  percentage: number
+}
+
 export interface DashboardData {
   recentActivity: {
     newPermits: number
@@ -28,6 +44,8 @@ export interface DashboardData {
     name: string
     lastUsed: Date
   }[]
+  topOperators: OperatorStats[]
+  countyActivity: CountyActivity[]
   chartData: {
     permitsOverTime: { date: string; count: number }[]
     permitStatus: { label: string; value: number; color: string }[]
@@ -149,6 +167,26 @@ export function useDashboard(): UseDashboardReturn {
         })
       }
 
+      // Create top operators data
+      const topOperators: OperatorStats[] = [
+        { id: '1', name: 'Apache Corporation', permitCount: Math.floor(newPermitsCount * 0.25), recentCount: Math.floor(newPermitsCount * 0.08), trend: 'up', primaryCounty: 'Midland' },
+        { id: '2', name: 'Pioneer Natural Resources', permitCount: Math.floor(newPermitsCount * 0.2), recentCount: Math.floor(newPermitsCount * 0.06), trend: 'up', primaryCounty: 'Reagan' },
+        { id: '3', name: 'Diamondback Energy', permitCount: Math.floor(newPermitsCount * 0.15), recentCount: Math.floor(newPermitsCount * 0.05), trend: 'neutral', primaryCounty: 'Martin' },
+        { id: '4', name: 'ConocoPhillips', permitCount: Math.floor(newPermitsCount * 0.12), recentCount: Math.floor(newPermitsCount * 0.04), trend: 'up', primaryCounty: 'Upton' },
+        { id: '5', name: 'Occidental Petroleum', permitCount: Math.floor(newPermitsCount * 0.1), recentCount: Math.floor(newPermitsCount * 0.03), trend: 'down', primaryCounty: 'Ector' },
+      ]
+
+      // Create county activity data
+      const totalPermits = newPermitsCount * 10
+      const countyActivity: CountyActivity[] = [
+        { name: 'Midland County', permitCount: Math.floor(totalPermits * 0.18), recentCount: Math.floor(newPermitsCount * 0.22), percentage: 18 },
+        { name: 'Reagan County', permitCount: Math.floor(totalPermits * 0.15), recentCount: Math.floor(newPermitsCount * 0.18), percentage: 15 },
+        { name: 'Martin County', permitCount: Math.floor(totalPermits * 0.12), recentCount: Math.floor(newPermitsCount * 0.15), percentage: 12 },
+        { name: 'Upton County', permitCount: Math.floor(totalPermits * 0.10), recentCount: Math.floor(newPermitsCount * 0.12), percentage: 10 },
+        { name: 'Ector County', permitCount: Math.floor(totalPermits * 0.08), recentCount: Math.floor(newPermitsCount * 0.10), percentage: 8 },
+        { name: 'Howard County', permitCount: Math.floor(totalPermits * 0.07), recentCount: Math.floor(newPermitsCount * 0.08), percentage: 7 },
+      ]
+
       const dashboardData: DashboardData = {
         recentActivity: {
           newPermits: newPermitsCount,
@@ -161,6 +199,8 @@ export function useDashboard(): UseDashboardReturn {
         },
         aois: mockAois,
         savedSearches: processedSavedSearches,
+        topOperators,
+        countyActivity,
         chartData: {
           permitsOverTime: [
             { date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(), count: Math.floor(Math.random() * 20) + 5 },
