@@ -1,22 +1,396 @@
-# Database Testing Guide
+# Testing Guide
 
-This guide explains how to set up and run database integration tests for the RRC Permit Scraper application.
+This guide explains how to set up and run tests for the RRC Permit Scraper application. It covers all testing types including unit tests, integration tests, and end-to-end tests.
 
-## Test Database Infrastructure
+## Table of Contents
 
-The test database infrastructure provides isolated PostgreSQL instances for running database tests, ensuring each test suite has a clean, consistent database environment.
+1. [Quick Start](#quick-start)
+2. [Testing Infrastructure](#testing-infrastructure)
+3. [Running Tests](#running-tests)
+4. [Writing Tests](#writing-tests)
+5. [Test Data Factories](#test-data-factories)
+6. [Test Helpers](#test-helpers)
+7. [Database Testing](#database-testing)
+8. [Best Practices](#best-practices)
+9. [Troubleshooting](#troubleshooting)
 
-### Components
+---
 
-1. `docker-compose.test.yml` - Docker Compose configuration for test database containers
-2. `tests/helpers/testcontainers.ts` - Testcontainers helper for managing test database containers
-3. `tests/helpers/db-helper.ts` - Database helper utilities for common database operations
-4. `tests/config/db-test.config.ts` - Database test configuration settings
-5. `tests/setup/database.ts` - Setup and teardown for database integration tests
-6. `scripts/setup-test-db.sh` - Script to set up the test database environment
-7. `scripts/teardown-test-db.sh` - Script to tear down the test database environment
+## Quick Start
 
-## Setting Up the Test Database
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run specific test file
+npm test -- tests/unit/parser/PermitParser.test.ts
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
+---
+
+## Testing Infrastructure
+
+### Test Framework
+
+The project uses **Jest** with **ts-jest** for TypeScript support:
+
+- **Framework**: Jest 29.x
+- **Test Environment**: Node.js (server), jsdom (frontend)
+- **TypeScript**: ts-jest for type checking during tests
+- **Test Data**: @faker-js/faker for realistic test data generation
+
+### Project Structure
+
+```
+├── tests/
+│   ├── unit/              # Unit tests (fast, isolated)
+│   │   ├── parser/        # Parser unit tests
+│   │   ├── qa/            # Quality assurance tests
+│   │   ├── validators/    # Validation tests
+│   │   └── reporters/     # Reporter tests
+│   ├── integration/       # Integration tests (database, API)
+│   │   ├── db/            # Database integration tests
+│   │   ├── api/           # API client tests
+│   │   └── etl/           # ETL pipeline tests
+│   ├── e2e/               # End-to-end tests (full workflows)
+│   │   ├── alerts/        # Alert workflow tests
+│   │   ├── pipeline/      # Pipeline tests
+│   │   └── web/           # Web app tests
+│   ├── factories/         # Test data factories
+│   ├── helpers/           # Test utilities and helpers
+│   └── config/            # Test configuration
+├── src/
+│   └── __tests__/         # Co-located tests with source
+└── web/
+    └── __tests__/         # Web frontend tests
+```
+
+### Test Types
+
+| Type | Location | Purpose | Speed |
+|------|----------|---------|-------|
+| Unit | `tests/unit/`, `src/__tests__/` | Test isolated functions/modules | Fast (< 1s) |
+| Integration | `tests/integration/` | Test component interactions | Medium (1-10s) |
+| E2E | `tests/e2e/` | Test complete workflows | Slow (> 10s) |
+
+---
+
+## Running Tests
+
+### All Tests
+
+```bash
+npm test
+```
+
+### By Type
+
+```bash
+# Unit tests only
+npm test -- tests/unit/
+
+# Integration tests only
+npm test -- tests/integration/
+
+# E2E tests only
+npm test -- tests/e2e/
+```
+
+### Specific Files
+
+```bash
+# Single test file
+npm test -- tests/unit/parser/PermitParser.test.ts
+
+# Multiple test files
+npm test -- tests/unit/parser/*.test.ts
+
+# Tests matching a pattern
+npm test -- --testNamePattern="should parse"
+```
+
+### Watch Mode
+
+```bash
+# Run tests on file changes
+npm run test:watch
+
+# Watch specific directory
+npm test -- --watch tests/unit/
+```
+
+### Coverage
+
+```bash
+# Generate coverage report
+npm test -- --coverage
+
+# Open coverage report
+open coverage/lcov-report/index.html
+```
+
+---
+
+## Writing Tests
+
+### Basic Test Structure
+
+```typescript
+import { PermitFactory } from '../factories';
+
+describe('MyComponent', () => {
+  beforeEach(() => {
+    // Setup code runs before each test
+  });
+
+  afterEach(() => {
+    // Cleanup code runs after each test
+  });
+
+  it('should do something specific', () => {
+    // Arrange
+    const input = 'test data';
+    
+    // Act
+    const result = myFunction(input);
+    
+    // Assert
+    expect(result).toBe('expected output');
+  });
+
+  it('should handle edge cases', () => {
+    // Test edge cases explicitly
+    expect(() => myFunction(null)).toThrow();
+  });
+});
+```
+
+### Using Test Factories
+
+```typescript
+import { PermitFactory, UserFactory } from '../factories';
+
+describe('Permit Processing', () => {
+  it('should process a valid permit', () => {
+    // Create realistic test data
+    const permit = PermitFactory.create({ county: 'Midland' });
+    
+    const result = processPermit(permit);
+    
+    expect(result.success).toBe(true);
+  });
+
+  it('should handle multiple permits', () => {
+    // Create multiple test items
+    const permits = PermitFactory.createMany(10, { county: 'Reagan' });
+    
+    const results = permits.map(processPermit);
+    
+    expect(results).toHaveLength(10);
+  });
+
+  it('should create horizontal well permit', () => {
+    // Use specialized factory methods
+    const permit = PermitFactory.horizontal();
+    
+    expect(permit.isHorizontal).toBe(true);
+    expect(permit.lateralLength).toBeGreaterThan(5000);
+  });
+});
+```
+
+### Async Tests
+
+```typescript
+describe('Async Operations', () => {
+  it('should handle async operations', async () => {
+    const result = await fetchData();
+    expect(result).toBeDefined();
+  });
+
+  it('should handle promises', () => {
+    return expect(fetchData()).resolves.toBeDefined();
+  });
+
+  it('should handle rejected promises', async () => {
+    await expect(fetchInvalidData()).rejects.toThrow();
+  });
+});
+```
+
+### Parameterized Tests
+
+```typescript
+describe.each([
+  ['Midland', true],
+  ['Reagan', true],
+  ['InvalidCounty', false],
+])('County validation for %s', (county, expected) => {
+  it(`should return ${expected}`, () => {
+    expect(isValidCounty(county)).toBe(expected);
+  });
+});
+```
+
+---
+
+## Test Data Factories
+
+Test factories generate realistic test data using `@faker-js/faker`. They ensure consistency across tests and make test data creation easy.
+
+### Available Factories
+
+| Factory | File | Purpose |
+|---------|------|---------|
+| `PermitFactory` | `tests/factories/permit.factory.ts` | Create permit test data |
+| `UserFactory` | `tests/factories/user.factory.ts` | Create user test data |
+| `AlertRuleFactory` | `tests/factories/alert-rule.factory.ts` | Create alert rule test data |
+| `WorkspaceFactory` | `tests/factories/workspace.factory.ts` | Create workspace test data |
+
+### PermitFactory Examples
+
+```typescript
+import { PermitFactory } from '../factories';
+
+// Basic permit
+const permit = PermitFactory.create();
+
+// Permit with overrides
+const midlandPermit = PermitFactory.create({ county: 'Midland' });
+
+// Multiple permits
+const permits = PermitFactory.createMany(100);
+
+// Permits in specific county
+const reaganPermits = PermitFactory.manyInCounty(50, 'Reagan');
+
+// Specialized permits
+const oilPermit = PermitFactory.oil();
+const gasPermit = PermitFactory.gas();
+const horizontalPermit = PermitFactory.horizontal();
+const injectionPermit = PermitFactory.injection();
+
+// Edge cases
+const expiredPermit = PermitFactory.expired();
+const pendingPermit = PermitFactory.pending();
+const invalidPermit = PermitFactory.invalid();
+
+// Convert to RRC format for parser testing
+const rrcText = PermitFactory.toRrcFormat(permit);
+```
+
+### UserFactory Examples
+
+```typescript
+import { UserFactory } from '../factories';
+
+const user = UserFactory.create();
+const admin = UserFactory.admin();
+const tenantAdmin = UserFactory.tenantAdmin();
+const users = UserFactory.createMany(20);
+```
+
+### AlertRuleFactory Examples
+
+```typescript
+import { AlertRuleFactory } from '../factories';
+
+const rule = AlertRuleFactory.create();
+const countyRule = AlertRuleFactory.forCounty('Midland');
+const operatorRule = AlertRuleFactory.forOperator('ExxonMobil');
+```
+
+### Custom Test Data
+
+```typescript
+import { randomTexasCounty, randomDepth, randomFormation } from '../factories/generators';
+
+const customPermit = {
+  county: randomTexasCounty(),
+  depth: randomDepth(),
+  formation: randomFormation(),
+};
+```
+
+---
+
+## Test Helpers
+
+### TestLogger
+
+```typescript
+import { TestLogger, logger } from '../helpers';
+
+describe('MyComponent', () => {
+  let testLogger: TestLogger;
+
+  beforeEach(() => {
+    testLogger = new TestLogger();
+  });
+
+  it('should log operations', () => {
+    testLogger.info('Operation started');
+    testLogger.expectLog('Operation started');
+  });
+});
+```
+
+### Database Helper
+
+```typescript
+import { DatabaseHelper } from '../helpers/db-helper';
+
+describe('Database Operations', () => {
+  let dbHelper: DatabaseHelper;
+
+  beforeEach(async () => {
+    dbHelper = new DatabaseHelper();
+    await dbHelper.connect();
+  });
+
+  afterEach(async () => {
+    await dbHelper.cleanup();
+    await dbHelper.disconnect();
+  });
+
+  it('should query database', async () => {
+    const results = await dbHelper.executeQuery(
+      'SELECT * FROM permits WHERE county = $1',
+      ['Midland']
+    );
+    expect(results).toBeDefined();
+  });
+});
+```
+
+### Logged Operations
+
+```typescript
+import { 
+  loggedOperation, 
+  loggedQuery, 
+  timeOperation 
+} from '../helpers';
+
+it('should track operation timing', async () => {
+  const result = await timeOperation('myOperation', async () => {
+    // Your operation here
+    return doSomething();
+  });
+  
+  // Timing is automatically logged
+});
+```
+
+---
+
+## Database Testing
 
 ### Prerequisites
 
