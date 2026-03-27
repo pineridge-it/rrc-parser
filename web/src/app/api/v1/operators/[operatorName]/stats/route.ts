@@ -26,13 +26,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .eq('operator_name', decodedOperatorName)
       .single();
 
-    if (error) {
-      throw new Error(`Database query failed: ${error.message}`);
-    }
-
-    if (!data) {
-      return createApiResponse(
-        { error: 'Operator not found' },
+    if (error || !data) {
+      return createApiErrorResponse(
+        new Error('Operator not found'),
         404,
         rateLimit
       );
