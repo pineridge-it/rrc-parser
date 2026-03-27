@@ -666,7 +666,7 @@ export class PermitParser {
             }
 
             const result: ParseResult = {
-              permits: this.permitStorage.getAllPermits(),
+              permits: await this.permitStorage.getAllPermitsAsync(),
               stats: this.stats,
               validationReport: this.validationReport,
               performance: this.perfMonitor.getReport(),
@@ -706,9 +706,12 @@ export class PermitParser {
     if (!this.checkpointManager) return;
 
     try {
+      // Use async method to get all permits including flushed ones from disk
+      const allPermits = await this.permitStorage.getAllPermitsAsync();
+
       await this.checkpointManager.saveCheckpoint({
         lastProcessedLine: lineNumber,
-        permits: this.permitStorage.getAllPermits(),
+        permits: allPermits,
         stats: this.stats,
         inputFilePath: inputPath
       });
